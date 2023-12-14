@@ -10,6 +10,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 import { useEffect, useState } from "react";
 const supabaseUrl = "https://skvnrwmwmcvsevknedhm.supabase.co";
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY as string;
@@ -207,7 +208,8 @@ const columns = [
   }),
   columnHelper.accessor((row) => row.definition, {
     id: "definition",
-    cell: (info) => <i>{info.getValue()}</i>,
+    cell: (info) =>  <div dangerouslySetInnerHTML={{__html: info.getValue()|| ''}}></div>
+    ,
     header: () => <span>Definition</span>,
   }),
 ];
@@ -242,7 +244,7 @@ function Table({ data }: { data: Card[] }) {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} width={"50%"}>
+                <td className="border m-2 p-4" key={cell.id} width={"50%"}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

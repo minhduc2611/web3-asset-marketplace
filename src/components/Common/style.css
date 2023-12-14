@@ -8,7 +8,9 @@ ul,
 ol {
   padding: 0 1rem;
 }
-
+li p::before{
+    content: "- "
+}
 h1,
 h2,
 h3,
