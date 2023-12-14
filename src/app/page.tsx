@@ -1,113 +1,227 @@
-import Image from 'next/image'
+"use client";
+import { Icons } from "@/components/icons";
+import { Database } from "@/supabase/database.types";
+import { ReactFCC } from "@/types/common";
+import { createClient } from "@supabase/supabase-js";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+const supabaseUrl = "https://skvnrwmwmcvsevknedhm.supabase.co";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+const supabase = createClient<Database>(supabaseUrl, supabaseKey || "");
+type Card = {
+  collection_id: number | null;
+  created_at: string;
+  definition: string | null;
+  deleted_at: string | null;
+  id: number;
+  term: string | null;
+};
+const getAll = async () => await supabase.from("cards").select("*");
+const insertOne = async ({ term, definition, collection_id }: Card) =>
+  await supabase
+    .from("cards")
+    .insert([{ term, definition, collection_id: collection_id }])
+    .select();
 
 export default function Home() {
+  const [data, setData] = useState<Card[]>(() => []);
+  const [error, setError] = useState<any>();
+  const getCards = async () => {
+    let { data: cards, error: e } = await getAll();
+    if (cards) {
+      setData(cards);
+    }
+    setError(e);
+  };
+  // { term: "someValue", definition: "otherValue", collection_id: 2 }
+  const insertCards = async (card: Card) => {
+    const { data: cards, error } = await insertOne(card);
+    if (cards) {
+      setData(cards);
+    }
+  };
+  useEffect(() => {
+    getCards();
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+      <div>
+        <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
+        <FlashcardContainer cards={data} />
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {data.length > 0 && <ModalButton cards={data} />}
     </main>
-  )
+  );
+}
+
+const ModalButton = ({ cards }: { cards: Card[] }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <button
+        className="absolute bottom-32 right-32 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        onClick={openModal}
+      >
+        Add Card
+      </button>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <div className="w-full h-[500px]">
+          <Table data={cards} />
+        </div>
+      </Modal>
+    </>
+  );
+};
+const Card = ({ card, onNext }: { card: Card; onNext: () => void }) => {
+  const [showDefinition, setShowDefinition] = useState(false);
+  const [shouldNext, setShouldNext] = useState(false);
+
+  return (
+    <div className="max-w-md mx-auto bg-white rounded-md overflow-hidden shadow-md m-4 w-[500px]">
+      <div
+        className={`text-center p-4 transition-all transform ${
+          showDefinition ? "rotate-y-180" : ""
+        }`}
+      >
+        <h2 className="text-xl font-semibold">{card.term}</h2>
+        <p className="mt-2 text-gray-600 min-h-[200px]">
+          {showDefinition && card.definition}
+        </p>
+      </div>
+      <div className="flex justify-end p-4">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          onClick={() => {
+            setShowDefinition(!showDefinition);
+            setShouldNext(true);
+          }}
+        >
+          {showDefinition ? "Hide Definition" : "Show Definition"}
+        </button>
+        <button
+          disabled={!shouldNext}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 ml-3 disabled:bg-slate-300 disabled:hover:bg-slate-300"
+          onClick={() => {
+            setShowDefinition(false);
+            onNext();
+            setShouldNext(false);
+          }}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const FlashcardContainer = ({ cards }: { cards: Card[] }) => {
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
+  const handleNext = () => {
+    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % cards.length);
+  };
+
+  return (
+    <div className="flex flex-wrap justify-center">
+      {cards.length > 0 && (
+        <Card card={cards[currentCardIndex]} onNext={handleNext} />
+      )}
+    </div>
+  );
+};
+
+const Modal: ReactFCC<{
+  isOpen: boolean;
+  onClose: () => void;
+}> = ({ isOpen, onClose, children }) => {
+  return (
+    <div
+      className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      <div className="absolute bg-white p-4 rounded-md shadow-md w-[900px]">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">FlashCards</h2>
+          <button
+            className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={onClose}
+          >
+            <Icons.close />
+          </button>
+        </div>
+        <div className="mt-4">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+const columnHelper = createColumnHelper<Card>();
+
+const columns = [
+  columnHelper.accessor("term", {
+    cell: (info) => info.getValue(),
+    header: () => <span>Term</span>,
+  }),
+  columnHelper.accessor((row) => row.definition, {
+    id: "definition",
+    cell: (info) => <i>{info.getValue()}</i>,
+    header: () => <span>Definition</span>,
+  }),
+];
+
+function Table({ data }: { data: Card[] }) {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <div className="p-2">
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} width={"50%"}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }

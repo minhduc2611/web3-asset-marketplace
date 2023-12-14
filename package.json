@@ -5,23 +5,29 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "supabase:gentype": "supabase gen types typescript --project-id skvnrwmwmcvsevknedhm > src/supabase/database.types.ts",
+    "supabase:login": "supabase login",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "@tanstack/react-table": "^8.10.7",
+    "lucide-react": "^0.295.0",
+    "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.4"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4"
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "supabase": "^1.123.4",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
   }
 }
