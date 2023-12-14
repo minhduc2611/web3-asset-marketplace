@@ -2,7 +2,7 @@
 import { Icons } from "@/components/icons";
 import { Database } from "@/supabase/database.types";
 import { ReactFCC } from "@/types/common";
-import { createClient } from "@supabase/supabase-js";
+import { SupabaseClient, createClient } from "@supabase/supabase-js";
 import {
   createColumnHelper,
   flexRender,
@@ -11,8 +11,14 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 const supabaseUrl = "https://skvnrwmwmcvsevknedhm.supabase.co";
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
-const supabase = createClient<Database>(supabaseUrl, supabaseKey || "");
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY as string;
+let supabase: SupabaseClient;
+try {
+  supabase = createClient<Database>(supabaseUrl, supabaseKey || "");
+} catch (e) {
+  console.error("supabase: ", e);
+}
+
 type Card = {
   collection_id: number | null;
   created_at: string;
