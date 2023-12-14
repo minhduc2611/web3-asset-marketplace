@@ -1,4 +1,5 @@
 "use client";
+import CardForm from "@/components/CardForm/CardForm";
 import { Icons } from "@/components/icons";
 import { Database } from "@/supabase/database.types";
 import { ReactFCC } from "@/types/common";
@@ -27,11 +28,21 @@ type Card = {
   id: number;
   term: string | null;
 };
-const getAll = async () => await supabase.from("cards").select("*");
-const insertOne = async ({ term, definition, collection_id }: Card) =>
+const getAll = async () =>
+  await supabase
+    .from("cards")
+    .select("*")
+    .order("created_at", { ascending: false });
+const insertOne = async ({ term, definition, collection_id }: Partial<Card>) =>
   await supabase
     .from("cards")
     .insert([{ term, definition, collection_id: collection_id }])
+    .select("*");
+const updateOne = async ({ id, term, definition }: Partial<Card>) =>
+  await supabase
+    .from("cards")
+    .update({ term, definition })
+    .eq("id", id)
     .select();
 
 export default function Home() {
@@ -45,10 +56,10 @@ export default function Home() {
     setError(e);
   };
   // { term: "someValue", definition: "otherValue", collection_id: 2 }
-  const insertCards = async (card: Card) => {
+  const insertCard = async (card: Partial<Card>) => {
     const { data: cards, error } = await insertOne(card);
-    if (cards) {
-      setData(cards);
+    if (!error) {
+      getCards();
     }
   };
   useEffect(() => {
@@ -60,12 +71,18 @@ export default function Home() {
         <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
         <FlashcardContainer cards={data} />
       </div>
-      {data.length > 0 && <ModalButton cards={data} />}
+      {data.length > 0 && <ModalButton cards={data} insertCard={insertCard} />}
     </main>
   );
 }
 
-const ModalButton = ({ cards }: { cards: Card[] }) => {
+const ModalButton = ({
+  cards,
+  insertCard,
+}: {
+  cards: Card[];
+  insertCard: ({ term, definition }: Partial<Card>) => void;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -86,6 +103,11 @@ const ModalButton = ({ cards }: { cards: Card[] }) => {
       </button>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="w-full h-[500px]">
+          <CardForm
+            onAddCard={({ term, definition }) => {
+              insertCard({ term, definition });
+            }}
+          ></CardForm>
           <Table data={cards} />
         </div>
       </Modal>
@@ -160,7 +182,7 @@ const Modal: ReactFCC<{
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="absolute bg-white p-4 rounded-md shadow-md w-[900px]">
+      <div className="absolute bg-white p-4 rounded-md shadow-md w-[900px] overflow-y-scroll">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">FlashCards</h2>
           <button
