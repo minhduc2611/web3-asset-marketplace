@@ -128,7 +128,11 @@ const Card = ({ card, onNext }: { card: Card; onNext: () => void }) => {
       >
         <h2 className="text-xl font-semibold">{card.term}</h2>
         <p className="mt-2 text-gray-600 min-h-[200px]">
-          {showDefinition && card.definition}
+          {showDefinition && (
+            <div
+              dangerouslySetInnerHTML={{ __html: card.definition || "" }}
+            ></div>
+          )}
         </p>
       </div>
       <div className="flex justify-end p-4">
@@ -208,8 +212,9 @@ const columns = [
   }),
   columnHelper.accessor((row) => row.definition, {
     id: "definition",
-    cell: (info) =>  <div dangerouslySetInnerHTML={{__html: info.getValue()|| ''}}></div>
-    ,
+    cell: (info) => (
+      <div dangerouslySetInnerHTML={{ __html: info.getValue() || "" }}></div>
+    ),
     header: () => <span>Definition</span>,
   }),
 ];
