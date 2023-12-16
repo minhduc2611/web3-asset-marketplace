@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import TipTapEditor from "../Common/Tiptap";
+import TipTapEditor from "@/components/common/common-tiptap/TiptapEditor";
 
 type CardFormProps = {
   onAddCard: (newCard: { term: string; definition: string }) => void;
 };
+
+
 
 const CardForm: React.FC<CardFormProps> = ({ onAddCard }) => {
   const [term, setTerm] = useState("");
@@ -25,6 +27,8 @@ const CardForm: React.FC<CardFormProps> = ({ onAddCard }) => {
     setTerm("");
     setDefinition("");
   };
+
+
 
   return (
     <form onSubmit={handleSubmit} className="mt-4">
@@ -51,13 +55,6 @@ const CardForm: React.FC<CardFormProps> = ({ onAddCard }) => {
         >
           Definition:
         </label>
-        {/* <textarea
-          id="definition"
-          value={definition}
-          onChange={(e) => setDefinition(e.target.value)}
-          rows={4}
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-        /> */}
         <TipTapEditor
         value={definition}
         onChange={(value) => setDefinition(value)}

@@ -8,7 +8,8 @@
     "supabase:gentype": "supabase gen types typescript --project-id skvnrwmwmcvsevknedhm > src/supabase/database.types.ts",
     "supabase:login": "supabase login",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type:check": "tsc --noEmit  --skipLibCheck"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -18,14 +19,19 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
+    "builder-pattern": "^2.2.0",
     "clsx": "^2.0.0",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.295.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
+    "recoil": "^0.7.7",
+    "sass": "^1.69.5",
     "tailwind-merge": "^2.1.0"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

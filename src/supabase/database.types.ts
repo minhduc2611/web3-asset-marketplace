@@ -48,18 +48,21 @@ export interface Database {
         Row: {
           created_at: string
           deleted_at: string | null
+          description: string | null
           id: number
           name: string | null
         }
         Insert: {
           created_at?: string
           deleted_at?: string | null
+          description?: string | null
           id?: number
           name?: string | null
         }
         Update: {
           created_at?: string
           deleted_at?: string | null
+          description?: string | null
           id?: number
           name?: string | null
         }

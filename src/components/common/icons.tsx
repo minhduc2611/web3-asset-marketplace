@@ -22,6 +22,7 @@ import {
   Trash,
   Twitter,
   User,
+  Pencil,
   X,
 } from "lucide-react"
 
@@ -34,6 +35,7 @@ export const Icons = {
   trash: Trash,
   post: FileText,
   page: File,
+  pencil: Pencil,
   media: Image,
   settings: Settings,
   billing: CreditCard,
