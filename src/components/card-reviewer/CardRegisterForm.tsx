@@ -120,7 +120,7 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
         <button
           onClick={reset}
           type="reset"
-          className="px-4 py-2 text-white rounded-md"
+          className="px-4 py-2 text-black rounded-md border ml-2"
         >
           Reset
         </button>
