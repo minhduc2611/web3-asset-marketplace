@@ -17,7 +17,7 @@ import CardForm from "./CardRegisterForm";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import useIsMobile from "@/hooks/useIsMobile";
 
-const CardRegisterModal = ({id}: {id:number}) => {
+const CardRegisterModal = ({collectionId}: {collectionId:number}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addOneFlashCard } = useFlashCardStoreActions();
   const { flashCards } = useFlashCardStoreValue();
@@ -36,7 +36,7 @@ const CardRegisterModal = ({id}: {id:number}) => {
         <div className="w-full h-[90vh] md:h-[500px]">
           <CardForm
             onAddCard={({ term, definition }) => {
-              addOneFlashCard({ term, definition, collection_id: id });
+              addOneFlashCard({ term, definition, collection_id: collectionId });
             }}
           ></CardForm>
           <Table data={flashCards} />
