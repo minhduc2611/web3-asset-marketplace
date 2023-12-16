@@ -1,5 +1,5 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
-import { FlashCardAddRequestModel } from "@/models/flash-card/flashCardRequestModel";
+import { FlashCardAddRequestModel, FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardRequestModel";
 import { FlashCardGetAllResponseModel } from "@/models/flash-card/flashCardResponseModel";
 import superbaseInstance from "@/services/superbaseInstance";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
@@ -30,11 +30,16 @@ const insertOne = async ({
     .insert([{ term, definition, collection_id: collection_id }])
     .select("*");
 
-const updateOne = async ({ id, term, definition }: Partial<FlashCardModel>) =>
+const updateOne = async ({
+  id,
+  term,
+  definition,
+  collection_id,
+}: FlashCardUpdateRequestModel) =>
   await superbaseInstance
     .getInstance()
     .from(FLASK_CARD_TABLE)
-    .update({ term, definition })
+    .update({ term, definition, collection_id })
     .eq("id", id || 0)
     .select();
 
@@ -50,5 +55,6 @@ const upload = (path: string, file: File) =>
 const FlashCardService = {
   getAll,
   insertOne,
+  updateOne,
 };
 export default FlashCardService;

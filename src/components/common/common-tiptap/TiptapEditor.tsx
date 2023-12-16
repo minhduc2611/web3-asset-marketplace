@@ -1,14 +1,67 @@
-import { cn } from "@/lib/utils";
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import { BubbleMenu, EditorProvider, useCurrentEditor } from "@tiptap/react";
+import {
+  BubbleMenu,
+  Editor,
+  EditorContent,
+  useCurrentEditor,
+  useEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { useEffect, useImperativeHandle } from "react";
 import "./style.scss";
-import { useEffect } from "react";
-const MenuBar = () => {
-  const { editor } = useCurrentEditor();
+import { cn } from "@/lib/utils";
+import React from "react";
 
+const extensions = [
+  Color.configure({ types: [TextStyle.name, ListItem.name] }),
+  TextStyle.configure(),
+  StarterKit.configure({
+    bulletList: {
+      keepMarks: true,
+      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+    },
+    orderedList: {
+      keepMarks: true,
+      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+    },
+  }),
+];
+type Props = {};
+export type TipTapEditorHandle = {
+  setContent: (text: string) => void;
+  getContent: () => string;
+};
+// eslint-disable-next-line react/display-name
+const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
+  ({}, ref) => {
+    const editor = useEditor({
+      extensions: [StarterKit],
+    });
+    useImperativeHandle(ref, () => ({
+      setContent: (html: string) => {
+        editor?.commands.setContent(html);
+      },
+      getContent: (): string => {
+        return editor?.getHTML() || "";
+      },
+    }));
+
+    return (
+      <>
+        {editor && (
+          <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+            <MenuBar editor={editor} />
+          </BubbleMenu>
+        )}
+        <EditorContent editor={editor} />
+      </>
+    );
+  }
+);
+
+const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
     return null;
   }
@@ -227,54 +280,4 @@ const MenuBar = () => {
   );
 };
 
-const extensions = [
-  Color.configure({ types: [TextStyle.name, ListItem.name] }),
-  TextStyle.configure(),
-  StarterKit.configure({
-    bulletList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-    orderedList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-  }),
-];
-
-const TipTapEditor = ({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (text: string) => void;
-}) => {
-  return (
-    <div>
-      <EditorProvider
-        extensions={extensions}
-        content={value}
-        onUpdate={(e) => {
-          onChange(e.editor.getHTML());
-        }}
-      >
-        <EventHandler value={value} />
-        <BubbleMenu>
-          <MenuBar />
-        </BubbleMenu>
-      </EditorProvider>
-    </div>
-  );
-};
-
-const EventHandler = ({ value }: { value: string }) => {
-  const { editor } = useCurrentEditor();
-  useEffect(() => {
-    console.log("value", value);
-    if (value === "" || !value) {
-      editor?.chain().clearContent().run();
-    }
-  }, [value, editor]);
-  return <></>;
-};
 export default TipTapEditor;

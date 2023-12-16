@@ -48,8 +48,8 @@ const Card = ({
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
-            onNext();
             setShouldNext(false);
+            onNext();
           }}
         >
           Easy {">"}

@@ -4,7 +4,7 @@ import ListUtils from "@/helpers/listUtils";
 import { FlashCardStoreModel } from "@/models/flash-card/flashCardStoreModel";
 import superbaseInstance from "@/services/superbaseInstance";
 import FlashCardService from "@/services/flashCard";
-import { FlashCardAddRequestModel } from "@/models/flash-card/flashCardRequestModel";
+import { FlashCardAddRequestModel, FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardRequestModel";
 
 export const FlashCardStore = atom<FlashCardStoreModel>({
   key: "flash-card",
@@ -29,11 +29,16 @@ export function useFlashCardStoreActions() {
     flashCard.collection_id && (await getFlashCards(flashCard.collection_id));
   };
 
+  const updateOneFlashCard = async (flashCard: FlashCardUpdateRequestModel) => {
+    await FlashCardService.updateOne(flashCard);
+    flashCard.collection_id && (await getFlashCards(flashCard.collection_id));
+  };
+
   // const setCustomers = async (customers: Customer) => {
   //     // code here
   // };
 
-  return { getFlashCards, addOneFlashCard, resetFlashCards };
+  return { getFlashCards, addOneFlashCard, resetFlashCards, updateOneFlashCard };
 }
 
 export const useFlashCardStoreValue = () => {
