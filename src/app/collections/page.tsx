@@ -18,6 +18,7 @@ export default function Home() {
   }, []);
   return (
     <main className="min-h-screen p-10 md:p-24">
+    <CollectionRegisterModal />
       <div className="grid md:grid-cols-4 md:gap-4 gap-4">
         {collections.map((collection) => {
           return (
@@ -64,8 +65,6 @@ export default function Home() {
           );
         })}
       </div>
-
-      <CollectionRegisterModal />
     </main>
   );
 }
