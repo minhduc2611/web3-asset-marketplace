@@ -19,7 +19,7 @@ const CollectionRegisterModal = () => {
   return (
     <>
       <button
-        className="md:absolute w-full md:w-[200px] bottom-16 right-32 mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="md:absolute w-full md:w-[200px] bottom-2 right-32 mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         onClick={openModal}
       >
         Add Collection
