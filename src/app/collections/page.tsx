@@ -1,15 +1,13 @@
 "use client";
 
+import CollectionRegisterModal from "@/components/collection/CollectionRegisterModal";
+import timeUtils from "@/helpers/timeUtils";
 import {
   useCollectionStoreActions,
   useCollectionStoreValue,
 } from "@/stores/collection";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import Link from "next/link";
-import CollectionRegisterModal from "@/components/collection/CollectionRegisterModal";
-import dayjs from "dayjs";
-import timeUtils from "@/helpers/timeUtils";
+import { useEffect } from "react";
 export default function Home() {
   const { getCollections } = useCollectionStoreActions();
   const { collections } = useCollectionStoreValue();

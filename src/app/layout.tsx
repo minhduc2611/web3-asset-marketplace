@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
 import RecoilProvider from "@/stores";
 import dayjs from "dayjs";
 import "dayjs/locale/en";
 import relativeTime from "dayjs/plugin/relativeTime";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 dayjs.locale("en");
 dayjs.extend(relativeTime);
 
