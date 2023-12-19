@@ -4,6 +4,7 @@ import { ReactFCC } from "@/types/common";
 import "./style.scss";
 import { ReactNode } from "react";
 
+const CARD_HEIGHT = '500px'
 const CommonFlipCard: ReactFCC<{
   isFlipped: boolean;
   setIsFlipped: (e: boolean) => void;
@@ -19,7 +20,7 @@ const CommonFlipCard: ReactFCC<{
   return (
     <div
       onClick={() => setIsFlipped(!isFlipped)}
-      className={cn(`flip-card ${isFlipped ? "flipped" : ""}`, "")}
+      className={cn(`flip-card ${isFlipped ? "flipped" : ""} h-[350px] lg:h-[500px]`, "")}
     >
       <div className="flip-card-inner">
         <div className="flip-card-front ">{renderFrontCard()}</div>

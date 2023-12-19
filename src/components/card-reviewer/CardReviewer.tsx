@@ -4,8 +4,9 @@ import { useFlashCardStoreValue } from "@/stores/flashCard";
 
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
 import { useState } from "react";
-import Image from "next/image";
 import { getImage } from "@/helpers/imageUtils";
+
+const CARD_SIZE = '682px'
 
 const Card = ({
   card,
@@ -18,7 +19,7 @@ const Card = ({
   const [shouldNext, setShouldNext] = useState(false);
 
   return (
-    <div className="card-wrapper w-full lg:w-[600px] p-5">
+    <div className={`card-wrapper w-full lg:w-[652px] p-5`}>
       <CommonFlipCard
         isFlipped={showDefinition}
         setIsFlipped={(value) => {
@@ -32,7 +33,7 @@ const Card = ({
           return (
             <p className="mt-2 text-gray-600 min-h-[200px] block">
               <h2 className="text-xl font-semibold">{card.term}</h2>
-              <div className="m-auto">
+              <div className="m-auto h-[200px]">
                 {card.media_url && (
                   <img
                     alt="src"

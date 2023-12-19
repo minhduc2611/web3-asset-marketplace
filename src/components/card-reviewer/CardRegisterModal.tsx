@@ -34,7 +34,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
   return (
     <>
       <button
-        className="absolute bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="md:absolute mb-10 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         onClick={openModal}
       >
         Add Card
