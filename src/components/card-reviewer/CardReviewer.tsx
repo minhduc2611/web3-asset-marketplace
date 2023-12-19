@@ -4,6 +4,8 @@ import { useFlashCardStoreValue } from "@/stores/flashCard";
 
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
 import { useState } from "react";
+import Image from "next/image";
+import { getImage } from "@/helpers/imageUtils";
 
 const Card = ({
   card,
@@ -30,6 +32,15 @@ const Card = ({
           return (
             <p className="mt-2 text-gray-600 min-h-[200px] block">
               <h2 className="text-xl font-semibold">{card.term}</h2>
+              <div className="m-auto">
+                {card.media_url && (
+                  <img
+                    alt="src"
+                    className="object-scale-down h-full m-auto"
+                    src={getImage(card.media_url)}
+                  />
+                )}
+              </div>
               <hr className="solid" />
               {/* todo: Image */}
               {showDefinition && (
@@ -94,7 +105,9 @@ const CardReviewer = () => {
       {flashCards.length > 0 && (
         <Card card={flashCards[currentCardIndex]} onNext={handleNext} />
       )}
-      {(flashCards.length == 0 && <h5 className="p-10">Please add a card to learn</h5>)}
+      {flashCards.length == 0 && (
+        <h5 className="p-10">Please add a card to learn</h5>
+      )}
     </div>
   );
 };

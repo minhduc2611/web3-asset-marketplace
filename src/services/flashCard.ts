@@ -19,42 +19,31 @@ const getAll = async (
   return response;
 };
 
-const insertOne = async ({
-  term,
-  definition,
-  collection_id,
-}: FlashCardAddRequestModel) =>
+const insertOne = async (a: FlashCardAddRequestModel) =>
   await superbaseInstance
     .getInstance()
     .from(FLASK_CARD_TABLE)
-    .insert([{ term, definition, collection_id: collection_id }])
+    .insert([a])
     .select("*");
 
-const updateOne = async ({
-  id,
-  term,
-  definition,
-  collection_id,
-}: FlashCardUpdateRequestModel) =>
+const updateOne = async (a: FlashCardUpdateRequestModel) =>
   await superbaseInstance
     .getInstance()
     .from(FLASK_CARD_TABLE)
-    .update({ term, definition, collection_id })
-    .eq("id", id || 0)
+    .update(a)
+    .eq("id", a.id || 0)
     .select();
 
 const upload = (path: string, file: File) =>
   superbaseInstance
     .getInstance()
     .storage.from(FLASK_CARD_BUCKET)
-    .upload("public/avatar1.png", file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+    .upload(path || "public/avatar1.png", file);
 
 const FlashCardService = {
   getAll,
   insertOne,
   updateOne,
+  upload
 };
 export default FlashCardService;

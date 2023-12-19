@@ -23,7 +23,7 @@ const CommonFlipCard: ReactFCC<{
     >
       <div className="flip-card-inner">
         <div className="flip-card-front ">{renderFrontCard()}</div>
-        <div className="flip-card-back">{renderBackCard()}</div>
+        <div className="flip-card-back overflow-y-scroll">{renderBackCard()}</div>
       </div>
     </div>
   );

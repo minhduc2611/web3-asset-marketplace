@@ -16,6 +16,7 @@ export interface Database {
           definition: string | null
           deleted_at: string | null
           id: number
+          media_url: string | null
           term: string | null
         }
         Insert: {
@@ -24,6 +25,7 @@ export interface Database {
           definition?: string | null
           deleted_at?: string | null
           id?: number
+          media_url?: string | null
           term?: string | null
         }
         Update: {
@@ -32,6 +34,7 @@ export interface Database {
           definition?: string | null
           deleted_at?: string | null
           id?: number
+          media_url?: string | null
           term?: string | null
         }
         Relationships: [

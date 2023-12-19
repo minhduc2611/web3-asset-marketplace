@@ -47,7 +47,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
       >
         <div
           ref={divRef}
-          className="absolute bg-white p-4 rounded-md shadow-md overflow-y-scroll md:min-w-[500px]"
+          className="absolute bg-white p-14 rounded-md shadow-md overflow-y-scroll md:w-[100vw] md:h-[100vh]"
         >
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">FlashCards</h2>
@@ -63,26 +63,28 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
               <CardForm
                 ref={formRef}
                 scrollToTop={scrollToTopOfDiv}
-                onAddCard={({ term, definition }) => {
-                  addOneFlashCard({
+                onAddCard={({ term, definition, media_url }) => {
+                  const a = {
                     term,
                     definition,
                     collection_id: collectionId,
-                  });
+                    media_url,
+                  }
+                  addOneFlashCard(a);
                 }}
-                onUpdate={({ id, term, definition }) => {
+                onUpdate={({ id, term, definition, media_url }) => {
                   updateOneFlashCard({
                     id,
                     term,
                     definition,
                     collection_id: collectionId,
+                    media_url,
                   });
                 }}
               ></CardForm>
               <Table
                 data={flashCards}
                 edit={(data) => {
-                  console.log(data);
                   formRef.current?.setForm(data);
                 }}
               />

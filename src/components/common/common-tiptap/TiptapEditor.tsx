@@ -13,6 +13,7 @@ import { useEffect, useImperativeHandle } from "react";
 import "./style.scss";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
 const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -28,16 +29,21 @@ const extensions = [
     },
   }),
 ];
-type Props = {};
+type Props = {
+  onChange: (e: string) => void;
+};
 export type TipTapEditorHandle = {
   setContent: (text: string) => void;
   getContent: () => string;
 };
 // eslint-disable-next-line react/display-name
 const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
-  ({}, ref) => {
+  ({ onChange }, ref) => {
     const editor = useEditor({
       extensions: [StarterKit],
+      onUpdate({ editor }) {
+        onChange(editor.getHTML())
+      },
     });
     useImperativeHandle(ref, () => ({
       setContent: (html: string) => {
