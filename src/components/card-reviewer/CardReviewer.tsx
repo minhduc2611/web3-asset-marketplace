@@ -17,7 +17,7 @@ const Card = ({
   const [shouldNext, setShouldNext] = useState(false);
 
   return (
-    <div className={`card-wrapper w-full lg:w-[652px] p-5`}>
+    <div className={`card-wrapper w-full lg:w-[652px]`}>
       <CommonFlipCard
         isFlipped={showDefinition}
         setIsFlipped={(value) => {
