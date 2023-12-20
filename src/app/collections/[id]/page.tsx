@@ -24,8 +24,9 @@ export default function Home({ params }: { params: { id: string } }) {
       <div className="w-full">
         <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
         <CardReviewer />
+        <CardRegisterModal collectionId={Number(params?.id)} />
       </div>
-      <CardRegisterModal collectionId={Number(params?.id)} />
+     
     </main>
   );
 }

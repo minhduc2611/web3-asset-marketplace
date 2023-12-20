@@ -6,8 +6,6 @@ import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
 import { useState } from "react";
 import { getImage } from "@/helpers/imageUtils";
 
-const CARD_SIZE = '682px'
-
 const Card = ({
   card,
   onNext,

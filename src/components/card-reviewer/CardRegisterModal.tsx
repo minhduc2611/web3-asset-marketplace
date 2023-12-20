@@ -17,6 +17,7 @@ import { RefObject, useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import useIsMobile from "@/hooks/useIsMobile";
+import { cn } from "@/lib/utils";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,19 +32,21 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
   const scrollToTopOfDiv = () => {
     divRef.current && divRef.current.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const isMobile= useIsMobile()
+
   return (
     <>
       <button
-        className="md:absolute mb-10 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className={cn(isMobile ? 'md:absolute' : '', ' mb-10 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600')}
         onClick={openModal}
       >
         Add Card
       </button>
 
       <div
-        className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${
-          isModalOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${isModalOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div
           ref={divRef}
@@ -164,10 +167,10 @@ function Table({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    {}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    { }
                   </th>
                 ))}
               </tr>
