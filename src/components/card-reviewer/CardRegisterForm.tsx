@@ -65,9 +65,7 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
 
       // Check if both term and definition are provided before adding the card
       if (
-        input.term.trim() === "" ||
-        definition === "" ||
-        input.media_url === ""
+        input.term.trim() === "" || definition === ""
       ) {
         alert("Please provide both term and definition.");
         return;
