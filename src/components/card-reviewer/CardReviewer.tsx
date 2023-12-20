@@ -33,15 +33,15 @@ const Card = ({
           return (
             <p className="mt-2 text-gray-600 min-h-[200px] block">
               <h2 className="text-xl font-semibold">{card.term}</h2>
-              <div className="m-auto h-[200px]">
-                {card.media_url && (
+              {card.media_url && (
+                <div className="m-auto h-[200px]">
                   <img
                     alt="src"
                     className="object-scale-down h-full m-auto"
                     src={getImage(card.media_url)}
                   />
-                )}
-              </div>
+                </div>
+              )}
               <hr className="solid" />
               {/* todo: Image */}
               {showDefinition && (
