@@ -21,7 +21,7 @@ export default function Home({ params }: { params: { id: string } }) {
           <Icons.chevronLeft />
         </Link>
       </button>
-      <div className="w-full">
+      <div className="w-full p-5">
         <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
         <CardReviewer />
         <CardRegisterModal collectionId={Number(params?.id)} />
