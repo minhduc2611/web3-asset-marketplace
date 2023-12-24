@@ -25,12 +25,21 @@ const Card = ({
           setShouldNext(true);
         }}
         renderFrontCard={() => {
-          return <h2 className="p-14 text-xl font-semibold">{card.term}</h2>;
+          return <div
+            className="mt-10"
+            dangerouslySetInnerHTML={{ __html: card.term || "" }}
+          ></div>;
         }}
         renderBackCard={() => {
           return (
             <p className="mt-2 text-gray-600 min-h-[200px] block">
-              <h2 className="text-xl font-semibold">{card.term}</h2>
+              {/* <h2 className="text-xl font-semibold">
+                
+              </h2> */}
+              <div
+                className="mt-10"
+                dangerouslySetInnerHTML={{ __html: card.term || "" }}
+              ></div>
               {card.media_url && (
                 <div className="m-auto h-[200px]">
                   <img
@@ -41,7 +50,6 @@ const Card = ({
                 </div>
               )}
               <hr className="solid" />
-              {/* todo: Image */}
               {showDefinition && (
                 <div
                   className="mt-10"

@@ -56,16 +56,18 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
       },
     });
 
-    const editorRef = useRef<TipTapEditorHandle>(null);
+    const editorRefTerm = useRef<TipTapEditorHandle>(null);
+    const editorRefDefinition = useRef<TipTapEditorHandle>(null);
 
     const handleSubmitCallBack: SubmitHandler<Inputs> = (input: Inputs) => {
       console.log("input @@", input);
 
-      const definition = editorRef.current?.getContent().trim() || "";
+      const term = editorRefTerm.current?.getContent().trim() || "";
+      const definition = editorRefDefinition.current?.getContent().trim() || "";
 
       // Check if both term and definition are provided before adding the card
       if (
-        input.term.trim() === "" || definition === ""
+        term.trim() === "" || definition === ""
       ) {
         alert("Please provide both term and definition.");
         return;
@@ -79,11 +81,11 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
     };
 
     const reset = () => {
-      setValue("term", "");
       setValue("id", 0);
       setValue("status", FormStatus.Add);
       setValue("media_url", "");
-      editorRef.current?.setContent("");
+      editorRefTerm.current?.setContent("");
+      editorRefDefinition.current?.setContent("");
     };
 
     React.useImperativeHandle(ref, () => ({
@@ -95,8 +97,9 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
       }: FlashCardUpdateRequestModel) => {
         setValue("id", id);
         setValue("term", term || "");
+        editorRefTerm.current?.setContent(definition || "");
         setValue("definition", definition || "");
-        editorRef.current?.setContent(definition || "");
+        editorRefDefinition.current?.setContent(definition || "");
         setValue("media_url", media_url || "");
         setValue("status", FormStatus.Update);
         scrollToTop();
@@ -129,10 +132,16 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
           >
             Term:
           </label>
-          <input
+          {/* <input
             {...register("term")}
             type="text"
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          /> */}
+          <TipTapEditor
+            onChange={(st) => {
+              setValue("term", st);
+            }}
+            ref={editorRefTerm}
           />
         </div>
         <Uploader
@@ -152,7 +161,7 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
             onChange={(st) => {
               setValue("definition", st);
             }}
-            ref={editorRef}
+            ref={editorRefDefinition}
           />
         </div>
 
