@@ -40,7 +40,7 @@ const Card = ({
                   />
                 </div>
               )}
-              <hr className="solid" />
+              <hr className="solid mt-6" />
               {showDefinition && (
                 <div
                   className="mt-10"
