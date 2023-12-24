@@ -110,10 +110,15 @@ function Table({
 }) {
   const columns = useMemo(
     () => [
-      columnHelper.accessor("term", {
-        cell: (info) => info.getValue(),
-        header: () => <span>Term</span>,
-        size: 25,
+      columnHelper.accessor((row) => row.term, {
+        id: "term",
+        cell: (info) => (
+          <div
+            dangerouslySetInnerHTML={{ __html: info.getValue() || "" }}
+          ></div>
+        ),
+        header: () => <span>Definition</span>,
+        size: 40,
       }),
       columnHelper.accessor((row) => row.definition, {
         id: "definition",
@@ -123,7 +128,7 @@ function Table({
           ></div>
         ),
         header: () => <span>Definition</span>,
-        size: 50,
+        size: 40,
       }),
       columnHelper.accessor((row) => row, {
         id: "id",
@@ -141,7 +146,7 @@ function Table({
           </div>
         ),
         header: () => <span className="w-1/4">Action</span>,
-        size: 25,
+        size: 20,
       }),
     ],
     []
