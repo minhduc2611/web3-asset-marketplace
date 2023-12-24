@@ -175,7 +175,6 @@ function Table({
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                    { }
                   </th>
                 ))}
               </tr>

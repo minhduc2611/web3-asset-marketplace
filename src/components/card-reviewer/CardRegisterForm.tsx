@@ -97,7 +97,7 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
       }: FlashCardUpdateRequestModel) => {
         setValue("id", id);
         setValue("term", term || "");
-        editorRefTerm.current?.setContent(definition || "");
+        editorRefTerm.current?.setContent(term || "");
         setValue("definition", definition || "");
         editorRefDefinition.current?.setContent(definition || "");
         setValue("media_url", media_url || "");
