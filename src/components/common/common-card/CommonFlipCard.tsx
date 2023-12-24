@@ -17,17 +17,17 @@ const CommonFlipCard: ReactFCC<{
   renderBackCard,
   children,
 }) => {
-  return (
-    <div
-      onClick={() => setIsFlipped(!isFlipped)}
-      className={cn(`flip-card ${isFlipped ? "flipped" : ""} h-[350px] lg:h-[500px]`, "")}
-    >
-      <div className="flip-card-inner">
-        <div className="flip-card-front ">{renderFrontCard()}</div>
-        <div className="flip-card-back overflow-y-scroll">{renderBackCard()}</div>
+    return (
+      <div
+        onClick={() => setIsFlipped(!isFlipped)}
+        className={cn(`flip-card ${isFlipped ? "flipped" : ""} h-[350px] lg:h-[500px]`, "")}
+      >
+        <div className="flip-card-inner">
+          <div className="flip-card-front p-10">{renderFrontCard()}</div>
+          <div className="flip-card-back p-10 overflow-y-scroll">{renderBackCard()}</div>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default CommonFlipCard;
