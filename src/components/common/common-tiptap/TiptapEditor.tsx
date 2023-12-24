@@ -1,6 +1,7 @@
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
+import HighLight from "@tiptap/extension-highlight";
 import {
   BubbleMenu,
   Editor,
@@ -15,20 +16,21 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-const extensions = [
-  Color.configure({ types: [TextStyle.name, ListItem.name] }),
-  TextStyle.configure(),
-  StarterKit.configure({
-    bulletList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-    orderedList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-  }),
-];
+// const extensions = [
+//   Color.configure({ types: [TextStyle.name, ListItem.name] }),
+//   TextStyle.configure(),
+//   ,
+//   StarterKit.configure({
+//     bulletList: {
+//       keepMarks: true,
+//       keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+//     },
+//     orderedList: {
+//       keepMarks: true,
+//       keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+//     },
+//   }),
+// ];
 type Props = {
   onChange: (e: string) => void;
 };
@@ -40,9 +42,14 @@ export type TipTapEditorHandle = {
 const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
   ({ onChange }, ref) => {
     const editor = useEditor({
-      extensions: [StarterKit],
+      extensions: [
+        Color.configure({ types: [TextStyle.name, ListItem.name] }),
+        TextStyle.configure(),
+        HighLight.configure({multicolor: true}),
+        StarterKit,
+      ],
       onUpdate({ editor }) {
-        onChange(editor.getHTML())
+        onChange(editor.getHTML());
       },
     });
     useImperativeHandle(ref, () => ({
@@ -256,14 +263,14 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       >
         hard break
       </button> */}
-      <button
+      {/* <button
         type="button"
         className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().chain().focus().undo().run()}
       >
         undo
-      </button>
+      </button> */}
       <button
         type="button"
         className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
@@ -272,16 +279,37 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       >
         redo
       </button>
-      <button
-        type="button"
-        className={cn(
-          editor.isActive("textStyle", { color: "#958DF1" }) ? "is-active" : "",
-          "border border-r-2 ml-2 p-2 border-stone-400"
-        )}
-        onClick={() => editor.chain().focus().setColor("#958DF1").run()}
+      <select
+        className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
+        onChange={(event) => {
+          editor.chain().focus().setColor(event.target.value).run();
+        }}
       >
-        purple
-      </button>
+        <option value="black">--Color--</option>
+        <option value="black">Black</option>
+        <option value="#958DF1">Purple</option>
+        <option value="#588157">Green</option>
+        <option value="#ae2012">Red</option>
+        <option value="#ffd500">Yellow</option>
+      </select>
+      <select
+        className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
+        onChange={(event) => {
+          console.log(editor
+            .chain().focus())
+          editor
+            .chain().focus()
+            .setHighlight({ color: event.target.value })
+            .run();
+        }}
+      >
+        <option value="white">--High Light--</option>
+        <option value="white">None</option>
+        <option value="#ffb3c1">Pink</option>
+        <option value="#b5e48c">Green</option>
+        <option value="#f07167">Red</option>
+        <option value="#ffd60a">Yellow</option>
+      </select>
     </div>
   );
 };
