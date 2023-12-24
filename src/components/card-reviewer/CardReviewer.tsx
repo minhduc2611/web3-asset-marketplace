@@ -25,21 +25,12 @@ const Card = ({
           setShouldNext(true);
         }}
         renderFrontCard={() => {
-          return <div
-            className="mt-10"
-            dangerouslySetInnerHTML={{ __html: card.term || "" }}
-          ></div>;
+          return <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>;
         }}
         renderBackCard={() => {
           return (
-            <p className="mt-2 text-gray-600 min-h-[200px] block">
-              {/* <h2 className="text-xl font-semibold">
-                
-              </h2> */}
-              <div
-                className="mt-10"
-                dangerouslySetInnerHTML={{ __html: card.term || "" }}
-              ></div>
+            <p className="text-gray-600 min-h-[200px] block">
+              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
               {card.media_url && (
                 <div className="m-auto h-[200px]">
                   <img
