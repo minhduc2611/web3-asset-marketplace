@@ -45,7 +45,7 @@ const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
       extensions: [
         Color.configure({ types: [TextStyle.name, ListItem.name] }),
         TextStyle.configure(),
-        HighLight.configure({multicolor: true}),
+        HighLight.configure({ multicolor: true }),
         StarterKit,
       ],
       onUpdate({ editor }) {
@@ -279,37 +279,76 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       >
         redo
       </button>
-      <select
-        className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
-        onChange={(event) => {
-          editor.chain().focus().setColor(event.target.value).run();
-        }}
-      >
-        <option value="black">--Color--</option>
-        <option value="black">Black</option>
-        <option value="#958DF1">Purple</option>
-        <option value="#588157">Green</option>
-        <option value="#ae2012">Red</option>
-        <option value="#ffd500">Yellow</option>
-      </select>
-      <select
-        className={cn("border border-r-2 ml-2 p-2 border-stone-400")}
-        onChange={(event) => {
-          console.log(editor
-            .chain().focus())
-          editor
-            .chain().focus()
-            .setHighlight({ color: event.target.value })
-            .run();
-        }}
-      >
-        <option value="white">--High Light--</option>
-        <option value="white">None</option>
-        <option value="#ffb3c1">Pink</option>
-        <option value="#b5e48c">Green</option>
-        <option value="#f07167">Red</option>
-        <option value="#ffd60a">Yellow</option>
-      </select>
+      <div className="group inline-block border border-r-2 ml-2 p-2 border-stone-400">
+        <button type="button">Color</button>
+        <div className="z-10 hidden group-hover:block absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+          <ul
+            className="py-2 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownDelayButton"
+          >
+            {[
+              { color: "Black", colorCode: "black" },
+              { color: "Purple", colorCode: "#958DF1" },
+              { color: "Green", colorCode: "#588157" },
+              { color: "Red", colorCode: "#ae2012" },
+              { color: "Yellow", colorCode: "#ffd500" },
+            ].map((item) => {
+              return (
+                <li key={item.colorCode}>
+                  <a
+                    style={{ color: item.colorCode }}
+                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                    onClick={() =>
+                      editor.chain().focus().setColor(item.colorCode).run()
+                    }
+                  >
+                    {item.color}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+      <div className="group inline-block border border-r-2 ml-2 p-2 border-stone-400">
+        <button type="button">Highlight</button>
+        <div className="z-10 hidden group-hover:block absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+          <ul
+            className="py-2 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownDelayButton"
+          >
+            {[
+              { color: "White", colorCode: "white" },
+              { color: "Pink", colorCode: "#ffb3c1" },
+              { color: "Green", colorCode: "#b5e48c" },
+              { color: "Red", colorCode: "#f07167" },
+              { color: "Yellow", colorCode: "#ffd60a" },
+            ].map((item) => {
+              return (
+                <li key={item.colorCode}>
+                  <a
+                    style={
+                      {
+                        backgroundColor: item.colorCode,
+                      } 
+                    }
+                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                    onClick={() =>
+                      editor
+                        .chain()
+                        .focus()
+                        .setHighlight({ color: item.colorCode })
+                        .run()
+                    }
+                  >
+                    {item.color}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
