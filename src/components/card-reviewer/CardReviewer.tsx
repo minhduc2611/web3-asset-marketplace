@@ -3,7 +3,7 @@ import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { useFlashCardStoreValue } from "@/stores/flashCard";
 
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getImage } from "@/helpers/imageUtils";
 
 const Card = ({
@@ -25,7 +25,9 @@ const Card = ({
           setShouldNext(true);
         }}
         renderFrontCard={() => {
-          return <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>;
+          return (
+            <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
+          );
         }}
         renderBackCard={() => {
           return (
@@ -90,16 +92,47 @@ const Card = ({
   );
 };
 
+class Reviewer {
+  constructor(cards: FlashCardModel[]) {
+    this.cards = cards;
+  }
+  cards: FlashCardModel[];
+  reviewedIndexes: number[] = [];
+  getRandomIndexToView(): number {
+    const randomIndex = Math.floor(Math.random() * this.cards.length);
+    if (this.cards.length === this.reviewedIndexes.length) {
+      this.reviewedIndexes = [];
+    }
+    if (this.reviewedIndexes.includes(randomIndex)) {
+      return this.getRandomIndexToView();
+    }
+    return randomIndex;
+  }
+}
 const CardReviewer = () => {
   const { flashCards } = useFlashCardStoreValue();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [flashCardsReviewer, setFlashCardsReviewer] = useState<Reviewer | null>(
+    null
+  );
+
+  useEffect(() => {
+    setFlashCardsReviewer(new Reviewer(flashCards));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flashCards.length]);
 
   const handleNext = () => {
-    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashCards.length);
+    setCurrentCardIndex((prevIndex) => {
+      // const a = (prevIndex + 1) % flashCards.length;
+      // console.log(a, flashCards.length);
+
+      return flashCardsReviewer?.getRandomIndexToView() || 0;
+    });
   };
 
   return (
     <div className="flex flex-wrap justify-center">
+      {currentCardIndex}
       {flashCards.length > 0 && (
         <Card card={flashCards[currentCardIndex]} onNext={handleNext} />
       )}
