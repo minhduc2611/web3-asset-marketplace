@@ -3,8 +3,8 @@ import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { useFlashCardStoreValue } from "@/stores/flashCard";
 
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
-import { useEffect, useRef, useState } from "react";
 import { getImage } from "@/helpers/imageUtils";
+import { useEffect, useState } from "react";
 
 const Card = ({
   card,
@@ -122,10 +122,7 @@ const CardReviewer = () => {
   }, [flashCards.length]);
 
   const handleNext = () => {
-    setCurrentCardIndex((prevIndex) => {
-      // const a = (prevIndex + 1) % flashCards.length;
-      // console.log(a, flashCards.length);
-
+    setCurrentCardIndex(() => {
       return flashCardsReviewer?.getRandomIndexToView() || 0;
     });
   };
