@@ -60,8 +60,6 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
     const editorRefDefinition = useRef<TipTapEditorHandle>(null);
 
     const handleSubmitCallBack: SubmitHandler<Inputs> = (input: Inputs) => {
-      console.log("input @@", input);
-
       const term = editorRefTerm.current?.getContent().trim() || "";
       const definition = editorRefDefinition.current?.getContent().trim() || "";
 
@@ -132,11 +130,6 @@ const CardForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
           >
             Term:
           </label>
-          {/* <input
-            {...register("term")}
-            type="text"
-            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-          /> */}
           <TipTapEditor
             onChange={(st) => {
               setValue("term", st);

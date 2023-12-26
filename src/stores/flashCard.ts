@@ -1,15 +1,13 @@
-import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
-import { Builder } from "builder-pattern";
-import ListUtils from "@/helpers/listUtils";
-import { FlashCardStoreModel } from "@/models/flash-card/flashCardStoreModel";
-import superbaseInstance from "@/services/superbaseInstance";
-import FlashCardService from "@/services/flashCard";
+import FlashCardViewer from "@/classes/FlashCardViewer";
 import { FlashCardAddRequestModel, FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardRequestModel";
+import { FlashCardStoreModel } from "@/models/flash-card/flashCardStoreModel";
+import FlashCardService from "@/services/flashCard";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
 export const FlashCardStore = atom<FlashCardStoreModel>({
   key: "flash-card",
   default: {
-    flashCards: [],
+    flashCardViewer: new FlashCardViewer([]),
   },
 });
 
@@ -17,11 +15,11 @@ export const FlashCardStore = atom<FlashCardStoreModel>({
 export function useFlashCardStoreActions() {
   const setFlashCardStore = useSetRecoilState(FlashCardStore);
   const resetFlashCards = () => {
-    setFlashCardStore({ flashCards: [] });
+    setFlashCardStore({ flashCardViewer: new FlashCardViewer([]) });
   };
   const getFlashCards = async (collectionId: number) => {
     const { data } = await FlashCardService.getAll(collectionId);
-    data && setFlashCardStore({ flashCards: data });
+    data && setFlashCardStore({ flashCardViewer: new FlashCardViewer(data) });
   };
 
   const addOneFlashCard = async (flashCard: FlashCardAddRequestModel) => {

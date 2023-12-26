@@ -5,6 +5,10 @@ import { useFlashCardStoreValue } from "@/stores/flashCard";
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
 import { getImage } from "@/helpers/imageUtils";
 import { useEffect, useState } from "react";
+import CommonProgressBar from "../common/common-progress-bar";
+import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
+import FlashCardViewer from "@/classes/FlashCardViewer";
+import useLoading from "@/hooks/useLoading";
 
 const Card = ({
   card,
@@ -17,7 +21,7 @@ const Card = ({
   const [shouldNext, setShouldNext] = useState(false);
 
   return (
-    <div className={`card-wrapper w-full lg:w-[652px]`}>
+    <>
       <CommonFlipCard
         isFlipped={showDefinition}
         setIsFlipped={(value) => {
@@ -88,54 +92,34 @@ const Card = ({
           Hard {">"}
         </button>
       </div>
-    </div>
+    </>
   );
 };
 
-class Reviewer {
-  constructor(cards: FlashCardModel[]) {
-    this.cards = cards;
-  }
-  cards: FlashCardModel[];
-  reviewedIndexes: number[] = [];
-  getRandomIndexToView(): number {
-    const randomIndex = Math.floor(Math.random() * this.cards.length);
-    if (this.cards.length === this.reviewedIndexes.length) {
-      this.reviewedIndexes = [];
-    }
-    if (this.reviewedIndexes.includes(randomIndex)) {
-      return this.getRandomIndexToView();
-    }
-    return randomIndex;
-  }
-}
 const CardReviewer = () => {
-  const { flashCards } = useFlashCardStoreValue();
+  const { flashCardViewer } = useFlashCardViewer();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [flashCardsReviewer, setFlashCardsReviewer] = useState<Reviewer | null>(
-    null
-  );
-
-  useEffect(() => {
-    setFlashCardsReviewer(new Reviewer(flashCards));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flashCards.length]);
 
   const handleNext = () => {
-    setCurrentCardIndex(() => {
-      return flashCardsReviewer?.getRandomIndexToView() || 0;
-    });
+    setCurrentCardIndex(flashCardViewer?.getRandomIndexToView() || 0);
   };
 
   return (
     <div className="flex flex-wrap justify-center">
-      {currentCardIndex}
-      {flashCards.length > 0 && (
-        <Card card={flashCards[currentCardIndex]} onNext={handleNext} />
-      )}
-      {flashCards.length == 0 && (
-        <h5 className="p-10">Please add a card to learn</h5>
-      )}
+      <div className={`card-wrapper w-full lg:w-[652px]`}>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+          <CommonProgressBar percentage={flashCardViewer.getPercentage()} />
+        </div>
+        {flashCardViewer.cards.length > 0 && (
+          <Card
+            card={flashCardViewer.cards[currentCardIndex]}
+            onNext={handleNext}
+          />
+        )}
+        {flashCardViewer.cards.length == 0 && (
+          <h5 className="p-10">Please add a card to learn</h5>
+        )}
+      </div>
     </div>
   );
 };

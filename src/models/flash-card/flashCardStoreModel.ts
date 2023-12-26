@@ -1,5 +1,5 @@
-import { FlashCardModel } from "./flashCardModel";
+import FlashCardViewer from "@/classes/FlashCardViewer";
 
 export interface FlashCardStoreModel {
-    flashCards: FlashCardModel[]
+    flashCardViewer: FlashCardViewer
 }

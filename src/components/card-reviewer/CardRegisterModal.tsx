@@ -1,6 +1,5 @@
 "use client";
 import { Icons } from "@/components/common/icons";
-import { ReactFCC } from "@/types/common";
 import {
   CellContext,
   createColumnHelper,
@@ -9,37 +8,25 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  useFlashCardStoreActions,
-  useFlashCardStoreValue,
-} from "@/stores/flashCard";
-import { RefObject, useMemo, useRef, useState } from "react";
-import CardForm, { CardFormHandle } from "./CardRegisterForm";
-import { FlashCardModel } from "@/models/flash-card/flashCardModel";
+import useFlashCardAdmin from "@/hooks/flash-cards-collection/useFlashCardAdmin";
 import useIsMobile from "@/hooks/useIsMobile";
+import useScrollTo from "@/hooks/useScrollTo";
 import { cn } from "@/lib/utils";
+import { FlashCardModel } from "@/models/flash-card/flashCardModel";
+import { useMemo, useRef, useState } from "react";
+import CardForm, { CardFormHandle } from "./CardRegisterForm";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { addOneFlashCard, updateOneFlashCard } = useFlashCardStoreActions();
-  const { flashCards } = useFlashCardStoreValue();
+  const { flashCards,addOneFlashCard, updateOneFlashCard } = useFlashCardAdmin();
   const formRef = useRef<CardFormHandle>(null);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const divRef = useRef<HTMLDivElement>(null);
-
-  const scrollToTopOfDiv = () => {
-    divRef.current && divRef.current.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const isMobile = useIsMobile()
+  const {divRef, scrollTo} = useScrollTo()
 
   return (
     <>
       <button
         className={cn('md:absolute mx-auto mb-10 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600')}
-        onClick={openModal}
+        onClick={() => setIsModalOpen(true)}
       >
         Add Card
       </button>
@@ -56,7 +43,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
             <h2 className="text-xl font-semibold">FlashCards</h2>
             <button
               className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              onClick={closeModal}
+              onClick={() => setIsModalOpen(false)}
             >
               <Icons.close />
             </button>
@@ -65,7 +52,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
             <div className="w-full h-[90vh] md:h-[500px]">
               <CardForm
                 ref={formRef}
-                scrollToTop={scrollToTopOfDiv}
+                scrollToTop={scrollTo}
                 onAddCard={({ term, definition, media_url }) => {
                   const a = {
                     term,

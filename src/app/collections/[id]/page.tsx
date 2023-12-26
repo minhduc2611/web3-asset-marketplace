@@ -2,13 +2,13 @@
 import CardRegisterModal from "@/components/card-reviewer/CardRegisterModal";
 import CardReviewer from "@/components/card-reviewer/CardReviewer";
 import { Icons } from "@/components/common/icons";
-import { useFlashCardStoreActions } from "@/stores/flashCard";
+import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import Link from "next/link";
 
 import { useEffect } from "react";
 
 export default function Home({ params }: { params: { id: string } }) {
-  const { getFlashCards, resetFlashCards } = useFlashCardStoreActions();
+  const { getFlashCards, resetFlashCards } = useFlashCardViewer();
 
   useEffect(() => {
     Number.isInteger(Number(params?.id)) && getFlashCards(Number(params?.id));
@@ -26,7 +26,6 @@ export default function Home({ params }: { params: { id: string } }) {
         <CardReviewer />
         <CardRegisterModal collectionId={Number(params?.id)} />
       </div>
-     
     </main>
   );
 }
