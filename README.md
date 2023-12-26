@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
+## Roadmap
+- [ ] Authentication
+- [ ] Space repitition algorithm applied
+- [ ] Shaditable (share and edit) Packs and Cards
+- [ ] UX upgrade
+- [ ] Repo structure upgrade
+ 
 ## Getting Started
 
 First, run the development server:
