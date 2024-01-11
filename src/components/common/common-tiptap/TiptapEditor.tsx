@@ -10,11 +10,13 @@ import {
   useEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useImperativeHandle } from "react";
+import { useEffect, useImperativeHandle, useState } from "react";
 import "./style.scss";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import "katex/dist/katex.min.css";
+import Mathematics from "@tiptap-pro/extension-mathematics";
 
 // const extensions = [
 //   Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -32,7 +34,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 //   }),
 // ];
 type Props = {
-  onChange: (e: string) => void;
+  
 };
 export type TipTapEditorHandle = {
   setContent: (text: string) => void;
@@ -40,26 +42,41 @@ export type TipTapEditorHandle = {
 };
 // eslint-disable-next-line react/display-name
 const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
-  ({ onChange }, ref) => {
+  (props, ref) => {
+    console.log('render')
     const editor = useEditor({
       extensions: [
-        Color.configure({ types: [TextStyle.name, ListItem.name] }),
-        TextStyle.configure(),
-        HighLight.configure({ multicolor: true }),
+        // Color.configure({ types: [TextStyle.name, ListItem.name] }),
+        // TextStyle.configure(),
+        // HighLight.configure({ multicolor: true }),
         StarterKit,
+        // Mathematics.configure({
+        //   katexOptions: {
+        //     maxSize: 300,
+        //   },
+        // }),
       ],
+      // content: value,
       onUpdate({ editor }) {
-        onChange(editor.getHTML());
+        console.log('update')
+        // onChange(editor.getHTML());
       },
     });
     useImperativeHandle(ref, () => ({
       setContent: (html: string) => {
-        editor?.commands.setContent(html);
+        // editor?.commands.setContent(html);
       },
       getContent: (): string => {
         return editor?.getHTML() || "";
       },
     }));
+
+    // useEffect(() => {
+    //   console.log(editor?.getHTML() !== value)
+    //   if (editor?.getHTML() !== value) {
+    //     // editor?.commands.setContent(value);
+    //   }
+    // }, [value]);
 
     return (
       <>
@@ -327,11 +344,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
               return (
                 <li key={item.colorCode}>
                   <a
-                    style={
-                      {
-                        backgroundColor: item.colorCode,
-                      } 
-                    }
+                    style={{
+                      backgroundColor: item.colorCode,
+                    }}
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
                     onClick={() =>
                       editor

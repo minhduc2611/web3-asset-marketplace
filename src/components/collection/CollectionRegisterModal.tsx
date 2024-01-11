@@ -2,13 +2,9 @@
 import { Icons } from "@/components/common/icons";
 import { ReactFCC } from "@/types/common";
 
-import {
-  useFlashCardStoreActions,
-  useFlashCardStoreValue,
-} from "@/stores/flashCard";
+import { useCollectionStoreActions } from "@/stores/collection";
 import { useState } from "react";
 import CollectionForm from "./CollectionForm";
-import { useCollectionStoreActions } from "@/stores/collection";
 
 const CollectionRegisterModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

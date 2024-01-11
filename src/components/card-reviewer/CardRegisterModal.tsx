@@ -17,8 +17,7 @@ import { useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { flashCards,addOneFlashCard, updateOneFlashCard } = useFlashCardAdmin();
+  const { isAdminOpen, flashCards,addOneFlashCard, updateOneFlashCard,setAdminModal } = useFlashCardAdmin();
   const formRef = useRef<CardFormHandle>(null);
   const {divRef, scrollTo} = useScrollTo()
 
@@ -26,13 +25,13 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
     <>
       <button
         className={cn('md:absolute mx-auto mb-10 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600')}
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setAdminModal(true)}
       >
         Add Card
       </button>
 
       <div
-        className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${isModalOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${isAdminOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
       >
         <div
@@ -43,7 +42,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
             <h2 className="text-xl font-semibold">FlashCards</h2>
             <button
               className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => setAdminModal(false)}
             >
               <Icons.close />
             </button>
