@@ -1,40 +1,22 @@
+import { cn } from "@/lib/utils";
 import { Color } from "@tiptap/extension-color";
+import HighLight from "@tiptap/extension-highlight";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import HighLight from "@tiptap/extension-highlight";
 import {
   BubbleMenu,
   Editor,
   EditorContent,
-  useCurrentEditor,
-  useEditor,
+  useEditor
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useImperativeHandle, useState } from "react";
+import debounce from "lodash.debounce";
+import React, { useEffect, useImperativeHandle } from "react";
 import "./style.scss";
-import { cn } from "@/lib/utils";
-import React from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
-import "katex/dist/katex.min.css";
-import Mathematics from "@tiptap-pro/extension-mathematics";
 
-// const extensions = [
-//   Color.configure({ types: [TextStyle.name, ListItem.name] }),
-//   TextStyle.configure(),
-//   ,
-//   StarterKit.configure({
-//     bulletList: {
-//       keepMarks: true,
-//       keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-//     },
-//     orderedList: {
-//       keepMarks: true,
-//       keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-//     },
-//   }),
-// ];
 type Props = {
-  
+  value: string;
+  onChange: (value: string) => void;
 };
 export type TipTapEditorHandle = {
   setContent: (text: string) => void;
@@ -42,42 +24,37 @@ export type TipTapEditorHandle = {
 };
 // eslint-disable-next-line react/display-name
 const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
-  (props, ref) => {
-    console.log('render')
+  ({ value, onChange }, ref) => {
+    const debounceChange = debounce((val) => onChange(val), 300);
     const editor = useEditor({
       extensions: [
-        // Color.configure({ types: [TextStyle.name, ListItem.name] }),
-        // TextStyle.configure(),
-        // HighLight.configure({ multicolor: true }),
+        Color.configure({ types: [TextStyle.name, ListItem.name] }),
+        TextStyle.configure(),
+        HighLight.configure({ multicolor: true }),
         StarterKit,
-        // Mathematics.configure({
-        //   katexOptions: {
-        //     maxSize: 300,
-        //   },
-        // }),
       ],
-      // content: value,
-      onUpdate({ editor }) {
-        console.log('update')
-        // onChange(editor.getHTML());
-      },
+      content: value,
     });
     useImperativeHandle(ref, () => ({
       setContent: (html: string) => {
-        // editor?.commands.setContent(html);
+        editor?.commands.setContent(html);
       },
       getContent: (): string => {
         return editor?.getHTML() || "";
       },
     }));
 
-    // useEffect(() => {
-    //   console.log(editor?.getHTML() !== value)
-    //   if (editor?.getHTML() !== value) {
-    //     // editor?.commands.setContent(value);
-    //   }
-    // }, [value]);
+    useEffect(() => {
+      if (editor?.getHTML() !== value) {
+        editor?.commands.setContent(value);
+      }
+    }, [value]);
 
+    useEffect(() => {
+      onChange(editor?.getHTML() || "");
+    }, [editor?.getHTML()]);
+
+    editor?.getHTML();
     return (
       <>
         {editor && (

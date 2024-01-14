@@ -1,9 +1,7 @@
-import {
-  useFlashCardStore
-} from "@/stores/flashCard";
+import { useFlashCardRegisterStore } from "@/stores/flashCardRegister";
 
 const useFlashCardViewer = () => {
-  const { flashCardViewer, getFlashCards, resetFlashCards } = useFlashCardStore();
+  const { values: {flashCardViewer}, getFlashCards, resetFlashCards } = useFlashCardRegisterStore();
   return { flashCardViewer, getFlashCards, resetFlashCards };
 };
 

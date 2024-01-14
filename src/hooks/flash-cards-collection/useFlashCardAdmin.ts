@@ -1,18 +1,17 @@
-import { useFlashCardStore } from "@/stores/flashCard";
+import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { useFlashCardRegisterStore } from "@/stores/flashCardRegister";
 
 const useFlashCardAdmin = () => {
   const {
-    flashCardViewer,
-    isAdminOpen,
+    values: { flashCardForm, flashCardViewer, isAdminOpen },
     addOneFlashCard,
     updateOneFlashCard,
     getFlashCards,
     resetFlashCards,
     setAdminModal,
-  } = useFlashCardStore();
-
-  const form = useFlashCardRegisterStore();
+    setValues,
+    resetForm,
+  } = useFlashCardRegisterStore();
 
   const formFields = {
     id: {
@@ -32,16 +31,33 @@ const useFlashCardAdmin = () => {
     },
   };
 
+  const editCard = (data?: FlashCardModel) => {
+    let currentCard: FlashCardModel =
+      data === undefined
+        ? flashCardViewer.cards[flashCardViewer.currentIndex]
+        : data;
+
+    if (currentCard) {
+      setValues({ flashCardForm: currentCard });
+      setAdminModal(true);
+    } else {
+      throw new Error("card not found");
+    }
+  };
+
   return {
     isAdminOpen,
     flashCards: flashCardViewer.cards,
+    flashCardForm,
+    formFields,
+    editCard,
     addOneFlashCard,
     updateOneFlashCard,
     getFlashCards,
     resetFlashCards,
     setAdminModal,
-    form,
-    formFields
+    setValues,
+    resetForm,
   };
 };
 

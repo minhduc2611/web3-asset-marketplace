@@ -1,5 +1,7 @@
 import { isEqual } from "lodash";
+import cloneDeep from "lodash.clonedeep";
 import partial from "lodash.partial";
+import set from "lodash.set";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 // import {
@@ -8,14 +10,15 @@ import { combine } from "zustand/middleware";
 //   animals,
 //   uniqueNamesGenerator,
 // } from 'unique-names-generator'
-import { FormikValues, useFormik } from "formik";
+import { FormikValues } from "formik";
 
 import * as Yup from "yup";
-import { RequiredFieldsOnly } from "@/types/common";
+type Value = string | number | boolean | Object;
+type ValueSetter = Record<string, Value>;
 const useStore = create(
   combine(
     {
-      formMap: {} as { [key: string]: { [key: string]: string } },
+      formMap: {} as { [key: string]: { [key: string]: Value } },
       formValidationMap: {} as { [key: string]: boolean },
       formErrorMap: {} as { [key: string]: { [key: string]: string } },
       schemaMap: {} as { [key: string]: Yup.AnyObject },
@@ -26,7 +29,6 @@ const useStore = create(
     })
   )
 );
-
 const useFormValues = (formKey: string) =>
   useStore(
     (s) => s.formMap[formKey],
@@ -47,64 +49,62 @@ const useFormKeys = () =>
     (s0, s1) => s0.length === s1.length
   );
 
-const updateGlobalState = (
-  formKey: string,
-  newVals: Record<string, string>
-) => {
+const updateGlobalState = (formKey: string, newVals: ValueSetter) => {
   const prevState = useStore.getState();
-  const schema = prevState.schemaMap[formKey];
-  schema;
-  if (schema) {
-    // console.log("schema", prevState.schemaMap[formKey], newVals);
+  // const schema = prevState.schemaMap[formKey];
+  // schema;
+  // if (schema) {
+  const newOne = cloneDeep(prevState.formMap[formKey]);
+  Object.keys(newVals).forEach((key) => {
+    set(newOne, key, newVals[key]);
+  });
+  console.log("prevState.formMap", prevState.formMap);
 
-    let formValues = prevState.formMap[formKey];
-    prevState.formMap[formKey] = { ...formValues, ...newVals };
-    console.log("newVals", newVals);
+  prevState.formMap[formKey] = newOne //{ ...prevState.formMap[formKey], ...newOne };
+  // prevState.formMap[formKey] = { ...prevState.formMap[formKey], ...newVals };
+  console.log("prevState.formMap[formKey]", prevState.formMap[formKey]);
+  useStore.setState({
+    // formValidationMap: prevState.formValidationMap,
+    formMap: prevState.formMap,
+    // formErrorMap: prevState.formErrorMap,
+  });
+  // set
+  // prevState.schemaMap[formKey]
+  //   .validate(newVals, { stripUnknown: true }) //, { abortEarly: false }
+  //   .then((isValid: boolean) => {})
+  //   .catch((err: Yup.ValidationError) => {
+  //     const errors: Record<string, string[]> = {};
 
-    prevState.schemaMap[formKey]
-      .validate(newVals, { stripUnknown: true }) //, { abortEarly: false }
-      .then((isValid: boolean) => {})
-      .catch((err: Yup.ValidationError) => {
-        const errors: Record<string, string[]> = {};
+  //     err.inner.forEach((element) => {
+  //       // Path is undefined when the error relates to the root object
+  //       const path = element.path || "root";
+  //       // compile errors for same field into one array
+  //       errors[path]
+  //         ? errors[path].push(element.message)
+  //         : (errors[path] = [element.message]);
+  //     });
+  //     //
+  //     // err.inner.forEach((e) => console.log("errors ==> ", e.message, e.path));
+  //     // console.log("errors ==> ", prevState.formMap[formKey]);
 
-        err.inner.forEach((element) => {
-          // Path is undefined when the error relates to the root object
-          const path = element.path || "root";
-          // compile errors for same field into one array
-          errors[path]
-            ? errors[path].push(element.message)
-            : (errors[path] = [element.message]);
-        });
-        //
-        // err.inner.forEach((e) => console.log("errors ==> ", e.message, e.path));
-        // console.log("errors ==> ", prevState.formMap[formKey]);
+  //     prevState.formErrorMap[formKey] = {
+  //       ...prevState.formErrorMap[formKey],
+  //       [err.path as string]: err.message,
+  //     };
+  //   })
+  //   .finally(() => {
+  //     useStore.setState({
+  //       formValidationMap: prevState.formValidationMap,
+  //       formMap: prevState.formMap,
+  //       formErrorMap: prevState.formErrorMap,
+  //     });
+  //   });
 
-        prevState.formErrorMap[formKey] = {
-          ...prevState.formErrorMap[formKey],
-          [err.path as string]: err.message,
-        };
-
-        console.log(
-          "prevState.formErrorMap[formKey]",
-          prevState.formErrorMap[formKey]
-        );
-      })
-      .finally(() => {
-        // prevState.formValidationMap[formKey] = isValid;
-        // console.log("form is valid", isValid);
-
-        useStore.setState({
-          formValidationMap: prevState.formValidationMap,
-          formMap: prevState.formMap,
-          formErrorMap: prevState.formErrorMap,
-        });
-      });
-  }
+  // }
 };
 
 const deleteForm = (key: string) => {
   const prev = useStore.getState();
-
   delete prev.formValidationMap[key];
   delete prev.formMap[key];
 
@@ -136,7 +136,7 @@ const addBlankForm = <T, A>(
 
   const prevState = useStore.getState();
   prevState.formValidationMap[key] = false;
-  prevState.formMap[key] = values as Record<string, string>; // todo not only string
+  prevState.formMap[key] = values as ValueSetter; // todo not only string
   if (schema) {
     prevState.schemaMap[key] = schema;
   }
@@ -154,23 +154,32 @@ const addBlankForm = <T, A>(
 interface CreateZustandForm<T extends Yup.AnyObject, A> {
   id: string;
   state: () => T;
-  actions: (setter: (value: Record<string, string>) => void) => A;
-  schema?: Yup.ObjectSchema<RequiredFieldsOnly<T>>;
+  actions: (setter: (value: ValueSetter & Partial<T>) => void, getter: () => T) => A;
+  // schema?: Yup.ObjectSchema<RequiredFieldsOnly<T>>;
 }
+
+type ZustandFormReturn<T, A> = () => {
+  values: T;
+  setValues: (newVals: ValueSetter) => void;
+} & A;
 
 const createForm = <T extends FormikValues, A>({
   id: key,
   state: defaultValues,
-  schema,
+  // schema,
   actions,
-}: CreateZustandForm<T, A>) => {
+}: CreateZustandForm<T, A>): ZustandFormReturn<T, A> => {
   /** if there is not a form, create it, this prevent multiple creation */
   const formState = useStore.getState();
   if (!formState.formMap[key]) {
     const setter = partial(zustandForm.updateGlobalState, key);
-    addBlankForm<T, A>(key, defaultValues(), actions(setter), schema);
+    const getter = () => {
+      const prevState = useStore.getState();
+      return prevState.formMap[key] as T;
+    };
+    addBlankForm<T, A>(key, defaultValues(), actions(setter, getter));
   }
-  const _actions = getActions(key) as A;
+  const userDeclaredActions = getActions(key) as A;
   // lam  2 form duoc khong
   return () => ({
     // formik: useFormik<T>({
@@ -180,12 +189,12 @@ const createForm = <T extends FormikValues, A>({
     //   validate: (newVals: any) => zustandForm.updateGlobalState(key, newVals),
     //   validateOnChange: true,
     // }),
-    values: useFormValues(key),
-    ..._actions,
+    values: useFormValues(key) as T,
+    ...userDeclaredActions,
     // formState: { errors }, // todo
-    setValues: (newVals: Record<string, string>) => {
-      console.log('setValues setValues')
+    setValues: (newVals: ValueSetter) => {
       zustandForm.updateGlobalState(key, newVals);
+      console.log("gegt state", useStore.getState().formMap);
     },
   });
 };

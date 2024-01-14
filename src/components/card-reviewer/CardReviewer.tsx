@@ -1,14 +1,11 @@
 "use client";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
-import { useFlashCardStoreValue } from "@/stores/flashCard";
 
 import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
 import { getImage } from "@/helpers/imageUtils";
-import { useEffect, useState } from "react";
-import CommonProgressBar from "../common/common-progress-bar";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
-import FlashCardViewer from "@/classes/FlashCardViewer";
-import useLoading from "@/hooks/useLoading";
+import { useState } from "react";
+import CommonProgressBar from "@/components/common/common-progress-bar";
 
 const Card = ({
   card,

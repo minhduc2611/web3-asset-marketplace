@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "preinstall": "./cloud/env.local.sh",
     "supabase:gentype": "supabase gen types typescript --project-id skvnrwmwmcvsevknedhm > src/supabase/database.types.ts",
     "supabase:login": "supabase login",
     "start": "next start",
@@ -15,7 +14,6 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "@tanstack/react-table": "^8.10.7",
-    "@tiptap-pro/extension-mathematics": "^2.5.1",
     "@tiptap/extension-color": "^2.1.13",
     "@tiptap/extension-highlight": "^2.1.13",
     "@tiptap/extension-text-style": "^2.1.13",
@@ -27,9 +25,10 @@
     "dayjs": "^1.11.10",
     "formik": "^2.4.5",
     "joi": "^17.11.0",
-    "katex": "^0.16.9",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
     "lodash.partial": "^4.2.1",
+    "lodash.set": "^4.3.2",
     "lucide-react": "^0.295.0",
     "next": "14.0.4",
     "react": "^18",
@@ -43,8 +42,10 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.9",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.partial": "^4.2.9",
+    "@types/lodash.set": "^4.3.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

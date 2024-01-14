@@ -30,8 +30,8 @@ export const useFlashCardStore = create<FlashCardStoreModel & Methods>(
         }));
     };
     const addOneFlashCard = async (flashCard: FlashCardAddRequestModel) => {
-      await FlashCardService.insertOne(flashCard);
-      flashCard.collection_id && (await getFlashCards(flashCard.collection_id));
+      // await FlashCardService.insertOne(flashCard);
+      // flashCard.collection_id && (await getFlashCards(flashCard.collection_id));
     };
 
     const updateOneFlashCard = async (

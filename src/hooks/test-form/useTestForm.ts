@@ -14,6 +14,9 @@ const useTestForm = () => {
         email: {
             name: 'email'
         },
+        "user.name": {
+            name: 'user.name'
+        },
     }
     return {
         ...store,

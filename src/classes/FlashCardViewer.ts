@@ -6,6 +6,7 @@ export default class FlashCardViewer {
   }
 cards: FlashCardModel[];
   reviewedIndexes: Set<number> = new Set();
+  currentIndex: number = 0
   getRandomIndexToView(): number {
     const randomIndex = Math.floor(Math.random() * this.cards.length);
     if (this.cards.length === this.reviewedIndexes.size) {
@@ -15,6 +16,7 @@ cards: FlashCardModel[];
       return this.getRandomIndexToView();
     }
     this.reviewedIndexes.add(randomIndex);
+    this.currentIndex = randomIndex;
     return randomIndex;
   }
   getPercentage(): number {
