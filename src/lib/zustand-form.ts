@@ -4,15 +4,14 @@ import partial from "lodash.partial";
 import set from "lodash.set";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
-// import {
-//   adjectives,
-//   colors,
-//   animals,
-//   uniqueNamesGenerator,
-// } from 'unique-names-generator'
+
 import { FormikValues } from "formik";
 
 import * as Yup from "yup";
+
+// inspiration
+// https://codesandbox.io/p/sandbox/react-zustand-form-q0csf?file=%2Fsrc%2Fschemas%2Fcontact_schema.ts%3A1%2C1-14%2C1
+
 type Value = string | number | boolean | Object;
 type ValueSetter = Record<string, Value>;
 const useStore = create(

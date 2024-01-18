@@ -34,7 +34,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
       </button>
       <button
         className={cn(
-          "md:absolute mx-auto mb-10 left-40 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          "md:absolute mx-auto mb-10 ml-5 left-40 bottom-12 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         )}
         onClick={() => editCard()}
       >
