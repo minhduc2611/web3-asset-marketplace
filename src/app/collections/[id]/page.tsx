@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Home({ params }: { params: { id: string } }) {
+  
   const { getFlashCards, resetFlashCards } = useFlashCardViewer();
 
   useEffect(() => {

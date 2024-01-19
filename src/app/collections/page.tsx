@@ -11,9 +11,11 @@ import { useEffect } from "react";
 export default function Home() {
   const { getCollections } = useCollectionStoreActions();
   const { collections } = useCollectionStoreValue();
+
   useEffect(() => {
     getCollections();
   }, []);
+
   return (
     <main className="min-h-screen p-10 md:p-24">
     <CollectionRegisterModal />
