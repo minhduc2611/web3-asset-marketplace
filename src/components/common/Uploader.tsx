@@ -1,17 +1,8 @@
 "use client";
 import { generateUniqueFileName } from "@/helpers/fileUtils";
-import { getImage } from "@/helpers/imageUtils";
-import { cn } from "@/lib/utils";
 import FlashCardService from "@/services/flashCard";
 import { ReactFCC } from "@/types/common";
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
+import { ChangeEvent } from "react";
 import { Icons } from "./icons";
 
 const Uploader: ReactFCC<{
@@ -36,13 +27,6 @@ const Uploader: ReactFCC<{
       }
     }
   };
-  // const getI = async () => {
-  //   const url = await getImage("flashcard.png");
-  //   setValue(url);
-  // };
-  // useEffect(() => {
-  //   getI();
-  // }, []);
 
   const change = (text: string) => {
     onChange(text);

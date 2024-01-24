@@ -1,7 +1,7 @@
 "use client";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 
-import CommonFlipCard from "@/components/common/common-card/CommonFlipCard";
+import CommonFlipCard from "@/components/common/common-flip-card/CommonFlipCard";
 import { getImage } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { useState } from "react";
