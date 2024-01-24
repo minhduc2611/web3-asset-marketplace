@@ -16,14 +16,14 @@ const CollectionRegisterModal = () => {
   return (
     <>
       <button
-        className="md:fixed md:top-2 md:right-10 md:w-[40px] z-50 w-full mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="md:fixed md:top-15 md:right-10 md:w-[40px] z-50 w-full mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         onClick={openModal}
         data-tooltip-id="add-a-collection"
         data-tooltip-content="Add a collection"
       >
         +
       </button>
-      <Tooltip id="add-a-collection" place={"left"} />
+      <Tooltip id="add-a-collection" place={"left"} className="z-50"/>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="w-full h-full md:h-[500px]">
           <CollectionForm

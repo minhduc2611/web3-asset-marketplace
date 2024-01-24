@@ -34,7 +34,7 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen p-10 md:p-24">
+    <main className="min-h-screen p-10 md:px-24">
       <CollectionRegisterModal />
       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 w-full">
         {collections.map((collection) => {

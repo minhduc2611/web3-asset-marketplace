@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import 'react-tooltip/dist/react-tooltip.css'
+import Header from "@/components/common/common-header/Header";
 
 dayjs.locale("en");
 dayjs.extend(relativeTime);
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+      <Header />
         <RecoilProvider>{children}</RecoilProvider>
       </body>
     </html>
