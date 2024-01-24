@@ -62,6 +62,3 @@ const useFlashCardAdmin = () => {
 };
 
 export default useFlashCardAdmin;
-
-/// form nằm ở 2 nơi ? edit cùng 1 form ?
-// cái state mà form edit phải nằm ở store

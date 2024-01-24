@@ -23,14 +23,6 @@ const insertOne = async ({ name, description }: CollectionAddRequestModel) =>
     .insert([{ name, description }])
     .select("*");
 
-// const updateOne = async ({ id, term, definition }: Partial<FlashCardModel>) =>
-//   await superbaseInstance
-//     .getInstance()
-//     .from(TABLE_NAME)
-//     .update({ term, definition })
-//     .eq("id", id || 0)
-//     .select();
-
 const CollectionService = {
   getAll,
   insertOne,

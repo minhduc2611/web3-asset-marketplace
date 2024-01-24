@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { Color } from "three";
 import { Physics, useBox, usePlane } from "@react-three/cannon";
 
-function Node(props) {
+function Node(props: any) {
   // This reference will give us direct access to the mesh
   // const meshRef = useRef();
   // Set up state for the hovered and active state
@@ -16,8 +16,8 @@ function Node(props) {
   // Return view, these are regular three.js elements expressed in JSX
   const [meshRef, api] = useBox(() => ({ mass: 1, position: [0, 10, 0] }));
   const jump = () => {
-    api.velocity.set(0, 2, 0)
-  }
+    api.velocity.set(0, 0, 9);
+  };
   return (
     <mesh
       {...props}
@@ -32,13 +32,13 @@ function Node(props) {
     </mesh>
   );
 }
-function Camera(props) {
+function Camera(props: any) {
   const ref = useRef();
   // const { setDefaultCamera } = useThree()
   // Make the camera known to the system
   // useEffect(() => void setDefaultCamera(ref.current), [])
   // Update it every frame
-  useFrame(() => ref.current.updateMatrixWorld());
+  // useFrame(() => ref?.current?.updateMatrixWorld());
   return (
     <perspectiveCamera
       ref={ref}
@@ -48,12 +48,8 @@ function Camera(props) {
     />
   );
 }
+
 function Plane() {
-  // Register plane as a physics body with zero mass
-  // const ref = useCannon({ mass: 0 }, body => {
-  //  body.addShape(new CANNON.Plane())
-  //  body.position.set(...position)
-  // })
   const [meshRef] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0] }));
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]}>
@@ -66,12 +62,8 @@ function Plane() {
 function Scene() {
   return (
     <>
-      <ambientLight />
-      <spotLight position={[10, 15, 10]} angle={0.3}/>
-      {/* <mesh rotation={[0, 10, 0]}>
-        <boxGeometry attach="geometry" args={[1, 1, 1]} />
-        <meshStandardMaterial attach="material" color={"#6be092"} />
-      </mesh> */}
+      <ambientLight position={[100, 15, 10]} intensity={Math.PI / 2} />
+      <spotLight position={[10, 15, 10]} angle={0.3} />
     </>
   );
 }
@@ -112,28 +104,15 @@ export default function Home() {
         <Stars />
         <Scene />
         <color attach="background" args={[bgColor.r, bgColor.g, bgColor.b]} />
-        {/* <pointLight position={[10, 10, 10]} /> */}
-        {/* <mesh>
-          <sphereGeometry />
-          <meshStandardMaterial color="hotpink" />
-        </mesh> */}
-        {/* <ambientLight intensity={Math.PI / 2} />
-        <spotLight /> */}
-
+        <pointLight position={[10, 10, 10]} />
         <Camera position={[Number(x), 9, 10]} />
         <OrbitControls />
         <Stats />
-        <Physics>
+        <Physics frictionGravity={[1, 1, 1]}>
           <Node position={[2, 2, 0]} />
           <Plane />
         </Physics>
-        {/* 
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Node position={[-1.2, 0, 0]} />
-        <Node position={[1.2, 0, 0]} /> */}
       </Canvas>
     </main>
   );
 }
-
-// https://www.spaceo.ca/blog/best-app-ideas/
