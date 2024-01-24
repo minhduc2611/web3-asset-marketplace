@@ -23,4 +23,36 @@ function useKeyControls(
   }, [current, map])
 }
 
+const keyControlMap = {
+  ' ': 'brake',
+  ArrowDown: 'backward',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  ArrowUp: 'forward',
+  a: 'left',
+  d: 'right',
+  r: 'reset',
+  s: 'backward',
+  w: 'forward',
+} as const
+
 type KeyCode = keyof typeof keyControlMap
+type GameControl = typeof keyControlMap[KeyCode]
+
+const keyCodes = Object.keys(keyControlMap) as KeyCode[]
+const isKeyCode = (v: unknown): v is KeyCode => keyCodes.includes(v as KeyCode)
+
+export function useControls() {
+  const controls = useRef<Record<GameControl, boolean>>({
+    backward: false,
+    brake: false,
+    forward: false,
+    left: false,
+    reset: false,
+    right: false,
+  })
+
+  useKeyControls(controls, keyControlMap)
+
+  return controls
+}
