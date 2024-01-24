@@ -193,7 +193,6 @@ const createForm = <T extends FormikValues, A>({
     // formState: { errors }, // todo
     setValues: (newVals: ValueSetter) => {
       zustandForm.updateGlobalState(key, newVals);
-      console.log("gegt state", useStore.getState().formMap);
     },
   });
 };
