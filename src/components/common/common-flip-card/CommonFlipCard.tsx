@@ -4,7 +4,6 @@ import { ReactFCC } from "@/types/common";
 import "./style.scss";
 import { ReactNode } from "react";
 
-const CARD_HEIGHT = "500px";
 const CommonFlipCard: ReactFCC<{
   isFlipped: boolean;
   setIsFlipped: (e: boolean) => void;

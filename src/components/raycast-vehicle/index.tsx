@@ -103,7 +103,6 @@ const VehicleScene = () => {
             <Pillar position={[5, 2.5, -5]} userData={{ id: "pillar-3" }} />
           </ToggledDebug>
         </Physics>
-        <Environment files="textures/dikhololo_night_1k.hdr" />
         <Suspense fallback={null}>
           <Environment preset="city" />
         </Suspense>

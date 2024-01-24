@@ -17,8 +17,7 @@ import { useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
-  const { isAdminOpen, flashCards, setAdminModal, editCard, resetForm } =
-    useFlashCardAdmin();
+  const { isAdminOpen, flashCards, setAdminModal, editCard, resetForm } = useFlashCardAdmin();
   const formRef = useRef<CardFormHandle>(null);
   const { divRef, scrollTo } = useScrollTo();
 
@@ -62,7 +61,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
             </button>
           </div>
           <div className="mt-4">
-            <div className="w-full h-[90vh] md:h-[500px]">
+            <div className="w-full h-full md:h-[500px]">
               <CardForm ref={formRef} collectionId={collectionId} />
               <Table
                 data={flashCards}
