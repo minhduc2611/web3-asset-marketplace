@@ -36,14 +36,10 @@ export default function Home() {
   return (
     <main className="min-h-screen p-10 md:p-24">
       <CollectionRegisterModal />
-      <div className="grid md:grid-cols-4 md:gap-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 w-full">
         {collections.map((collection) => {
           return (
-            <Tilt
-              key={collection.id}
-              options={defaultOptions}
-              style={{ height: 250, width: 250 }}
-            >
+            <Tilt key={collection.id} options={defaultOptions}>
               <div className="block rounded-lg bg-white text-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
                 <div className="border-b-2 border-neutral-100 px-6 py-3 dark:border-neutral-600 dark:text-neutral-50">
                   Featured
@@ -52,7 +48,7 @@ export default function Home() {
                   <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
                     {`"${collection.name}"`} Pack
                   </h5>
-                  <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
+                  <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200 overflow-hidden whitespace-nowrap text-ellipsis w-full">
                     {collection.description}
                   </p>
                   <Link

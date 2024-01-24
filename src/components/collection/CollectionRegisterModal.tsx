@@ -5,6 +5,7 @@ import { ReactFCC } from "@/types/common";
 import { useCollectionStoreActions } from "@/stores/collection";
 import { useState } from "react";
 import CollectionForm from "./CollectionForm";
+import { Tooltip } from "react-tooltip";
 
 const CollectionRegisterModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,17 +16,20 @@ const CollectionRegisterModal = () => {
   return (
     <>
       <button
-        className="md:absolute w-full md:w-[200px] bottom-2 right-32 mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="md:fixed md:top-2 md:right-10 md:w-[40px] z-50 w-full mt-4 mb-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         onClick={openModal}
+        data-tooltip-id="add-a-collection"
+        data-tooltip-content="Add a collection"
       >
-        Add Collection
+        +
       </button>
+      <Tooltip id="add-a-collection" place={"left"} />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className="w-full h-[90vh] md:h-[500px]">
+        <div className="w-full h-full md:h-[500px]">
           <CollectionForm
             onAddCollection={({ name, description }) => {
               addOneCollection({ name, description });
-              closeModal()
+              closeModal();
             }}
           />
         </div>
@@ -44,7 +48,7 @@ const Modal: ReactFCC<{
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="md:w-[600px] absolute bg-white p-4 rounded-md shadow-md overflow-y-scroll min-w-[500px]">
+      <div className="absolute bg-white p-4 rounded-md shadow-md overflow-y-scroll w-full h-full md:w-[600px] md:h-[80vh] ">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Add A Collection</h2>
           <button
