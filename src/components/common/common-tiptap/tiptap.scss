@@ -1,14 +1,22 @@
-.ProseMirror {
-  min-height: 200px;
-  border: #616161 solid 1px;
-  border-radius: 2px;
-  padding: 10px;
+.ProseMirror,
+.tiptapPreview {
+  &.tiptap {
+    min-height: 200px;
+    border: #616161 solid 1px;
+    border-radius: 2px;
+    padding: 10px;
+  }
   ul,
   ol {
     padding: 0 1rem;
   }
   li p::before {
     content: "- ";
+  }
+  a {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: underline;
   }
   h1,
   h2,

@@ -3,16 +3,12 @@ import { Color } from "@tiptap/extension-color";
 import HighLight from "@tiptap/extension-highlight";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import {
-  BubbleMenu,
-  Editor,
-  EditorContent,
-  useEditor
-} from "@tiptap/react";
+import Link from "@tiptap/extension-link";
+import { BubbleMenu, Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import debounce from "lodash.debounce";
 import React, { useEffect, useImperativeHandle } from "react";
-import "./style.scss";
+import "./tiptap.scss";
 
 type Props = {
   value: string;
@@ -32,6 +28,7 @@ const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
         TextStyle.configure(),
         HighLight.configure({ multicolor: true }),
         StarterKit,
+        Link,
       ],
       content: value,
     });
@@ -68,6 +65,48 @@ const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
   }
 );
 
+const LinkTool = ({ editor }: { editor: Editor }) => {
+  const [url, setUrl] = React.useState("");
+  return (
+    <div>
+      <input value={url} onChange={(e) => setUrl(e.target.value)} type="text" />
+      <button
+        type="button"
+        onClick={() =>
+          {
+            editor
+            .chain()
+            .focus()
+            .setLink({
+              href: url,
+            })
+            .run()
+            setUrl("")
+          }
+        }
+        disabled={!url}
+        className={cn(
+          editor.isActive("link") ? "is-active" : "",
+          "border border-r-2 ml-2 p-2 border-stone-400"
+        )}
+      >
+        Link
+      </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().unsetLink().run()}
+        disabled={!editor.isActive("link")}
+        className={cn(
+          editor.isActive("link") ? "is-active" : "",
+          "border border-r-2 ml-2 p-2 border-stone-400"
+        )}
+      >
+        unlink
+      </button>
+    </div>
+  );
+};
+
 const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
     return null;
@@ -75,6 +114,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div className="tiptap bg-slate-200 w-[500px]">
+      <LinkTool editor={editor} />
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
