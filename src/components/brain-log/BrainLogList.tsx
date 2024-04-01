@@ -10,7 +10,7 @@ export const BrainLogList = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-6 gap-4 w-full">
       {brainLogTypes.map((type) => (
         <div key={type.id} className="">
-          <h2 className="text-center">{type.name}</h2>
+          <h1 className="text-center">{type.name}</h1>
           <div className="">
             <BrainLogForm
               onSubmit={(content) => {

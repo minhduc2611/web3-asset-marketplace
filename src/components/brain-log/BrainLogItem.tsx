@@ -20,8 +20,8 @@ export const BrainLogItem: FC<BrainLogItemProps> = ({
     isOpen && formRef.current?.setForm(log.content);
   };
   return (
-    <div className=" w-full bg-slate-200 rounded-lg min-h-[200px] whitespace-pre-wrap break-words mt-2">
-      <div className="header bg-slate-300 rounded-t-lg flex justify-end fill text-slate-500 p-2">
+    <div className=" w-full bg-slate-200 dark:bg-slate-700 rounded-lg min-h-[200px] whitespace-pre-wrap break-words mt-2">
+      <div className="header bg-slate-300 dark:bg-slate-800 rounded-t-lg flex justify-end fill text-slate-500 dark:text-slate-200 p-2">
         <Icons.pencil
           className="cursor-pointer h-4"
           onClick={() => onOpenEdit(!open)}
