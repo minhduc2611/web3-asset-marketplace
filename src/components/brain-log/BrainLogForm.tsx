@@ -5,6 +5,7 @@ import { isMobile, isTablet } from "react-device-detect";
 
 type BrainLogFormProps = {
   onSubmit: (content: string) => void;
+  onDelete?: () => void;
   className?: string;
   editable?: boolean;
 };
@@ -17,7 +18,7 @@ export type BrainLogFormHandle = {
 const BrainLogForm = React.forwardRef<
   BrainLogFormHandle | null,
   BrainLogFormProps
->(({ editable, className, onSubmit }, ref) => {
+>(({ onDelete, className, onSubmit }, ref) => {
   const [content, setContent] = useState("");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +43,6 @@ const BrainLogForm = React.forwardRef<
 
   return isMobile || isTablet ? (
     <div>
-      <Icons.add className="cursor-pointer" />
     </div>
   ) : (
     <form onSubmit={handleSubmit} className={className + " mt-4"}>
@@ -56,6 +56,17 @@ const BrainLogForm = React.forwardRef<
       >
         Add
       </button>
+      {/* delete */}
+      {onDelete && (
+        <button
+          type="button"
+          onClick={() => onDelete()}
+          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 ml-2"
+        >
+          Delete
+        </button>
+      )}
+
     </form>
   );
 });

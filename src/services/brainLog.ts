@@ -67,11 +67,16 @@ const insert = async (data: Pick<BrainLogModel, 'content' | 'brain_log_type_id'>
   let response = await superbaseInstance.getInstance().from('brain_logs').insert([data]);
   return response;
 }
+const deleteLog = async (id: string) => {
+  let response = await superbaseInstance.getInstance().from('brain_logs').delete().match({id: id});
+  return response;
+}
 
 const BrainLogService = {
   getAll,
   subscribe,
   insert,
-  update
+  update,
+  delete: deleteLog,
 };
 export default BrainLogService;
