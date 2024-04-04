@@ -47,12 +47,12 @@ export function useBrainLogStoreActions() {
     }));
   }
 
-  const localDeleteOneBrainLog = async (data: BrainLogModel) => {
-    // delete from subscribedData is not implemented yet
-    // because we don't have the brain_log_type_id of the deleted item
+  const localDeleteOneBrainLog = async (id: string) => {
+    await BrainLogService.delete(id);
+    getBrainLogTypes(false);
   }
 
-  const getBrainLogTypes = async () => {
+  const getBrainLogTypes = async (isSubscribe = true) => {
     const { data } = await BrainLogService.getAll();
     data &&
       set({
@@ -60,7 +60,9 @@ export function useBrainLogStoreActions() {
         subscribedData: data.reduce((acc, item) => {
           acc[item.id] = item.brain_logs;
 
-          subscribe(item.id);
+          if (isSubscribe) {
+            subscribe(item.id);
+          }
           return acc;
         }, {} as BrainLogStoreModel["subscribedData"]),
       });
