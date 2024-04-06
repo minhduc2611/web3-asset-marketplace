@@ -16,11 +16,11 @@ const getAll = async (): Promise<
   return response;
 };
 
-const insertOne = async ({ name, description }: CollectionAddRequestModel) =>
+const insertOne = async ({ name, description, author_id }: CollectionAddRequestModel) =>
   await superbaseInstance
     .getInstance()
     .from(TABLE_NAME)
-    .insert([{ name, description }])
+    .insert([{ name, description, author_id }])
     .select("*");
 
 const CollectionService = {

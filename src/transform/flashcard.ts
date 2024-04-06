@@ -17,6 +17,7 @@ const flashCardFormStateToAddRequestModel = (
     collection_id: collectionId,
     media_url: state.media_url,
     term: state.term,
+    author_id: state.author_id,
   } as FlashCardAddRequestModel;
 };
 
@@ -37,6 +38,7 @@ const flashCardFormStateToUpdateRequestModel = (
     collection_id: collectionId,
     media_url: state.media_url,
     term: state.term,
+    author_id: state.author_id,
   };
   return request;
 };

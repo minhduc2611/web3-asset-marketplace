@@ -4,6 +4,7 @@ import { FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardReques
 import React, { FormEvent } from "react";
 import Uploader from "../common/Uploader";
 import { FormStatus } from "@/enum/common";
+import { useClientAuthStore } from "@/stores/authentication";
 
 type CardFormProps = {
   collectionId: number;
@@ -15,6 +16,7 @@ export type CardFormHandle = {
 // eslint-disable-next-line react/display-name
 const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
   ({ collectionId }, ref) => {
+    const { user } = useClientAuthStore();
     const {
       flashCardForm,
       formFields,
@@ -24,12 +26,15 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
       updateOneFlashCard,
     } = useFlashCardAdmin();
 
+    if (!user) {
+      return <>Authenticated user is not found</>;
+    }
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (flashCardForm.status === FormStatus.Add) {
-        addOneFlashCard(collectionId);
+        addOneFlashCard(collectionId, user.id);
       } else {
-        updateOneFlashCard(collectionId);
+        updateOneFlashCard(collectionId, user.id);
       }
     };
 

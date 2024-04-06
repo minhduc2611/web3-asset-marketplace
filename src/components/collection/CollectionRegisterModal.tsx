@@ -6,12 +6,18 @@ import { useCollectionStoreActions } from "@/stores/collection";
 import { useState } from "react";
 import CollectionForm from "./CollectionForm";
 import { Tooltip } from "react-tooltip";
+import { useClientAuthStore } from "@/stores/authentication";
 
 const CollectionRegisterModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { addOneCollection } = useCollectionStoreActions();
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const { user } = useClientAuthStore();
+
+  if (!user) {
+    return <>Authenticated user is not found</>;
+  }
 
   return (
     <>
@@ -28,7 +34,7 @@ const CollectionRegisterModal = () => {
         <div className="w-full h-full md:h-[500px]">
           <CollectionForm
             onAddCollection={({ name, description }) => {
-              addOneCollection({ name, description });
+              addOneCollection({ name, description, author_id: user.id});
               closeModal();
             }}
           />
