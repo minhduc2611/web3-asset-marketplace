@@ -58,8 +58,6 @@ export const useFlashCardRegisterStore = zustandForm.create<
         collectionId,
         {...flashCardForm, author_id}
       );
-      console.log("a", flashCardForm);
-      console.log("request", request);
       await FlashCardService.insertOne(request);
       collectionId && (await getFlashCards(collectionId));
     };
