@@ -11,42 +11,63 @@ export type Database = {
     Tables: {
       brain_log_types: {
         Row: {
+          author_id: string | null
           created_at: string
           id: string
           name: string
         }
         Insert: {
+          author_id?: string | null
           created_at?: string
           id?: string
           name?: string
         }
         Update: {
+          author_id?: string | null
           created_at?: string
           id?: string
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_brain_log_types_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       brain_logs: {
         Row: {
+          author_id: string | null
           brain_log_type_id: string
           content: string
           created_at: string
           id: string
         }
         Insert: {
+          author_id?: string | null
           brain_log_type_id: string
           content?: string
           created_at?: string
           id?: string
         }
         Update: {
+          author_id?: string | null
           brain_log_type_id?: string
           content?: string
           created_at?: string
           id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "public_brain_logs_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "public_brain-log_brain_log_type_id_fkey"
             columns: ["brain_log_type_id"]
@@ -58,6 +79,7 @@ export type Database = {
       }
       cards: {
         Row: {
+          author_id: string | null
           collection_id: number | null
           created_at: string
           definition: string | null
@@ -67,6 +89,7 @@ export type Database = {
           term: string | null
         }
         Insert: {
+          author_id?: string | null
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -76,6 +99,7 @@ export type Database = {
           term?: string | null
         }
         Update: {
+          author_id?: string | null
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -92,10 +116,18 @@ export type Database = {
             referencedRelation: "collections"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "public_cards_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       collections: {
         Row: {
+          author_id: string | null
           created_at: string
           deleted_at: string | null
           description: string | null
@@ -103,6 +135,7 @@ export type Database = {
           name: string | null
         }
         Insert: {
+          author_id?: string | null
           created_at?: string
           deleted_at?: string | null
           description?: string | null
@@ -110,13 +143,22 @@ export type Database = {
           name?: string | null
         }
         Update: {
+          author_id?: string | null
           created_at?: string
           deleted_at?: string | null
           description?: string | null
           id?: number
           name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_collections_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

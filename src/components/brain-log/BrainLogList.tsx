@@ -3,9 +3,15 @@ import { BrainLogItem } from "./BrainLogItem";
 import { Icons } from "../common/icons";
 import BrainLogForm from "./BrainLogForm";
 import BrainLogService from "@/services/brainLog";
+import { useClientAuthStore } from "@/stores/authentication";
 
 export const BrainLogList = () => {
-  const { brainLogTypes, subscribedData } = useBrainLog();
+  const { user } = useClientAuthStore();
+  if (!user) {
+    return null;
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { brainLogTypes, subscribedData } = useBrainLog(user.id);
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 md:gap-6 gap-4 w-full">
       {brainLogTypes.map((type) => (
@@ -18,6 +24,7 @@ export const BrainLogList = () => {
                 BrainLogService.insert({
                   content,
                   brain_log_type_id: type.id,
+                  author_id: user.id,
                 });
               }}
             />
