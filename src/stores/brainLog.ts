@@ -12,7 +12,7 @@ export const BrainLogStore = atom<BrainLogStoreModel>({
 });
 
 // Store actions should be here in store file
-export function useBrainLogStoreActions() {
+export function useBrainLogStoreActions(author_id: string) {
   const set = useSetRecoilState(BrainLogStore);
 
   const subscribe = async (id: string) => {
@@ -45,15 +45,14 @@ export function useBrainLogStoreActions() {
         ].map((item) => (item.id === data.id ? data : item)),
       },
     }));
-  }
+  };
 
   const localDeleteOneBrainLog = async (id: string) => {
     await BrainLogService.delete(id);
-    getBrainLogTypes(false);
-  }
+  };
 
-  const getBrainLogTypes = async (isSubscribe = true) => {
-    const { data } = await BrainLogService.getAll();
+  const getBrainLogTypes = async (authorId:string, isSubscribe = true) => {
+    const { data } = await BrainLogService.getAll(authorId);
     data &&
       set({
         brainLogTypes: data,
@@ -70,7 +69,7 @@ export function useBrainLogStoreActions() {
 
   const insertBrainLog = async (data: BrainLogModel) => {
     // insert to db
-  }
+  };
 
   return { getBrainLogTypes, insertBrainLog };
 }
@@ -79,6 +78,6 @@ export const useBrainLogStoreValue = () => {
   return useRecoilValue(BrainLogStore);
 };
 
-export const useBrainLog = () => {
-  return { ...useBrainLogStoreActions(), ...useBrainLogStoreValue() };
+export const useBrainLog = (author_id: string) => {
+  return { ...useBrainLogStoreActions(author_id), ...useBrainLogStoreValue() };
 };

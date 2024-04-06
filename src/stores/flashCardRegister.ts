@@ -17,11 +17,12 @@ export interface FlashCardRegisterFormState {
   definition: string;
   media_url: string;
   status?: FormStatus;
+  author_id: string | null;
 }
 
 interface Actions {
-  addOneFlashCard: (collectionId: number) => void;
-  updateOneFlashCard: (collectionId: number) => void;
+  addOneFlashCard: (collectionId: number, author_id: string) => void;
+  updateOneFlashCard: (collectionId: number, author_id: string) => void;
   resetFlashCards: () => void;
   setAdminModal: (boo: boolean) => void;
   resetForm: () => void;
@@ -35,6 +36,7 @@ export const createInitialValues = () => {
     definition: "",
     media_url: "",
     status: FormStatus.Add,
+    author_id: null,
   };
 };
 const defaultFlashCardViewer = () => new FlashCardViewer([]);
@@ -50,11 +52,11 @@ export const useFlashCardRegisterStore = zustandForm.create<
     isAdminOpen: false,
   }),
   actions: (set, get) => {
-    const addOneFlashCard = async (collectionId: number) => {
+    const addOneFlashCard = async (collectionId: number, author_id: string) => {
       const { flashCardForm } = get();
       const request = FlashCardTransform.flashCardFormStateToAddRequestModel(
         collectionId,
-        flashCardForm
+        {...flashCardForm, author_id}
       );
       console.log("a", flashCardForm);
       console.log("request", request);
@@ -62,11 +64,11 @@ export const useFlashCardRegisterStore = zustandForm.create<
       collectionId && (await getFlashCards(collectionId));
     };
 
-    const updateOneFlashCard = async (collectionId: number) => {
+    const updateOneFlashCard = async (collectionId: number, author_id: string) => {
       const { flashCardForm } = get();
       const request = FlashCardTransform.flashCardFormStateToUpdateRequestModel(
         collectionId,
-        flashCardForm
+        {...flashCardForm, author_id}
       );
       // console.log("a", flashCardForm);
       console.log("request", request);
@@ -117,15 +119,3 @@ export const useFlashCardRegisterStore = zustandForm.create<
     };
   },
 });
-
-// schema: Yup.object({
-//   term: Yup.string()
-//     .max(15, "Must be 15 characters or less")
-//     .required("Required"),
-//   definition: Yup.string()
-//     .max(20, "Must be 20 characters or less")
-//     .required("Required"),
-//   media_url: Yup.string()
-//     .max(20, "Must be 20 characters or less")
-//     .required("Required"),
-// }),

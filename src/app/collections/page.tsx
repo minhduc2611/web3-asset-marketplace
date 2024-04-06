@@ -10,6 +10,8 @@ import Link from "next/link";
 import { Tilt } from "react-tilt";
 
 import { useEffect } from "react";
+import { useClientAuthStore } from "@/stores/authentication";
+import { redirect } from "next/navigation";
 
 const defaultOptions = {
 	reverse:        false,  // reverse the tilt direction
@@ -27,7 +29,10 @@ const defaultOptions = {
 export default function Home() {
   const { getCollections } = useCollectionStoreActions();
   const { collections } = useCollectionStoreValue();
-
+  const { user } = useClientAuthStore();
+  if(!user) {
+      redirect("/login");
+  }
   useEffect(() => {
     getCollections();
   }, []);
