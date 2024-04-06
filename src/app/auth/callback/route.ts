@@ -4,19 +4,8 @@ import {NextRequest, NextResponse} from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr'
 
 export async function GET(request: NextRequest) {
-    // const requestUrl = new URL(request.url);
-    // const { searchParams } = requestUrl;
-    // const code = searchParams.get('code');
-    // console.log('code', code);
-    // if (!code && code !== null) {
-    //     const cookiesStore = cookies();
-    //     const supabase = createRouteHandlerClient({ cookies: () => cookiesStore });
-    //     await supabase.auth.exchangeCodeForSession(code)
-    // }
-    // return NextResponse.redirect(requestUrl.origin);
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
-    // if "next" is in param, use it as the redirect URL
     const next = searchParams.get('next') ?? '/'
   
     if (code) {

@@ -117,15 +117,3 @@ export const useFlashCardRegisterStore = zustandForm.create<
     };
   },
 });
-
-// schema: Yup.object({
-//   term: Yup.string()
-//     .max(15, "Must be 15 characters or less")
-//     .required("Required"),
-//   definition: Yup.string()
-//     .max(20, "Must be 20 characters or less")
-//     .required("Required"),
-//   media_url: Yup.string()
-//     .max(20, "Must be 20 characters or less")
-//     .required("Required"),
-// }),
