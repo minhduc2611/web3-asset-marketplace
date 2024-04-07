@@ -84,6 +84,7 @@ const LoginPage = () => {
   };
 
   const loginWithGithub = async () => {
+    console.log("login with github", location.origin, pathname);
     await superbaseInstance.getInstance().auth.signInWithOAuth({
       provider: "github",
       options: {
@@ -93,6 +94,7 @@ const LoginPage = () => {
   };
 
   const loginWithGoogle = async () => {
+    console.log("login with google", location.origin, pathname);
     await superbaseInstance.getInstance().auth.signInWithOAuth({
       provider: "google",
       options: {
