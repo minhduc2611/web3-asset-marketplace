@@ -13,6 +13,12 @@ const nextConfig = {
             hostname: "avatars.githubusercontent.com",
             port: "",
             pathname: "/**",
+          },
+          {
+            protocol: "https",
+            hostname: "cdn-icons-png.flaticon.com",
+            port: "",
+            pathname: "/**",
           }
         ],
       },
