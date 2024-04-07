@@ -43,7 +43,9 @@ export default async function RootLayout({
           <>
             <ClientAuthInitiator user={user}>
               <Header />
-              <RecoilProvider>{children}</RecoilProvider>
+              <div className="h-screen">
+                <RecoilProvider>{children}</RecoilProvider>
+              </div>
             </ClientAuthInitiator>
           </>
         ) : (
