@@ -10,7 +10,6 @@ import useIsMobile from "@/hooks/useIsMobile";
 const Header = () => {
   const path = usePathname();
   const { isLoading, user } = useClientAuthStore();
-  const isMobile = useIsMobile();
 
   if (isLoading) {
     return <></>;
@@ -24,7 +23,7 @@ const Header = () => {
           "fixed flex"
         )}
       >
-        <Logo className={twMerge(isMobile ? "w-12" : 'w-52')} />
+        <Logo />
       </div>
 
       <div
