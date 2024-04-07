@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      console.log(" NextResponse.redirect", `${origin}${next}`);
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
