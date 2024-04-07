@@ -8,6 +8,7 @@ import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import Link from "next/link";
 import { Icons } from "../icons";
+import ThemeSelector from "@/components/common/common-theme-selector/ThemeSelector";
 
 interface AppDrawerProps {}
 
@@ -71,6 +72,8 @@ const AppDrawer = (props: AppDrawerProps) => {
             </label>
           </div>
           <div className="divider"></div>
+
+          <ThemeSelector />
           <Link
             href="/learn"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
@@ -108,11 +111,7 @@ const AppDrawer = (props: AppDrawerProps) => {
             Setting
           </Link>
           <div className="divider"></div>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="btn w-full"
-          >
+          <button type="button" onClick={handleLogout} className="btn w-full">
             Logout
           </button>
         </div>

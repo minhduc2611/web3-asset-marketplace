@@ -3,12 +3,9 @@ import { useClientAuthStore } from "@/stores/authentication";
 import { User } from "@supabase/supabase-js";
 import { FC, PropsWithChildren, useEffect } from "react";
 type Props = PropsWithChildren<{
-  user: User
+  user: User;
 }>;
-export const ClientAuthInitiator: FC<Props> = ({
-  user,
-  children,
-}) => {
+export const ClientAuthInitiator: FC<Props> = ({ user, children }) => {
   const { user: stateUser, setUserFromServer } = useClientAuthStore();
 
   useEffect(() => {
@@ -18,10 +15,6 @@ export const ClientAuthInitiator: FC<Props> = ({
   if (!stateUser) {
     return null;
   }
-  return (
-    <>
-      {children}
-    </>
-  );
-};  
+  return <>{children}</>;
+};
 export default ClientAuthInitiator;
