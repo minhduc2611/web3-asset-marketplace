@@ -30,8 +30,12 @@ const AppDrawer = (props: AppDrawerProps) => {
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
   };
+  const close = () => {
+    setIsOpen(false);
+  };
   const handleLogout = async () => {
     await logout();
+    close();
     router.push("/login");
     router.refresh();
   };
@@ -75,6 +79,7 @@ const AppDrawer = (props: AppDrawerProps) => {
 
           <ThemeSelector />
           <Link
+            onClick={close}
             href="/learn"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
@@ -82,6 +87,7 @@ const AppDrawer = (props: AppDrawerProps) => {
             Learn
           </Link>
           <Link
+            onClick={close}
             href="/brain-log"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
@@ -89,6 +95,7 @@ const AppDrawer = (props: AppDrawerProps) => {
             Brain Log
           </Link>
           <Link
+            onClick={close}
             href="/collections"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
@@ -96,6 +103,7 @@ const AppDrawer = (props: AppDrawerProps) => {
             Flash cards
           </Link>
           <Link
+            onClick={close}
             href="/car"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
@@ -104,6 +112,7 @@ const AppDrawer = (props: AppDrawerProps) => {
           </Link>
           <div className="divider"></div>
           <Link
+            onClick={close}
             href="/settings"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
