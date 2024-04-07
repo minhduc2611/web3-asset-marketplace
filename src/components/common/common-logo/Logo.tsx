@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Icons } from "@/components/common/icons";
-import useTheme, { Theme } from "@/hooks/useTheme";
 import { twMerge } from "tailwind-merge";
+import useIsMobile from "@/hooks/useIsMobile";
 
-const Logo = () => {
+const Logo = ({...props}) => {
+  const isMobile = useIsMobile();
+
   return (
-    <Link href="/" className="app-logo flex items-center">
-      <Icons.logoMinhKim className={twMerge("w-52")} />
+    <Link href="/" {...props} className={twMerge("app-logo flex items-center", props.className)}>
+      <Icons.logoMinhKim className={twMerge(isMobile?"w-32":"w-52", props.logoClassName)} />
     </Link>
   );
 };

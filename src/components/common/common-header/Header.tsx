@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import AppDrawer from "@/components/common/common-drawer/AppDrawer";
 import Logo from "@/components/common/common-logo/Logo";
+import useIsMobile from "@/hooks/useIsMobile";
 
 const Header = () => {
   const path = usePathname();

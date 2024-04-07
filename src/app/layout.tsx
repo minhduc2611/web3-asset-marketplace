@@ -38,6 +38,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        {/* todo, theme provider */}
         {user ? (
           <>
             <ClientAuthInitiator user={user}>

@@ -1,17 +1,10 @@
-import { useLayoutEffect, useState } from 'react';
-import debounce from 'lodash.debounce';
+import { useDeviceSelectors } from "react-device-detect";
 
 const useIsMobile = (): boolean => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useLayoutEffect(() => {
-    const updateSize = (): void => {
-      setIsMobile(window.innerWidth < 768); // code ngu that :(
-    };
-    window.addEventListener('resize', debounce(updateSize, 250));
-    return (): void => window.removeEventListener('resize', updateSize);
-  }, []);
-
+  if (typeof window === "undefined") return false;
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
+  const { isMobile } = selectors;
   return isMobile;
 };
 
