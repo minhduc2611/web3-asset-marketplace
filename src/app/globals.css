@@ -38,3 +38,9 @@ body .header-time {
 li p::before {
   content: "- ";
 }
+
+.app-logo {
+  path {
+    @apply fill-primary;
+  }
+}

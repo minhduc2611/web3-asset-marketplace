@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <main
       className={twMerge(
-        "flex w-full min-h-screen items-center justify-center gap-52 p-10 md:p-20 h-full bg-base-100 text-accent"
+        "flex w-full min-h-screen items-center justify-center gap-52 p-10 md:p-20 h-full bg-base-100 text-primary"
       )}
     >
       {!user && (

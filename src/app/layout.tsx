@@ -1,6 +1,6 @@
 import ClientAuthInitiator from "@/components/auth/ClientAuthInitiator";
 import Header from "@/components/common/common-header/Header";
-import { Icons } from "@/components/common/icons";
+import Logo from "@/components/common/common-logo/Logo";
 import RecoilProvider from "@/stores";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import dayjs from "dayjs";
@@ -9,7 +9,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
-import Link from "next/link";
 import "react-tooltip/dist/react-tooltip.css";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
@@ -53,9 +52,7 @@ export default async function RootLayout({
             <div
               className={ twMerge("fixed w-full flex items-center justify-center p-5")}
             >
-              <Link href="/" className="flex items-center">
-                <Icons.logoMinhKim className={"w-52"} />
-              </Link>
+              <Logo />
             </div>
             {children}
           </div>
