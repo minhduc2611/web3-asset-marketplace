@@ -1,18 +1,13 @@
 "use client";
+import useIsMobile from "@/hooks/useIsMobile";
 import { useClientAuthStore } from "@/stores/authentication";
 import "dayjs/locale/en";
 import Link from "next/link";
-import { useDeviceSelectors } from "react-device-detect";
 import ReactTypingEffect from "react-typing-effect";
 import { twMerge } from "tailwind-merge";
 export default function Home() {
   const { user } = useClientAuthStore();
-
-  const [selectors] = useDeviceSelectors(
-    typeof window !== undefined ? window.navigator.userAgent : ""
-  );
-
-  const { isMobile } = selectors;
+  const isMobile = useIsMobile();
   return (
     <main
       className={twMerge(

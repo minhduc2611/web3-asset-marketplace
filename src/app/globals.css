@@ -39,8 +39,6 @@ li p::before {
   content: "- ";
 }
 
-.app-logo {
-  path {
-    @apply fill-primary;
-  }
+.app-logo path {
+  @apply fill-primary;
 }

@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import AppDrawer from "@/components/common/common-drawer/AppDrawer";
 import Logo from "@/components/common/common-logo/Logo";
+import useIsMobile from "@/hooks/useIsMobile";
 
 const Header = () => {
   const path = usePathname();
   const { isLoading, user } = useClientAuthStore();
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return <></>;
@@ -22,7 +24,7 @@ const Header = () => {
           "fixed flex"
         )}
       >
-        <Logo />
+        <Logo className={twMerge(isMobile ? "w-12" : 'w-52')} />
       </div>
 
       <div
