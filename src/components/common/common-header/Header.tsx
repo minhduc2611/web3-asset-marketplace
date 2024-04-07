@@ -1,11 +1,10 @@
 "use client";
 import { useClientAuthStore } from "@/stores/authentication";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
-import { Icons } from "../icons";
-import AppDrawer from "../common-drawer/AppDrawer";
+import AppDrawer from "@/components/common/common-drawer/AppDrawer";
+import Logo from "@/components/common/common-logo/Logo";
 
 const Header = () => {
   const path = usePathname();
@@ -23,9 +22,7 @@ const Header = () => {
           "fixed flex"
         )}
       >
-        <Link href="/" className="flex items-center">
-          <Icons.logoMinhKim className={path === "/" ? "w-52" : "w-20"} />
-        </Link>
+        <Logo />
       </div>
 
       <div

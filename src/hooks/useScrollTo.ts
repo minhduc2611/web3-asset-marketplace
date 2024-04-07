@@ -1,5 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
-import debounce from "lodash.debounce";
+import { useRef } from "react";
 
 const useScrollTo = () => {
   const divRef = useRef<HTMLDivElement>(null);

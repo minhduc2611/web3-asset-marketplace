@@ -13,21 +13,6 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      colors: {
-        primary: {
-          "50": "#eff6ff",
-          "100": "#dbeafe",
-          "200": "#bfdbfe",
-          "300": "#93c5fd",
-          "400": "#60a5fa",
-          "500": "#3b82f6",
-          "600": "#2563eb",
-          "700": "#1d4ed8",
-          "800": "#1e40af",
-          "900": "#1e3a8a",
-          "950": "#172554",
-        },
-      },
     },
     fontFamily: {
       body: [
@@ -65,6 +50,43 @@ const config: Config = {
         "Noto Color Emoji",
       ],
     },
+  },
+  daisyui: {
+    darkTheme: "dark", // name of one of the included themes for dark mode
+    base: true, // applies background color and foreground color for root element by default
+    styled: true, // include daisyUI colors and design decisions for all components
+    utils: true, // adds responsive and modifier utility classes
+    prefix: "", // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+    themeRoot: ":root", 
+    themes: [
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          primary: "#f3f4f6",
+          secondary: "#0e7490",
+          accent: "#22d3ee",
+          neutral: "#0a0d16",
+          "base-100": "#1f2937",
+          info: "#00a2ff",
+          success: "#00c249",
+          warning: "#ff8600",
+          error: "#f04c59",
+        },
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          primary: "#075985",
+          secondary: "#93c5fd",
+          accent: "#9ca3af",
+          neutral: "#0c030a",
+          "base-100": "#fcfcfc",
+          info: "#00e3ff",
+          success: "#57a700",
+          warning: "#dc2b00",
+          error: "#e1002a",
+        },
+      },
+    ],
   },
   plugins: [require("daisyui")],
   darkMode: "class",
