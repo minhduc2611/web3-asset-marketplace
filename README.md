@@ -9,6 +9,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - [ ] MK Learn - Create Video Lessons
 - [ ] MK Learn - Create Video Lessons versioning
 - [ ] MK Learn - Create Curriculum
+- [ ] Stripe payment integration
+- [ ] Crypto payment integration
  
 ## Getting Started
 
