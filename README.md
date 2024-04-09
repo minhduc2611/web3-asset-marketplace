@@ -1,10 +1,14 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 ## Roadmap
-- [ ] Authentication
-- [ ] Space repitition algorithm applied
-- [ ] Shaditable (share and edit) Packs and Cards
+- [x] Authentication
+- [ ] Flashcard - Space repitition algorithm applied
+- [ ] Flashcard - Shaditable (share and edit) Packs and Cards
 - [ ] UX upgrade
 - [ ] Repo structure upgrade
+- [ ] Brain Log - AI intergration
+- [ ] MK Learn - Create Video Lessons
+- [ ] MK Learn - Create Video Lessons versioning
+- [ ] MK Learn - Create Curriculum
  
 ## Getting Started
 
