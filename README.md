@@ -1,5 +1,5 @@
 ## Keys to win
-- Valueable content
+- Valuable content
 - Great UX, learning experience
 - Practicing drills
 ## Roadmap
