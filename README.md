@@ -1,4 +1,7 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Keys to win
+- Valueable content
+- Great UX, learning experience
+- Practicing drills
 ## Roadmap
 - [x] Authentication
 - [ ] Flashcard - Space repitition algorithm applied
@@ -9,9 +12,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - [ ] MK Learn - Create Video Lessons
 - [ ] MK Learn - Create Video Lessons versioning
 - [ ] MK Learn - Create Curriculum
-- [ ] Stripe payment integration
+- [ ] Stripe one off payment integration
+- [ ] Stripe subcription payment integration
 - [ ] Crypto payment integration
- 
+- [ ] Rust editor - creat Rust analyser
+- [ ] Rust editor - code 
+- [ ] Rust editor - register test cases
+
+
 ## Getting Started
 
 First, run the development server:
