@@ -6,6 +6,7 @@
 - [x] Authentication
 - [ ] Flashcard - Space repitition algorithm applied
 - [ ] Flashcard - Shaditable (share and edit) Packs and Cards
+- [ ] Flashcard - Realtime collaboration
 - [ ] UX upgrade
 - [ ] Repo structure upgrade
 - [ ] Brain Log - AI intergration
