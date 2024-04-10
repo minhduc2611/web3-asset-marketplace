@@ -14,6 +14,7 @@
 - [ ] MK Learn - Create Curriculum
 - [ ] Stripe one off payment integration
 - [ ] Stripe subcription payment integration
+- [ ] [Web3 wallet based authentication](https://supabase.com/partners/integrations/picket)
 - [ ] Crypto payment integration
 - [ ] Rust editor - creat Rust analyser
 - [ ] Rust editor - code 
