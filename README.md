@@ -1,7 +1,8 @@
 ## Keys to win
-- Valuable content
-- Great UX, learning experience
-- Practicing drills
+- Valuable **content**
+- Great app **UX**, learning **experience**
+- Practicing well prepared **drills and excercises**
+
 ## Roadmap
 - [x] Authentication
 - [ ] Flashcard - Space repitition algorithm applied
@@ -20,6 +21,7 @@
 - [ ] Rust editor - creat Rust analyser
 - [ ] Rust editor - code 
 - [ ] Rust editor - register test cases
+- [ ] Create customer chat bot, create chatbot knowledge.
 
 
 ## Getting Started
