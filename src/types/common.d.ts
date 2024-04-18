@@ -8,3 +8,5 @@ export type RequiredFieldsOnly<T> = {
 
 // declare global window for client
 declare const window: {} & Window;
+
+export type Maybe<T> = NonNullable<T> | undefined;

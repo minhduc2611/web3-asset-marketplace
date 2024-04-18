@@ -10,11 +10,12 @@ const Header = () => {
   const path = usePathname();
   const { isLoading, user } = useClientAuthStore();
 
+  const pathNoIconLogo = ["/tinder"];
   if (isLoading) {
     return <></>;
   }
 
-  return (
+  return !pathNoIconLogo.includes(path) ? (
     <header className="fixed z-50">
       <div
         className={twMerge(
@@ -42,6 +43,8 @@ const Header = () => {
         {user && <AppDrawer />}
       </div>
     </header>
+  ) : (
+    <></>
   );
 };
 

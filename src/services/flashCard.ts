@@ -1,7 +1,7 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { FlashCardAddRequestModel, FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardRequestModel";
 import { FlashCardGetAllResponseModel } from "@/models/flash-card/flashCardResponseModel";
-import superbaseInstance from "@/services/superbaseInstance";
+import superbaseInstance from "@/services/instances/superbaseInstance";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 const FLASK_CARD_BUCKET = "flashcard";
