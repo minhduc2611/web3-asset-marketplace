@@ -28,11 +28,9 @@ export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
   };
   const nextUser = async () => {
     const { userStack, seen } = get();
-    console.log("userStack", userStack);
     set({
       userStack,
     });
-    console.log("seen", seen.size);
     if (seen.size !== 0 && seen.size % THREAD_HOLD === 0) {
       getUsers();
     }

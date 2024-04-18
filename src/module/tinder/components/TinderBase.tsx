@@ -5,11 +5,9 @@ import TinderCardStack from "./TinderCardStack";
 import { useEffectOnce } from "@/hooks/useEffectOnce";
 const TinderBase = () => {
   const { initiatePage } = useTinderStore();
-  console.log("initiatePage RENDER");
 
   useEffectOnce(() => {
     initiatePage();
-    console.log("useEffectOnce");
   });
 
   return (
