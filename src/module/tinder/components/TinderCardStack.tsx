@@ -21,7 +21,7 @@ const from = (_i: number) => {
   return { x: 0, rot: 0, scale: 1, y: 0 };
 };
 const trans = (r: number, scale: number) => {
-  return `translate(12px, 0) perspective(150px) rotateX(0deg) rotateY(0deg) rotateZ(${
+  return `perspective(150px) rotateX(0deg) rotateY(0deg) rotateZ(${
     Math.abs(r * 10) > 15 ? (r > 0 ? -15 : 15) : -r * 10
   }deg) scale(${scale})`;
 };
@@ -125,7 +125,7 @@ function Deck() {
                     <animated.div
                       style={{
                         display: interpolate([rot, scale], (r, s) => {
-                          if (r > 1) return "flex";
+                          if (r > 0.5) return "flex";
                           return "none";
                         }),
                       }}
@@ -136,7 +136,7 @@ function Deck() {
                     <animated.div
                       style={{
                         display: interpolate([rot, scale], (r, s) => {
-                          if (r < 0) return "flex";
+                          if (r < -0.5) return "flex";
                           return "none";
                         }),
                       }}
