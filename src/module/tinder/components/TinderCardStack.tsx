@@ -9,13 +9,11 @@ import { move } from "formik";
 import { BATCH_SIZE } from "../constant/tinder";
 // These two are just helpers, they curate spring data, values that are later being interpolated into css
 const to = (i: number) => {
-  // console.log("===>", i);
   return {
     x: 0,
     y: 0,
     scale: 1,
-    rot: -10 + Math.random() * 20,
-    // rot: i,
+    rot: i,
     delay: i,
   };
 };
