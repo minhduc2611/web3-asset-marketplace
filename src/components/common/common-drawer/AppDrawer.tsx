@@ -46,7 +46,7 @@ const AppDrawer = (props: AppDrawerProps) => {
         onClick={toggleDrawer}
         width={40}
         height={40}
-        className="rounded-full"
+        className="rounded-full cursor-pointer"
         src={userAvatar}
         alt="Rounded avatar"
       />
@@ -62,7 +62,7 @@ const AppDrawer = (props: AppDrawerProps) => {
             <label className="swap swap-flip text-4xl">
               <input type="checkbox" />
               <div className="swap-on">
-                {Math.round(Math.random()) ? "😈" : "😇"}
+                {Math.round(Math.random()) ? "😇" : "😈"}
               </div>
               <div className="swap-off">
                 <Image
@@ -101,6 +101,22 @@ const AppDrawer = (props: AppDrawerProps) => {
           >
             <Icons.collections className="mr-4" />
             Flash cards
+          </Link>
+          <Link
+            onClick={close}
+            href="/projects"
+            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
+          >
+            <Icons.capperboard className="mr-4" />
+            Curriculum Crafting
+          </Link>
+          <Link
+            onClick={close}
+            href="/projects"
+            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
+          >
+            <Icons.blocks className="mr-4" />
+            Projects
           </Link>
           <Link
             onClick={close}

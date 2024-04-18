@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import "react-tooltip/dist/react-tooltip.css";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
+import React from "react";
 
 dayjs.locale("en");
 dayjs.extend(relativeTime);

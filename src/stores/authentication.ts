@@ -1,5 +1,5 @@
 import { AuthenticationStoreModel } from "@/models/authentication/authenticationStoreModel";
-import superbaseInstance from "@/services/superbaseInstance";
+import superbaseInstance from "@/services/instances/superbaseInstance";
 import { User } from "@supabase/supabase-js";
 import { useMemo } from "react";
 
