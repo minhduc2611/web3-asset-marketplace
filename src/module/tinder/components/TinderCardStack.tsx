@@ -22,6 +22,7 @@ const from = (_i: number) => {
 };
 const trans = (r: number, scale: number) => {
   console.log('trans r', r);
+  console.log('trans Math.abs(r * 10)', Math.abs(r * 10));
   return `perspective(150px) rotateX(0deg) rotateY(0deg) rotateZ(${
     Math.abs(r * 10) > 15 ? (r > 0 ? -15 : 15) : -r * 10
   }deg) scale(${scale})`;
