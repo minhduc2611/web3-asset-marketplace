@@ -41,11 +41,15 @@ export default CardStack;
 function Deck() {
   const { flip, userStack } = useTinderStore();
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
-  const [props, api] = useSprings(BATCH_SIZE, (i) => ({
-    reset: true,
-    ...to(i),
-    from: from(i),
-  })); // Create a bunch of springs using the helpers above
+  const [props, api] = useSprings(BATCH_SIZE, (i) => {
+    const a = {
+      reset: true,
+      ...to(i),
+      from: from(i),
+    };
+    console.log('useSprings config a', a);
+    return a
+  }); // Create a bunch of springs using the helpers above
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
   const bind = useDrag(
     ({
@@ -68,6 +72,7 @@ function Deck() {
         const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         const rot = mx / 100 + (isGone ? xDir * 100 * vx : 0); // How much the card tilts, flicking it harder makes it rotate faster
         const scale = active ? 1.1 : 1; // Active cards lift up a bit
+        console.log('useDrag rot', rot);
         return {
           x,
           rot: active ? rot : 0,
