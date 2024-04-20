@@ -92,7 +92,7 @@ function CardStack({ batch }: { batch: Batch }) {
         const isGone = gone.has(index);
         // console.log("swipe right: isGone", isGone);
         const x = isGone
-          ? (200 + window.innerWidth) * (right ? 1 : -1)
+          ? (300 + window.innerWidth) * (right ? 1 : -1)
           : active
           ? mx
           : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
@@ -167,23 +167,25 @@ function CardStack({ batch }: { batch: Batch }) {
                   <>
                     <animated.div
                       style={{
+                        boxShadow:"rgb(109, 255, 106, 0.3) 0px 3px 12px 1px",
                         display: interpolate([rot, scale], (r, s) => {
                           if (r > SWIPE_THRESHOLD / 100) return "flex";
                           return "none";
                         }),
                       }}
-                      className="absolute left-[30px] rounded-md text-[#6DFF6A] border-[4px] border-[#6DFF6A] top-16 p-4 h-[50px] w-[100px] bg-opacity-50 align-middle items-center justify-center"
+                      className="absolute left-[30px] rounded-lg text-[1.55rem] font-bold text-[#6DFF6A] border-[4px] border-[#6DFF6A] top-16 p-4 h-[50px] w-[100px] bg-opacity-50 align-middle items-center justify-center"
                     >
                       <p>LIKE</p>
                     </animated.div>
                     <animated.div
                       style={{
+                        boxShadow:"rgb(255, 78, 64, 0.4) 0px 3px 12px 1px",
                         display: interpolate([rot, scale], (r, s) => {
                           if (r < -SWIPE_THRESHOLD / 100) return "flex";
                           return "none";
                         }),
                       }}
-                      className="absolute right-[30px] rounded-md text-[#FF4E40] border-[4px] border-[#FF4E40] top-16 p-4 h-[50px] w-[100px] bg-opacity-50 align-middle items-center justify-center"
+                      className="absolute right-[30px] rounded-lg text-[1.55rem] font-bold text-[#FF4E40] border-[4px] border-[#FF4E40] top-16 p-4 h-[50px] w-[100px] bg-opacity-50 align-middle items-center justify-center"
                     >
                       <p>NOPE</p>
                     </animated.div>

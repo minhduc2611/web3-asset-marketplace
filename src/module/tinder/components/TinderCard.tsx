@@ -20,25 +20,24 @@ const TinderCard = ({
         zIndex: index,
         ...style,
         boxShadow:
-          "inset 0px 44px 226px -19px #000000, inset 0px -59px 116px -10px #000000",
-          // box-shadow: inset 0 0 109px 0px rgba(0, 0, 0, 1);
+          "rgb(0, 0, 0) 0px 52px 53px -18px inset, rgb(0, 0, 0) 0px -100px 129px -10px inset",
       }}
     >
       {renderBadge()}
-      <figure className="relative h-full transition-all duration-300 cursor-pointer">
-        <figcaption className="absolute px-4 text-lg text-white bottom-6">
+      <div className="relative h-full transition-all duration-300 cursor-pointer">
+        <div className="absolute px-4 text-white bottom-6">
+          <h1 className="text-[1.55rem] font-bold">
+            {user?.firstName} {user?.lastName}, {`${user.age}`}
+          </h1>
           <p>
-            {user?.firstName} {user?.lastName} {`(${user.id})`}
+            Lives in {user.address.city}
           </p>
-        </figcaption>
-      </figure>
-      {/* <img alt="src" className="object-fill h-full m-auto" src={user.image} /> */}
+          <p>
+            {user.address.coordinates.lat.toFixed(0)} miles away
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
-
-
-/**
- * box-shadow: rgb(0, 0, 0, 1) 0px 32px 26px 2px inset, rgb(0, 0, 0, 1) 0px -47px 5px 7px inset;
- */
 export default TinderCard;
