@@ -11,7 +11,7 @@ const TinderBase = () => {
   });
 
   return (
-    <div className="h-full w-full flex flex-col justify-end flex-grow mt-6">
+    <div className="h-full w-full flex flex-col justify-end flex-grow mt-6 max-w-xl">
         <TinderCardStack />
         <TinderCardController />
     </div>

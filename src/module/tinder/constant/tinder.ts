@@ -1,2 +1,2 @@
-export const BATCH_SIZE = 30;
-export const THREAD_HOLD = 29;
+export const BATCH_SIZE = 10;
+export const THREAD_HOLD = 8;

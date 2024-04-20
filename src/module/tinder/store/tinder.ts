@@ -1,13 +1,12 @@
 import { TinderStoreModal } from "@/module/tinder/resource/store/tinderStoreModal";
+import { v4 } from "uuid";
 import { create } from "zustand";
-import tinderService from "../service/users";
 import { BATCH_SIZE, THREAD_HOLD } from "../constant/tinder";
-
+import tinderService from "../service/users";
 interface Methods {
   getUsers: () => void;
-  nextUser: () => void;
   initiatePage: () => void;
-  flip: (id: string, like: boolean) => void;
+  flip: (params: { userId: string; like: boolean; batchId: string }) => void;
 }
 
 export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
@@ -16,51 +15,68 @@ export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
     // get 6 users at a batch
     // if user swipe to third user of the batch, get next batch
     const res = await tinderService.getUsers(BATCH_SIZE, skip);
-    
-
+    const batchId = v4();
     set((state) => ({
       ...state,
-      userStack: [...state.userStack, ...res.users],
+      userStackMap: {
+        [batchId]: {
+          users: res.users,
+          id: batchId,
+          seen: new Set(),
+        },
+        ...state.userStackMap,
+      },
       skip: skip + BATCH_SIZE,
     }));
-    const { userStack } = get();
-    console.log("new userStack", userStack);
-  };
-  const nextUser = async () => {
-    const { userStack, seen } = get();
-    set({
-      userStack,
-    });
-    if (seen.size !== 0 && seen.size % THREAD_HOLD === 0) {
-      getUsers();
-    }
   };
 
   const initiatePage = async () => {
     await getUsers();
-    nextUser();
+    // nextUser();
   };
 
-  const flip = (id: string, like: boolean) => {
-    console.log(`User ${id} is ${like ? "liked" : "disliked"}`);
-    const { seen } = get();
-    seen.add(id);
-    set({
-      seen
-    });
-    nextUser();
+  const swipe = (params: {
+    userId: string;
+    like: boolean;
+    batchId: string;
+  }) => {
+    const { userId, like, batchId } = params;
+    console.log(
+      `swipeDEBUG: batch [${batchId}], User ${userId} is ${
+        like ? "liked" : "disliked"
+      }`
+    );
+    const { userStackMap } = get();
+    const userStack = userStackMap[batchId];
+    userStackMap[batchId].seen.add(userId);
+    set({ userStackMap });
+
+    if (userStack.seen.size == THREAD_HOLD) {
+      console.log(
+        "swipeDEBUG: thread hold is reached: " + [batchId],
+        ". Calling another batch"
+      );
+      getUsers();
+    }
+    if (userStack.seen.size === userStack.users.length) {
+      console.log("swipeDEBUG: All users are seen in this batch");
+      setTimeout(() => {
+        delete userStackMap[batchId];
+        set({ userStackMap });
+      }, 1000);
+    }
+    const { userStackMap: debug } = get();
+    console.log("swipeDEBUG: userStackMap", debug);
   };
 
   return {
     skip: 0,
     total: 0,
-    userStack: [],
-    seen: new Set(),
+    userStackMap: {},
     firstUser: {},
     secondUser: {},
     getUsers,
-    nextUser,
     initiatePage,
-    flip,
+    flip: swipe,
   };
 });

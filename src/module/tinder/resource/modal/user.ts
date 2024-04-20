@@ -49,3 +49,10 @@ export interface MockUser {
   university: string;
   bank: Bank;
 }
+
+
+export interface Batch {
+  id: string;
+  users: MockUser[];
+  seen: Set<string>;
+}

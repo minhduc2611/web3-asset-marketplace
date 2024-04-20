@@ -50,11 +50,11 @@ export default async function RootLayout({
           </>
         ) : (
           <div className="h-screen">
-            <div
+            {/* <div
               className={ twMerge("fixed w-full flex items-center justify-center p-5")}
             >
               <Logo />
-            </div>
+            </div> */}
             {children}
           </div>
         )}
