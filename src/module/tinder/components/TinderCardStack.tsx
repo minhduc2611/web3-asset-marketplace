@@ -12,18 +12,18 @@ import { Batch, MockUser } from "../resource/modal/user";
 const SWIPE_THRESHOLD = 70;
 
 // These two are just helpers, they curate spring data, values that are later being interpolated into css
-const to = (i: number) => {
-  return {
-    x: 0,
-    y: 0,
-    scale: 1,
-    rot: i,
-    delay: i,
-  };
-};
-const from = (_i: number) => {
-  return { x: 0, rot: 0, scale: 1, y: 0 };
-};
+// const to = (i: number) => {
+//   return {
+//     x: 0,
+//     y: 0,
+//     scale: 1,
+//     rot: i,
+//     delay: i,
+//   };
+// };
+// const from = (_i: number) => {
+//   return { x: 0, rot: 0, scale: 1, y: 0 };
+// };
 const trans = (r: number, scale: number) => {
   return `perspective(150px) rotateX(0deg) rotateY(0deg) rotateZ(${
     Math.abs(r * 10) > 15 ? (r > 0 ? -15 : 15) : -r * 10
@@ -49,8 +49,12 @@ function CardStack({ batch }: { batch: Batch }) {
   const [props, api] = useSprings(batch.users.length || BATCH_SIZE, (i) => {
     const a = {
       reset: true,
-      ...to(i),
-      from: from(i),
+      x: 0,
+      y: 0,
+      scale: 1,
+      rot: 0,
+      delay: 0,
+      from: { x: 0, rot: 0, scale: 1, y: 0, delay: 0 },
     };
     return a;
   }); // Create a bunch of springs using the helpers above
@@ -87,7 +91,11 @@ function CardStack({ batch }: { batch: Batch }) {
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
         // console.log("swipe right: isGone", isGone);
-        const x = isGone ? (200 + window.innerWidth) * (right ? 1 : -1) : active ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
+        const x = isGone
+          ? (200 + window.innerWidth) * (right ? 1 : -1)
+          : active
+          ? mx
+          : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         // console.log("swipe right: mx", mx);
         // console.log("swipe right: xDir", xDir);
         // console.log("swipe right: (200 + window.innerWidth) * xDir", (200 + window.innerWidth) * xDir);
@@ -137,8 +145,7 @@ function CardStack({ batch }: { batch: Batch }) {
                 borderRadius: "10px",
                 transform: interpolate([rot, scale], trans),
                 background: "gray",
-                touchAction: 'none'
-
+                touchAction: "none",
               }}
               id={`card-${i}`}
             >
