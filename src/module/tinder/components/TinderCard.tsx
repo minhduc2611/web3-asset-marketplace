@@ -1,4 +1,4 @@
-import { MockUser } from "../resource/modal/user";
+import { MockUser } from "@/module/tinder/resource/modal/user";
 
 interface TinderCardProps {
   user: MockUser;
