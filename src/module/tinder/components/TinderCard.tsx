@@ -15,7 +15,7 @@ const TinderCard = ({
 }: TinderCardProps) => {
   return (
     <div
-      className="h-full top-0 left-0 right-0 rounded-lg"
+      className="h-full top-0 left-0 right-0 rounded-[1.7rem]"
       style={{
         zIndex: index,
         ...style,

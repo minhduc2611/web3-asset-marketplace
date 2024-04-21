@@ -142,7 +142,7 @@ function CardStack({ batch }: { batch: Batch }) {
                 width: "100%",
                 height: "100%",
                 color: "white",
-                borderRadius: "10px",
+                borderRadius: "1.7rem",
                 transform: interpolate([rot, scale], trans),
                 background: "gray",
                 touchAction: "none",
