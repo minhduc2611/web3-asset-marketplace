@@ -1,15 +1,15 @@
 import { useIsomorphicLayoutEffect } from "usehooks-ts";
 
 export const usePreventSwipeBack = () => {
-    useIsomorphicLayoutEffect(() => {
-        if (window.safari) {
-          history.pushState(null, null, location.href);
-          window.onpopstate = function (event) {
-            history.go(1);
-          };
-        }
-        return () => {
-            
-        }
-    }, [])
+  useIsomorphicLayoutEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
+    return () => {
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, []);
 };
