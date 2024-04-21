@@ -207,7 +207,7 @@ function CardStack({ batch }: { batch: Batch }) {
                   </animated.div>
                 </animated.div>
               </div>
-              <div className="h-32 p-2">
+              <div className="h-32 p-5">
                 <div className="z-0 w-full flex items-center gap-9 justify-center relative">
                   <animated.div
                     style={{
