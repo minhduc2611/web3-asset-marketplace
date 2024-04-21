@@ -104,7 +104,7 @@ function CardStack({ batch }: { batch: Batch }) {
       if (index !== i) return;
       if (dir === 0) return;
 
-      gone.add(index); 
+      gone.add(index);
 
       const right = dir === 1;
       flip({
@@ -207,50 +207,52 @@ function CardStack({ batch }: { batch: Batch }) {
                   </animated.div>
                 </animated.div>
               </div>
-              <div className="z-0 h-24 w-full flex items-center gap-9 justify-center relative">
-                <animated.div
-                  style={{
-                    transform: interpolate([x, scale], (x, scle) =>
-                      x < 0 && Math.abs(x) > SWIPE_THRESHOLD
-                        ? `scale(${scle})`
-                        : ""
-                    ),
-                    borderRadius: "50%",
-                    boxShadow: interpolate([x], (x) =>
-                      x < 0 && Math.abs(x) > SWIPE_THRESHOLD
-                        ? "rgb(255, 78, 64, 0.4) 0px 3px 12px 1px"
-                        : ""
-                    ),
-                  }}
-                  className="flex items-center justify-center relative bg-white"
-                >
-                  <Icons.tinderUnlike
-                    onClick={() => move(i, -1)}
-                    className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]"
-                  />
-                </animated.div>
-                <Icons.tinderSuperLike className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]" />
-                <animated.div
-                  style={{
-                    transform: interpolate([x, scale], (x, scle) =>
-                      x > 0 && Math.abs(x) > SWIPE_THRESHOLD
-                        ? `scale(${scle})`
-                        : ""
-                    ),
-                    borderRadius: "50%",
-                    boxShadow: interpolate([x], (x) =>
-                      x > 0 && Math.abs(x) > SWIPE_THRESHOLD
-                        ? "rgb(109, 255, 106, 0.3) 0px 3px 12px 1px"
-                        : ""
-                    ),
-                  }}
-                  className="flex items-center justify-center  bg-white"
-                >
-                  <Icons.tinderLike
-                    onClick={() => move(i, 1)}
-                    className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]"
-                  />
-                </animated.div>
+              <div className="h-32 p-2">
+                <div className="z-0 w-full flex items-center gap-9 justify-center relative">
+                  <animated.div
+                    style={{
+                      transform: interpolate([x, scale], (x, scle) =>
+                        x < 0 && Math.abs(x) > SWIPE_THRESHOLD
+                          ? `scale(${scle})`
+                          : ""
+                      ),
+                      borderRadius: "50%",
+                      boxShadow: interpolate([x], (x) =>
+                        x < 0 && Math.abs(x) > SWIPE_THRESHOLD
+                          ? "rgb(255, 78, 64, 0.4) 0px 3px 12px 1px"
+                          : ""
+                      ),
+                    }}
+                    className="flex items-center justify-center relative bg-white"
+                  >
+                    <Icons.tinderUnlike
+                      onClick={() => move(i, -1)}
+                      className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]"
+                    />
+                  </animated.div>
+                  <Icons.tinderSuperLike className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]" />
+                  <animated.div
+                    style={{
+                      transform: interpolate([x, scale], (x, scle) =>
+                        x > 0 && Math.abs(x) > SWIPE_THRESHOLD
+                          ? `scale(${scle})`
+                          : ""
+                      ),
+                      borderRadius: "50%",
+                      boxShadow: interpolate([x], (x) =>
+                        x > 0 && Math.abs(x) > SWIPE_THRESHOLD
+                          ? "rgb(109, 255, 106, 0.3) 0px 3px 12px 1px"
+                          : ""
+                      ),
+                    }}
+                    className="flex items-center justify-center  bg-white"
+                  >
+                    <Icons.tinderLike
+                      onClick={() => move(i, 1)}
+                      className="hover:scale-105 active:animate-[wiggle_1s_ease-in-out_infinite]"
+                    />
+                  </animated.div>
+                </div>
               </div>
             </div>
           </animated.div>
