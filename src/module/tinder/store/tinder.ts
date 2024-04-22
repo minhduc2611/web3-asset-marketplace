@@ -12,8 +12,8 @@ interface Methods {
 export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
   const getUsers = async () => {
     const { skip } = get();
-    // get 6 users at a batch
-    // if user swipe to third user of the batch, get next batch
+    // get BATCH_SIZE users in a batch
+    // if user swipe to user number THREAD_HOLD of the batch, get next batch
     const res = await tinderService.getUsers(BATCH_SIZE, skip);
     const batchId = v4();
     set((state) => ({
@@ -32,7 +32,6 @@ export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
 
   const initiatePage = async () => {
     await getUsers();
-    // nextUser();
   };
 
   const swipe = (params: {
@@ -59,7 +58,7 @@ export const useTinderStore = create<TinderStoreModal & Methods>((set, get) => {
       getUsers();
     }
     if (userStack.seen.size === userStack.users.length) {
-      console.log("swipeDEBUG: All users are seen in this batch");
+      console.log(`swipeDEBUG: All users are seen in this batch: [${batchId}]`);
       setTimeout(() => {
         delete userStackMap[batchId];
         set({ userStackMap });
