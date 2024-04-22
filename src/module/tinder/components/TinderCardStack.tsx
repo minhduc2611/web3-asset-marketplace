@@ -1,15 +1,12 @@
 "use client";
 import { animated, to as interpolate, useSprings } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
-
 import { Icons } from "@/components/common/icons";
 import { useState } from "react";
-import { BATCH_SIZE } from "@/module/tinder/constant/tinder";
+import { BATCH_SIZE, SWIPE_THRESHOLD } from "@/module/tinder/constant/tinder";
 import { Batch } from "@/module/tinder/resource/modal/user";
 import { useTinderStore } from "@/module/tinder/store/tinder";
 import TinderCard from "@/module/tinder/components/TinderCard";
-
-const SWIPE_THRESHOLD = 70;
 
 const trans = (r: number, scale: number) => {
   return `perspective(150px) rotateX(0deg) rotateY(0deg) rotateZ(${
@@ -75,7 +72,6 @@ function CardStack({ batch }: { batch: Batch }) {
       api.start((i) => {
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
-        // console.log("swipe right: isGone", isGone);
         const x = isGone
           ? (300 + window.innerWidth) * (right ? 1 : -1)
           : active
@@ -91,11 +87,6 @@ function CardStack({ batch }: { batch: Batch }) {
           config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 },
         };
       });
-
-      // if (!active && gone.size === cards.length) {
-      //   gone.clear();
-      //   api.start((i) => to(i));
-      // }
     }
   );
 
@@ -103,9 +94,7 @@ function CardStack({ batch }: { batch: Batch }) {
     api.start((i) => {
       if (index !== i) return;
       if (dir === 0) return;
-
       gone.add(index);
-
       const right = dir === 1;
       flip({
         userId: batch.users[index].id.toString(),
@@ -117,7 +106,7 @@ function CardStack({ batch }: { batch: Batch }) {
         x,
         rot: 10,
         scale: 1.05,
-        delay: 0,
+        delay: undefined,
         config: { friction: 50, tension: 800 },
       };
     });

@@ -1,5 +1,4 @@
 import mockInstance from "@/services/instances/mockInstance";
-import { MockUser } from "../resource/modal/user";
 import { UserListResponse } from "../resource/response/users";
 
 class TinderService {
