@@ -1,5 +1,5 @@
 import { BrainLogModel } from "@/models/brain-log/brainLogModel";
-import superbaseInstance from "@/services/superbaseInstance";
+import superbaseInstance from "@/services/instances/superbaseInstance";
 import { PostgrestSingleResponse, QueryData } from "@supabase/supabase-js";
 
 const TABLE_NAME = "brain_log_types";

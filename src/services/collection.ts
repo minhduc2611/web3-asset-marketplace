@@ -1,6 +1,6 @@
 import { CollectionAddRequestModel } from "@/models/collection/collectionRequestModel";
 import { CollectionGetAllResponseModel } from "@/models/collection/collectionResponseModel";
-import superbaseInstance from "@/services/superbaseInstance";
+import superbaseInstance from "@/services/instances/superbaseInstance";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 const TABLE_NAME = "collections";

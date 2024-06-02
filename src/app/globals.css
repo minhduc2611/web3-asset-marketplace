@@ -42,3 +42,8 @@ li p::before {
 .app-logo path {
   @apply fill-primary;
 }
+
+/* Disable horizontal overscroll, scroll back */
+html, body {
+  overscroll-behavior-x: none;
+}

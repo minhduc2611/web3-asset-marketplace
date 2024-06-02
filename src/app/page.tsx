@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDeviceSelectors } from "react-device-detect";
 import ReactTypingEffect from "react-typing-effect";
 import { twMerge } from "tailwind-merge";
+
 export default function Home() {
   const { user } = useClientAuthStore();
 

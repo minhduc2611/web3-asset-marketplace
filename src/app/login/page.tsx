@@ -1,6 +1,6 @@
 "use client";
 import { Icons } from "@/components/common/icons";
-import superbaseInstance from "@/services/superbaseInstance";
+import superbaseInstance from "@/services/instances/superbaseInstance";
 import { useClientAuthStore } from "@/stores/authentication";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -84,21 +84,21 @@ const LoginPage = () => {
   };
 
   const loginWithGithub = async () => {
-    console.log("login with github", location.origin, pathname);
+    console.log("login with github", process.env.NEXT_PUBLIC_BASE_URL, pathname);
     await superbaseInstance.getInstance().auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=${pathname}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback?next=${pathname}`,
       },
     });
   };
 
   const loginWithGoogle = async () => {
-    console.log("login with google", location.origin, pathname);
+    console.log("login with google", process.env.NEXT_PUBLIC_BASE_URL, pathname);
     await superbaseInstance.getInstance().auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=${pathname}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback?next=${pathname}`,
       },
     });
   };

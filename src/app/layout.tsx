@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import "react-tooltip/dist/react-tooltip.css";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
+import React from "react";
 
 dayjs.locale("en");
 dayjs.extend(relativeTime);
@@ -49,11 +50,11 @@ export default async function RootLayout({
           </>
         ) : (
           <div className="h-screen">
-            <div
+            {/* <div
               className={ twMerge("fixed w-full flex items-center justify-center p-5")}
             >
               <Logo />
-            </div>
+            </div> */}
             {children}
           </div>
         )}
