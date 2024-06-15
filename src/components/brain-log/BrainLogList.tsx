@@ -13,7 +13,7 @@ export const BrainLogList = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { brainLogTypes, subscribedData } = useBrainLog(user.id);
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 md:gap-6 gap-4 w-full">
+    <div className={`grid grid-cols-1 md:grid-cols-${brainLogTypes.length} md:gap-6 gap-4 w-full`}>
       {brainLogTypes.map((type) => (
         <div key={type.id} className="">
           <h1 className="text-center text-2xl">{type.name}</h1>

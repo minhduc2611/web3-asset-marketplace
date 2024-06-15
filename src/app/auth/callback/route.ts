@@ -30,10 +30,10 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       console.log(" NextResponse.redirect", `${process.env.NEXT_PUBLIC_BASE_URL}${next}`);
-      // return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}${next}`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}${next}`);
     }
   }
 
   // return the user to an error page with instructions
-  // return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
