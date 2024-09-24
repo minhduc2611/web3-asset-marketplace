@@ -9,6 +9,7 @@ export interface FlashCardRegisterState {
   flashCardForm: FlashCardRegisterFormState;
   flashCardViewer: FlashCardViewer;
   isAdminOpen: boolean;
+  currentIndex: number;
 }
 
 export interface FlashCardRegisterFormState {
@@ -27,6 +28,7 @@ interface Actions {
   setAdminModal: (boo: boolean) => void;
   resetForm: () => void;
   getFlashCards: (collectionId: number) => void;
+  updateCurrentIndex: (index: number) => void;
 }
 
 export const createInitialValues = () => {
@@ -49,6 +51,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
   state: () => ({
     flashCardForm: createInitialValues(),
     flashCardViewer: defaultFlashCardViewer(),
+    currentIndex: 0,
     isAdminOpen: false,
   }),
   actions: (set, get) => {
@@ -61,7 +64,9 @@ export const useFlashCardRegisterStore = zustandForm.create<
       await FlashCardService.insertOne(request);
       collectionId && (await getFlashCards(collectionId));
     };
-
+    const updateCurrentIndex = (index: number) => {
+      set({ currentIndex: index });
+    };
     const updateOneFlashCard = async (collectionId: number, author_id: string) => {
       const { flashCardForm } = get();
       const request = FlashCardTransform.flashCardFormStateToUpdateRequestModel(
@@ -114,6 +119,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       getFlashCards,
       resetFlashCards,
       setAdminModal,
+      updateCurrentIndex,
     };
   },
 });

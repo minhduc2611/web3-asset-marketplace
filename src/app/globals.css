@@ -1,7 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer twbase, primereact, twutilities;
+/* import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.min.css';
 
+import 'primereact/resources/themes/saga-blue/theme.css'; */
+/* @import 'primereact/resources/themes/lara-light-cyan/theme.css' layer(primereact); */
+
+@layer twbase {
+ @tailwind base;
+}
+
+@layer twutilities {
+ @tailwind components;
+ @tailwind utilities;
+}
 :root {
   --foreground-rgb: 0, 0, 0;
   --tiptap-rgb: 0, 0, 0;

@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useDeviceSelectors } from "react-device-detect";
 import ReactTypingEffect from "react-typing-effect";
 import { twMerge } from "tailwind-merge";
+import {Button} from 'primereact/button';
+import { useState } from "react";
 
 export default function Home() {
   const { user } = useClientAuthStore();
-
   const [selectors] = useDeviceSelectors(
     typeof window !== undefined ? window.navigator.userAgent : ""
   );

@@ -10,9 +10,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import "react-tooltip/dist/react-tooltip.css";
-import { twMerge } from "tailwind-merge";
-import "./globals.css";
 import React from "react";
+import { PrimeReactProvider } from "primereact/api";
+import "./globals.css";
+
+
 
 dayjs.locale("en");
 dayjs.extend(relativeTime);
@@ -38,26 +40,27 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+
       <body className={inter.className}>
-        {user ? (
-          <>
-            <ClientAuthInitiator user={user}>
-              <Header />
-              <div className="h-screen">
-                <RecoilProvider>{children}</RecoilProvider>
-              </div>
-            </ClientAuthInitiator>
-          </>
-        ) : (
-          <div className="h-screen">
-            {/* <div
+          {user ? (
+            <>
+              <ClientAuthInitiator user={user}>
+                <Header />
+                <div className="h-screen">
+                  <RecoilProvider>{children}</RecoilProvider>
+                </div>
+              </ClientAuthInitiator>
+            </>
+          ) : (
+            <div className="h-screen">
+              {/* <div
               className={ twMerge("fixed w-full flex items-center justify-center p-5")}
             >
               <Logo />
             </div> */}
-            {children}
-          </div>
-        )}
+              {children}
+            </div>
+          )}
       </body>
     </html>
   );

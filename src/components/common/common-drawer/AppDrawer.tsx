@@ -104,6 +104,14 @@ const AppDrawer = (props: AppDrawerProps) => {
           </Link>
           <Link
             onClick={close}
+            href="/expenses"
+            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
+          >
+            <Icons.billing className="mr-4" />
+            Expenses & Finance
+          </Link>
+          <Link
+            onClick={close}
             href="/projects"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
