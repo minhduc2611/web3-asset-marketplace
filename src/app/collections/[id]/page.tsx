@@ -53,6 +53,7 @@ const Debugger = () => {
 };
 export default function Home({ params }: { params: { id: string } }) {
   const [showCardList, setShowCardList] = useState(false);
+
   const { getFlashCards, resetFlashCards } = useFlashCardViewer();
 
   useEffect(() => {
