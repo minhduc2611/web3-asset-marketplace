@@ -85,7 +85,11 @@ export type Database = {
           definition: string | null
           deleted_at: string | null
           id: number
+          interval: number | null
           media_url: string | null
+          next_review_time: string | null
+          short_answer: string | null
+          single_answer: string | null
           term: string | null
         }
         Insert: {
@@ -95,7 +99,11 @@ export type Database = {
           definition?: string | null
           deleted_at?: string | null
           id?: number
+          interval?: number | null
           media_url?: string | null
+          next_review_time?: string | null
+          short_answer?: string | null
+          single_answer?: string | null
           term?: string | null
         }
         Update: {
@@ -105,7 +113,11 @@ export type Database = {
           definition?: string | null
           deleted_at?: string | null
           id?: number
+          interval?: number | null
           media_url?: string | null
+          next_review_time?: string | null
+          short_answer?: string | null
+          single_answer?: string | null
           term?: string | null
         }
         Relationships: [
@@ -156,6 +168,69 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          expense_amount: number | null
+          expense_name: string | null
+          expense_type_id: string | null
+          id: string
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          expense_amount?: number | null
+          expense_name?: string | null
+          expense_type_id?: string | null
+          id?: string
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          expense_amount?: number | null
+          expense_name?: string | null
+          expense_type_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_expense_type_fkey"
+            columns: ["expense_type_id"]
+            isOneToOne: false
+            referencedRelation: "expense_types"
             referencedColumns: ["id"]
           },
         ]

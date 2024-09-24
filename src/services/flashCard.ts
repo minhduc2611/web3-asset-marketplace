@@ -15,7 +15,8 @@ const getAll = async (
     .from("cards")
     .select("*")
     .eq("collection_id", collectionId)
-    .order("created_at", { ascending: false });
+    .order("next_review_time", { ascending: false })
+    .range(0, 20);
   return response;
 };
 

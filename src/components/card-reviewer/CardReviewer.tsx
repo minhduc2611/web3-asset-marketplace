@@ -2,20 +2,22 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 
 import CommonFlipCard from "@/components/common/common-flip-card/CommonFlipCard";
+import CommonProgressBar from "@/components/common/common-progress-bar";
+import { Difficulty } from "@/enum/difficulty";
 import { getImage } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { useState } from "react";
-import CommonProgressBar from "@/components/common/common-progress-bar";
 
 const Card = ({
   card,
   onNext,
 }: {
   card: FlashCardModel;
-  onNext: () => void;
+  onNext: (difficulty: Difficulty) => void;
 }) => {
   const [showDefinition, setShowDefinition] = useState(false);
   const [shouldNext, setShouldNext] = useState(false);
+  const [stringModal, setStringModal] = useState("");
 
   return (
     <>
@@ -55,38 +57,52 @@ const Card = ({
         }}
       />
       <div className="flex justify-center gap-1">
+        {/* {stringModal} | {card.definition} | */}
+        {/* {stringModal && card.definition?.includes(stringModal) ? 't': 'f'}
+        <input value={stringModal} onChange={e => setStringModal(e.target.value)} /> */}
         <button
           disabled={!shouldNext}
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
             setShouldNext(false);
-            onNext();
+            onNext(Difficulty.SUPER_EASY);
           }}
         >
-          Easy {">"}
+          Super Easy {"~1d"}
         </button>
         <button
           disabled={!shouldNext}
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
-            onNext();
             setShouldNext(false);
+            onNext(Difficulty.EASY);
           }}
         >
-          Medium {">"}
+          Easy {"~12min"}
         </button>
         <button
           disabled={!shouldNext}
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
-            onNext();
+            onNext(Difficulty.MEDIUM);
             setShouldNext(false);
           }}
         >
-          Hard {">"}
+          Medium {"~9min"}
+        </button>
+        <button
+          disabled={!shouldNext}
+          className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
+          onClick={() => {
+            setShowDefinition(false);
+            onNext(Difficulty.HARD);
+            setShouldNext(false);
+          }}
+        >
+          Hard {"~2min"}
         </button>
       </div>
     </>
@@ -94,11 +110,13 @@ const Card = ({
 };
 
 const CardReviewer = () => {
-  const { flashCardViewer } = useFlashCardViewer();
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const { currentIndex, flashCardViewer, updateCurrentIndex } = useFlashCardViewer();
+  // const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
-  const handleNext = () => {
-    setCurrentCardIndex(flashCardViewer?.getRandomIndexToView() || 0);
+  const handleNext = async (difficulty: Difficulty) => {
+    await flashCardViewer?.updateCard(currentIndex, difficulty);
+    updateCurrentIndex(flashCardViewer?.getNextIndexToView() || 0);
+
   };
 
   return (
@@ -109,7 +127,7 @@ const CardReviewer = () => {
         </div>
         {flashCardViewer.cards.length > 0 && (
           <Card
-            card={flashCardViewer.cards[currentCardIndex]}
+            card={flashCardViewer.cards[currentIndex]}
             onNext={handleNext}
           />
         )}
