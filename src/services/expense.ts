@@ -23,7 +23,7 @@ const getAll = async (
 };
 const getTotalExpenseByCatagories = async (
   month: number
-): Promise<PostgrestSingleResponse<ExpenseModel[]>> => {
+): Promise<[]> => {
   //   const query = `
   //   SELECT et.name AS expense_type, SUM(e.expense_amount) AS total_amount
   //   FROM expenses e

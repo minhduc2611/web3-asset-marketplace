@@ -21,26 +21,26 @@ const defaultExpensesByCategories = () => {
   return {} as Record<string, string>;
 };
 
-export const useExpenseStore = create<ExpenseStoreModel & Methods>((set) => {
+export const useExpenseStore = create<ExpenseStoreModel & any>((set: any) => {
   const getExpense = async (collectionId: number) => {
     const { data } = await FlashCardService.getAll(collectionId);
     data &&
-      set((state) => ({
+      set((state: any) => ({
         ...state,
         flashCardViewer: new FlashCardViewer(data),
       }));
   };
 
   const getTotalExpenseByCatagories = async () => {
-    const data = await ExpenseService.getTotalExpensesByTime({
-      from: "09-01-2024",
-      to: "09-30-2024",
-    }); // format is MM-DD-YYYY
-    set((state) => ({
-      ...state,
-      totalExpenseByCatagories: data as Record<string, string>,
-    }));
-    return data;
+    // const data = await ExpenseService.getTotalExpensesByTime({
+    //   from: "09-01-2024",
+    //   to: "09-30-2024",
+    // }); // format is MM-DD-YYYY
+    // set((state) => ({
+    //   ...state,
+    //   totalExpenseByCatagories: data as Record<string, string>,
+    // }));
+    return [];
   };
 
   // const resetFlashCards = () => {
