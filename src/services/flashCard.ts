@@ -16,7 +16,7 @@ const getAll = async (
     .select("*")
     .eq("collection_id", collectionId)
     .order("next_review_time", { ascending: false })
-    .range(0, 20);
+    // .range(0, 20);
   return response;
 };
 

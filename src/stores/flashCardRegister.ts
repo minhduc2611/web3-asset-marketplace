@@ -63,6 +63,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       );
       await FlashCardService.insertOne(request);
       collectionId && (await getFlashCards(collectionId));
+      resetForm();
     };
     const updateCurrentIndex = (index: number) => {
       set({ currentIndex: index });
