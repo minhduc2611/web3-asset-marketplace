@@ -7,8 +7,8 @@
 ## Roadmap
 
 - [x] Authentication
-- [ ] Flashcard - Space repitition algorithm applied
-- [ ] Flashcard - Shaditable (share and edit) Packs and Cards
+- [x] Flashcard - Space repitition algorithm applied
+- [x] Flashcard - Shaditable (share and edit) Packs and Cards
 - [ ] Flashcard - Realtime collaboration
 - [ ] UX upgrade
 - [ ] Repo structure upgrade
