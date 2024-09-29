@@ -36,7 +36,6 @@ const Uploader: ReactFCC<{
       <label htmlFor="term" className="block text-sm font-medium text-gray-700">
         Upload Image:
       </label>
-
       {!value && (
         <input
           onChange={handleFileChange}

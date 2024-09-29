@@ -1,10 +1,13 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
-import { FlashCardAddRequestModel, FlashCardUpdateRequestModel } from "@/models/flash-card/flashCardRequestModel";
+import {
+  FlashCardAddRequestModel,
+  FlashCardUpdateRequestModel,
+} from "@/models/flash-card/flashCardRequestModel";
 import { FlashCardGetAllResponseModel } from "@/models/flash-card/flashCardResponseModel";
 import superbaseInstance from "@/services/instances/superbaseInstance";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
-const FLASK_CARD_BUCKET = "flashcard";
+export const FLASK_CARD_BUCKET = "flashcard";
 const FLASK_CARD_TABLE = "cards";
 
 const getAll = async (
@@ -15,8 +18,8 @@ const getAll = async (
     .from("cards")
     .select("*")
     .eq("collection_id", collectionId)
-    .order("next_review_time", { ascending: false })
-    // .range(0, 20);
+    .order("next_review_time", { ascending: false });
+  // .range(0, 20);
   return response;
 };
 
@@ -41,10 +44,17 @@ const upload = (path: string, file: File) =>
     .storage.from(FLASK_CARD_BUCKET)
     .upload(path || "public/avatar1.png", file);
 
+const deleteOne = async (id: number) =>
+  await superbaseInstance
+    .getInstance()
+    .from(FLASK_CARD_TABLE)
+    .delete()
+    .eq("id", id);
 const FlashCardService = {
   getAll,
   insertOne,
   updateOne,
-  upload
+  upload,
+  deleteOne,
 };
 export default FlashCardService;

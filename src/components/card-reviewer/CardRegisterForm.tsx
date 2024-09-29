@@ -5,6 +5,7 @@ import React, { FormEvent } from "react";
 import Uploader from "../common/Uploader";
 import { FormStatus } from "@/enum/common";
 import { useClientAuthStore } from "@/stores/authentication";
+import CommonAudioRecorder from "../common/common-audio-recorder";
 
 type CardFormProps = {
   collectionId: number;
@@ -75,6 +76,24 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
           value={flashCardForm.media_url}
           onChange={(url) => setValues({ "flashCardForm.media_url": url })}
         />
+        <div className="mb-4">
+          <label
+            htmlFor="definition"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Audio:
+          </label>
+          <CommonAudioRecorder
+            initialValue={flashCardForm.audio_url}
+            value={flashCardForm.audio_file}
+            onChange={(file) => {
+              setValues({
+                "flashCardForm.audio_file": file as Object,
+                "flashCardForm.audio_url": "",
+              });
+            }}
+          />
+        </div>
         <div className="mb-4">
           <label
             htmlFor="definition"

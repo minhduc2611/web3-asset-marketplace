@@ -79,6 +79,7 @@ export type Database = {
       }
       cards: {
         Row: {
+          audio_url: string | null
           author_id: string | null
           collection_id: number | null
           created_at: string
@@ -93,6 +94,7 @@ export type Database = {
           term: string | null
         }
         Insert: {
+          audio_url?: string | null
           author_id?: string | null
           collection_id?: number | null
           created_at?: string
@@ -107,6 +109,7 @@ export type Database = {
           term?: string | null
         }
         Update: {
+          audio_url?: string | null
           author_id?: string | null
           collection_id?: number | null
           created_at?: string
