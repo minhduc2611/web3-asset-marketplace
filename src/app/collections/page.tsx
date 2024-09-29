@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "primereact/button";
+import { Menu } from "primereact/menu";
+import { Toast } from "primereact/toast";
 
 import CollectionRegisterModal from "@/components/collection/CollectionRegisterModal";
 import timeUtils from "@/helpers/timeUtils";
@@ -7,11 +10,16 @@ import {
   useCollectionStoreValue,
 } from "@/stores/collection";
 import Link from "next/link";
-import { Tilt } from "react-tilt";
 
-import { useEffect } from "react";
 import { useClientAuthStore } from "@/stores/authentication";
 import { redirect } from "next/navigation";
+import { useEffect, useRef } from "react";
+
+import "primeicons/primeicons.css";
+// import "primeflex/primeflex.css";
+import "primereact/resources/primereact.min.css";
+
+import "primereact/resources/themes/lara-light-cyan/theme.css";
 
 export default function Home() {
   const { getCollections } = useCollectionStoreActions();
@@ -23,6 +31,8 @@ export default function Home() {
   useEffect(() => {
     getCollections();
   }, []);
+  const menuLeft = useRef<Menu>(null);
+  const toast = useRef(null);
 
   return (
     <main className="min-h-screen p-10 md:px-24">
@@ -34,8 +44,45 @@ export default function Home() {
               key={collection.id}
               className="block rounded-lg bg-white text-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700"
             >
-              <div className="border-b-2 border-neutral-100 px-6 py-3 dark:border-neutral-600 dark:text-neutral-50">
-                Featured
+              <div className="relative flex items-center justify-center border-b-2 border-neutral-100 px-6 py-3 dark:border-neutral-600 dark:text-neutral-50">
+                <div className="">Featured</div>
+                <div className="absolute bottom-0 right-0">
+                  {(() => {
+                    const items = [
+                      {
+                        label: "Options",
+                        items: [
+                          {
+                            label: "Share",
+                            icon: "pi pi-share-alt",
+                            command: () => {
+                              console.log("Share", collection.id);
+                            },
+                          },
+                        ],
+                      },
+                    ];
+                    return (
+                      <>
+                        <Toast ref={toast}></Toast>
+                        <Menu
+                          model={items}
+                          popup
+                          ref={menuLeft}
+                          id="popup_menu_left"
+                        />
+                        <Button
+                          rounded
+                          text
+                          icon="pi pi-list"
+                          onClick={(event) => menuLeft?.current && menuLeft.current.toggle && menuLeft.current.toggle(event)}
+                          aria-controls="popup_menu_left"
+                          aria-haspopup
+                        />
+                      </>
+                    );
+                  })()}
+                </div>
               </div>
               <div className="p-6">
                 <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">

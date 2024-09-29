@@ -10,12 +10,14 @@ import { FlashCardRegisterFormState } from "@/stores/flashCardRegister";
  */
 const flashCardFormStateToAddRequestModel = (
   collectionId: number,
-  state: FlashCardRegisterFormState
+  state: FlashCardRegisterFormState,
+  audioUrl?: string
 ): FlashCardAddRequestModel => {
   return {
     definition: state.definition,
     collection_id: collectionId,
     media_url: state.media_url,
+    audio_url: audioUrl,
     term: state.term,
     author_id: state.author_id,
   } as FlashCardAddRequestModel;
@@ -27,7 +29,8 @@ const flashCardFormStateToAddRequestModel = (
  */
 const flashCardFormStateToUpdateRequestModel = (
   collectionId: number,
-  state: FlashCardRegisterFormState
+  state: FlashCardRegisterFormState,
+  audioUrl?: string
 ): FlashCardUpdateRequestModel => {
   if (!state.id) {
     throw new Error("Id required");
@@ -37,6 +40,7 @@ const flashCardFormStateToUpdateRequestModel = (
     definition: state.definition,
     collection_id: collectionId,
     media_url: state.media_url,
+    audio_url: audioUrl || null,
     term: state.term,
     author_id: state.author_id,
   };

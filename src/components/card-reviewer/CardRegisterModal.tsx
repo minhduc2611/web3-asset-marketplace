@@ -17,7 +17,8 @@ import { useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
-  const { isAdminOpen, flashCards, setAdminModal, editCard, resetForm } = useFlashCardAdmin();
+  const { isAdminOpen, flashCards, setAdminModal, editCard, deleteOneFlashCard, resetForm } =
+    useFlashCardAdmin();
   const formRef = useRef<CardFormHandle>(null);
   const { divRef, scrollTo } = useScrollTo();
 
@@ -40,13 +41,13 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
         Edit Card
       </button>
       <div
-        className={`fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 transition-opacity ${
+        className={`fixed inset-0 z-50 transition-opacity ${
           isAdminOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <div
           ref={divRef}
-          className="absolute bg-white p-14 rounded-md shadow-md overflow-y-scroll md:w-[100vw] md:h-[100vh]"
+          className="h-full w-full` bg-white pt-8 px-4 rounded-md shadow-md overflow-y-scroll"
         >
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">FlashCards</h2>
@@ -70,6 +71,11 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
                   editCard(data);
                   scrollTo();
                 }}
+                deleteCard={(data) => {
+                  if(confirm("Are you sure you want to delete this card?")){
+                    deleteOneFlashCard(data.collection_id!, data.id);
+                  }
+                }}
               />
             </div>
           </div>
@@ -83,10 +89,12 @@ const columnHelper = createColumnHelper<FlashCardModel>();
 
 function Table({
   data,
+  deleteCard,
   edit,
 }: {
   data: FlashCardModel[];
   edit: (data: FlashCardModel) => void;
+  deleteCard: (data: FlashCardModel) => void;
 }) {
   const columns = useMemo(
     () => [
@@ -120,7 +128,10 @@ function Table({
             >
               <Icons.pencil />
             </button>
-            <button className="p-2 m-1 bg-[#EF4444] text-white rounded-md hover:bg-[#B91C1C]">
+            <button
+              className="p-2 m-1 bg-[#EF4444] text-white rounded-md hover:bg-[#B91C1C]"
+              onClick={() => deleteCard(info.getValue())}
+            >
               <Icons.trash />
             </button>
           </div>

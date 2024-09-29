@@ -42,6 +42,39 @@ const Debugger = () => {
                 {timeUtils
                   .dayjs(card.next_review_time)
                   .format("YYYY-MM-DD HH:mm:ssZ[Z]")}
+                {/* next_review_time - now, in minute */}
+              </p>
+              <p>
+                - {" "}
+                {(() => {
+                  if (!card.next_review_time) {
+                    return (
+                      <span className="text-neutral-400">No next review time</span>
+                    );
+                  } else if (
+                    timeUtils
+                      .dayjs(card.next_review_time)
+                      .diff(timeUtils.dayjs(), "days") < 0
+                  ) {
+                    return <span className="text-red-600">Overdue</span>;
+                  } else if (
+                    timeUtils
+                      .dayjs(card.next_review_time)
+                      .diff(timeUtils.dayjs(), "days") === 0
+                  ) {
+                    return <span className="text-green-600">Today</span>;
+                  } else {
+                    return (
+                      <span className="text-blue-600">
+                        Upcoming in{" "}
+                        {timeUtils
+                          .dayjs(card.next_review_time)
+                          .diff(timeUtils.dayjs(), "days")}{" "}
+                        days
+                      </span>
+                    );
+                  }
+                })()}
               </p>
               <p>- Interval: {card.interval}</p>
             </div>
@@ -72,7 +105,12 @@ export default function Home({ params }: { params: { id: string } }) {
         <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
         <CardReviewer />
         <CardRegisterModal collectionId={Number(params?.id)} />
-        <Button className={`border rounded-full p-2 absolute bottom-10 right-10 mt-5 ${showCardList ? 'bg-blue-500 text-green-100' : ''}`} onClick={() => setShowCardList(!showCardList)}>
+        <Button
+          className={`border rounded-full p-2 absolute bottom-10 right-10 mt-5 ${
+            showCardList ? "bg-blue-500 text-green-100" : ""
+          }`}
+          onClick={() => setShowCardList(!showCardList)}
+        >
           <Icons.collections />
         </Button>
       </div>

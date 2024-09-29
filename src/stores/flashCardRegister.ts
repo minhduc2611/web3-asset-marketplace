@@ -1,9 +1,9 @@
 import FlashCardViewer from "@/classes/FlashCardViewer";
 import { FormStatus } from "@/enum/common";
+import { generateUniqueFileName } from "@/helpers/fileUtils";
 import { zustandForm } from "@/lib/zustand-form";
 import FlashCardService from "@/services/flashCard";
 import FlashCardTransform from "@/transform/flashcard";
-import * as Yup from "yup";
 
 export interface FlashCardRegisterState {
   flashCardForm: FlashCardRegisterFormState;
@@ -17,6 +17,8 @@ export interface FlashCardRegisterFormState {
   term: string;
   definition: string;
   media_url: string;
+  audio_file?: File;
+  audio_url: string;
   status?: FormStatus;
   author_id: string | null;
 }
@@ -24,6 +26,7 @@ export interface FlashCardRegisterFormState {
 interface Actions {
   addOneFlashCard: (collectionId: number, author_id: string) => void;
   updateOneFlashCard: (collectionId: number, author_id: string) => void;
+  deleteOneFlashCard: (collectionId: number, id: number) => void;
   resetFlashCards: () => void;
   setAdminModal: (boo: boolean) => void;
   resetForm: () => void;
@@ -37,6 +40,7 @@ export const createInitialValues = () => {
     term: "",
     definition: "",
     media_url: "",
+    audio_url: "",
     status: FormStatus.Add,
     author_id: null,
   };
@@ -57,9 +61,20 @@ export const useFlashCardRegisterStore = zustandForm.create<
   actions: (set, get) => {
     const addOneFlashCard = async (collectionId: number, author_id: string) => {
       const { flashCardForm } = get();
+      let audio_url = "";
+      if (flashCardForm.audio_file) {
+        const path2 = generateUniqueFileName(flashCardForm.audio_file!);
+        const { data } = await FlashCardService.upload(
+          path2,
+          flashCardForm.audio_file!
+        );
+        audio_url = data?.path!;
+      }
+
       const request = FlashCardTransform.flashCardFormStateToAddRequestModel(
         collectionId,
-        {...flashCardForm, author_id}
+        { ...flashCardForm, author_id },
+        audio_url || flashCardForm.audio_url || undefined
       );
       await FlashCardService.insertOne(request);
       collectionId && (await getFlashCards(collectionId));
@@ -68,17 +83,32 @@ export const useFlashCardRegisterStore = zustandForm.create<
     const updateCurrentIndex = (index: number) => {
       set({ currentIndex: index });
     };
-    const updateOneFlashCard = async (collectionId: number, author_id: string) => {
+    const updateOneFlashCard = async (
+      collectionId: number,
+      author_id: string
+    ) => {
       const { flashCardForm } = get();
+      let audio_url = "";
+
+      if (flashCardForm.audio_file) {
+        const path2 = generateUniqueFileName(flashCardForm.audio_file!);
+        const { data } = await FlashCardService.upload(
+          path2,
+          flashCardForm.audio_file!
+        );
+        audio_url = data?.path!;
+      }
       const request = FlashCardTransform.flashCardFormStateToUpdateRequestModel(
         collectionId,
-        {...flashCardForm, author_id}
+        { ...flashCardForm, author_id },
+        audio_url || flashCardForm.audio_url || undefined
       );
+
       // console.log("a", flashCardForm);
       console.log("request", request);
       await FlashCardService.updateOne(request);
       collectionId && (await updateFlashCards(collectionId));
-      resetForm()
+      resetForm();
     };
 
     const getFlashCards = async (collectionId: number) => {
@@ -93,6 +123,12 @@ export const useFlashCardRegisterStore = zustandForm.create<
         flashCardViewer.cards = data;
         // data && set({ flashCardViewer: new FlashCardViewer(data) });
       }
+    };
+
+    const deleteOneFlashCard = async (collectionId: number, id: number) => {
+      await FlashCardService.deleteOne(id);
+      collectionId && (await updateFlashCards(collectionId));
+      resetForm();
     };
 
     const resetForm = () => {
@@ -116,6 +152,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
     return {
       addOneFlashCard,
       updateOneFlashCard,
+      deleteOneFlashCard,
       resetForm: resetForm,
       getFlashCards,
       resetFlashCards,

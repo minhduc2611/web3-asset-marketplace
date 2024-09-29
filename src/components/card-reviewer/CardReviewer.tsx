@@ -4,9 +4,11 @@ import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import CommonFlipCard from "@/components/common/common-flip-card/CommonFlipCard";
 import CommonProgressBar from "@/components/common/common-progress-bar";
 import { Difficulty } from "@/enum/difficulty";
-import { getImage } from "@/helpers/imageUtils";
+import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
+import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
+import { Icons } from "../common/icons";
 
 const Card = ({
   card,
@@ -29,28 +31,50 @@ const Card = ({
         }}
         renderFrontCard={() => {
           return (
-            <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
+            <>
+              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
+              {card.media_url && (
+                <div className="">
+                  <img
+                    alt="src"
+                    className="object-scale-down h-full m-auto"
+                    src={getFile(FLASK_CARD_BUCKET, card.media_url)}
+                  />
+                </div>
+              )}
+            </>
           );
         }}
         renderBackCard={() => {
           return (
             <p className="text-gray-600 min-h-[200px] block">
-              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
-              {card.media_url && (
-                <div className="m-auto h-[200px]">
-                  <img
-                    alt="src"
-                    className="object-scale-down h-full m-auto"
-                    src={getImage(card.media_url)}
-                  />
-                </div>
-              )}
-              <hr className="solid my-6" />
               {showDefinition && (
                 <div
                   className="mt-10"
                   dangerouslySetInnerHTML={{ __html: card.definition || "" }}
                 ></div>
+              )}
+              <hr className="solid my-6" />
+              {card.audio_url && (
+                <div className="">
+                  <audio
+                    src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
+                    controls
+                  >
+                    <Icons.post />
+                  </audio>
+                </div>
+              )}
+              <hr className="solid my-6" />
+              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
+              {card.media_url && (
+                <div className="">
+                  <img
+                    alt="src"
+                    className="object-scale-down h-full m-auto"
+                    src={getFile(FLASK_CARD_BUCKET, card.media_url)}
+                  />
+                </div>
               )}
             </p>
           );
@@ -110,13 +134,13 @@ const Card = ({
 };
 
 const CardReviewer = () => {
-  const { currentIndex, flashCardViewer, updateCurrentIndex } = useFlashCardViewer();
+  const { currentIndex, flashCardViewer, updateCurrentIndex } =
+    useFlashCardViewer();
   // const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   const handleNext = async (difficulty: Difficulty) => {
     await flashCardViewer?.updateCard(currentIndex, difficulty);
     updateCurrentIndex(flashCardViewer?.getNextIndexToView() || 0);
-
   };
 
   return (
