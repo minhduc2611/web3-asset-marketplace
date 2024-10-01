@@ -28,7 +28,7 @@ const CommonAudioUploader = (props: CommonAudioUploaderProps) => {
         icon="pi pi-bookmark"
         rounded
         text
-        raised
+          raised
         severity="secondary"
         aria-label="Bookmark"
       />
