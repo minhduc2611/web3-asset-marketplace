@@ -42,16 +42,24 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
       />
       {props.value && (
         <div id="audio-review">
-          <audio src={URL.createObjectURL(props.value)} controls />
+          <audio controls preload="none">
+            <source src={URL.createObjectURL(props.value)} type="audio/mpeg" />
+          </audio>
           <p>{props.value.name}</p>
         </div>
       )}
       {props.initialValue && (
         <div className="flex">
-          <audio src={getFile(FLASK_CARD_BUCKET, props.initialValue)} controls>
-            <Icons.post />
+          <audio controls preload="none">
+            <source
+              src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
+              type="audio/mpeg"
+            />
           </audio>
-          <button type="button" onClick={() => props.onChange && props.onChange()}>
+          <button
+            type="button"
+            onClick={() => props.onChange && props.onChange()}
+          >
             <Icons.trash />
           </button>
         </div>

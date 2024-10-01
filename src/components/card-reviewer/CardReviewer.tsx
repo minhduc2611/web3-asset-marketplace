@@ -57,11 +57,11 @@ const Card = ({
               <hr className="solid my-6" />
               {card.audio_url && (
                 <div className="">
-                  <audio
-                    src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
-                    controls
-                  >
-                    <Icons.post />
+                  <audio controls preload="none">
+                    <source
+                      src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
+                      type="audio/mpeg"
+                    />
                   </audio>
                 </div>
               )}
