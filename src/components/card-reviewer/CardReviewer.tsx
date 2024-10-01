@@ -57,7 +57,7 @@ const Card = ({
               <hr className="solid my-6" />
               {card.audio_url && (
                 <div className="">
-                  <audio controls>
+                  <audio controls preload="none">
                     <source
                       src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
                       type="audio/mpeg"
