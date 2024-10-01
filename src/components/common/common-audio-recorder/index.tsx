@@ -12,16 +12,7 @@ interface CommonAudioRecorderProps {
 }
 
 const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
-  console.log("RERENDER ", props);
-  // const addAudioElement = (blob: Blob) => {
-  //   const url = URL.createObjectURL(blob);
-  //   const audio = document.createElement("audio");
-  //   audio.src = url;
-  //   audio.controls = true;
-  //   document.getElementById('audio-review')?.appendChild(audio);
-  // };
   const onRecordDone = (blob: Blob) => {
-    // mp3 extension
     var file = new File([blob], "recorded.mp3", {
       type: "audio/webm",
       lastModified: Date.now(),
@@ -29,6 +20,7 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
     console.log("file ", file);
     props.onChange && props.onChange(file);
   };
+
   return (
     <div>
       <AudioRecorder
@@ -42,19 +34,26 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
       />
       {props.value && (
         <div id="audio-review">
-          <audio controls preload="auto">
-            <source src={URL.createObjectURL(props.value)} type="audio/mpeg" />
+          <audio controls preload="metadata">
+            <source src={URL.createObjectURL(props.value)} type="audio/webm" />
+            <source src={URL.createObjectURL(props.value)} type="audio/ogg" />
+            not support
           </audio>
           <p>{props.value.name}</p>
         </div>
       )}
       {props.initialValue && (
         <div className="flex">
-          <audio controls preload="auto">
+          <audio controls preload="metadata">
             <source
               src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
-              type="audio/mpeg"
+              type="audio/webm"
             />
+            <source
+              src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
+              type="audio/ogg"
+            />
+            not support
           </audio>
           <button
             type="button"

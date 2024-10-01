@@ -9,18 +9,22 @@ interface CommonAudioUploaderProps {
 const CommonAudioUploader = (props: CommonAudioUploaderProps) => {
   const upload = () => {
     // create a input file element
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "audio/*";
-    // input.onchange = (e) => {
-    //   const file = e.target.files[0];
-    //   props.onUpload && props.onUpload(file);
-    //   input.remove();
-    // };
+   const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'audio/*';
+    
     // click it 
     input.click();
     // get the file
-    const file = input.files && input.files[0];
+    const file = input.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const blob = new Blob([new Uint8Array(e.target?.result as ArrayBuffer)], { type: 'audio/webm' });
+        props.onUpload && props.onUpload(blob);
+      };
+      reader.readAsArrayBuffer(file);
+    }
   }
   return (
     <div>

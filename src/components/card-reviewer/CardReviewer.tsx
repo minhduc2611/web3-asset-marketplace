@@ -8,7 +8,6 @@ import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
-import { Icons } from "../common/icons";
 
 const Card = ({
   card,
@@ -56,12 +55,23 @@ const Card = ({
               )}
               <hr className="solid my-6" />
               {card.audio_url && (
-                <div className="">
-                  <audio controls preload="auto">
+                <div
+                  className=""
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                >
+                  <audio controls preload="metadata">
                     <source
                       src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
-                      type="audio/mpeg"
+                      type="audio/webm"
                     />
+                    <source
+                      src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
+                      type="audio/ogg"
+                    /> 
+                    not support
                   </audio>
                 </div>
               )}
