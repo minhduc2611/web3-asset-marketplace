@@ -14,7 +14,6 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import CommonAudioUploader from "@/components/common/common-audio-uploader";
 import { useLocalStorage } from "usehooks-ts";
 import useSound from "use-sound";
-import { useRef } from "react";
 
 export default function Home() {
   const { user } = useClientAuthStore();
@@ -52,6 +51,7 @@ export default function Home() {
         {sound?.state()}
         {duration}
       </p> */}
+
       {/* <TabView
         activeIndex={activeIndex}
         onTabChange={(e) => setActiveIndex(e.index)}
