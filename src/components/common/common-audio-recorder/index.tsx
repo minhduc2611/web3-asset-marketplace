@@ -4,7 +4,23 @@ import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { memo } from "react";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import { Icons } from "../icons";
+import useSound from "use-sound";
 
+const SoundPlayer = ({ url }: { url: string }) => {
+  const [play] = useSound(url);
+  return (
+    <button
+      type="button"
+      className="bg-slate-200 p-5"
+      onClick={() => {
+        console.log("play");
+        play();
+      }}
+    >
+      <span className="text-zinc-600">Play</span>
+    </button>
+  );
+};
 interface CommonAudioRecorderProps {
   initialValue?: string;
   value?: File;
@@ -34,17 +50,19 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
       />
       {props.value && (
         <div id="audio-review">
-          <audio controls preload="metadata">
+          {/* <audio controls preload="metadata">
             <source src={URL.createObjectURL(props.value)} type="audio/webm" />
             <source src={URL.createObjectURL(props.value)} type="audio/ogg" />
             not support
-          </audio>
+          </audio> */}
+          <SoundPlayer url={URL.createObjectURL(props.value)} />
+
           <p>{props.value.name}</p>
         </div>
       )}
       {props.initialValue && (
         <div className="flex">
-          <audio controls preload="metadata">
+          {/* <audio controls preload="metadata">
             <source
               src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
               type="audio/webm"
@@ -54,7 +72,9 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
               type="audio/ogg"
             />
             not support
-          </audio>
+          </audio> */}
+          <SoundPlayer url={getFile(FLASK_CARD_BUCKET, props.initialValue)} />
+
           <button
             type="button"
             onClick={() => props.onChange && props.onChange()}

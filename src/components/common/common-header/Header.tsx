@@ -16,7 +16,7 @@ const Header = () => {
   }
 
   return !pathNoIconLogo.includes(path) ? (
-    <header className="fixed z-50">
+    <header className="h-16 z-50">
       <div
         className={twMerge(
           path === "/" ? "top-10 left-10" : "top-1 left-1",

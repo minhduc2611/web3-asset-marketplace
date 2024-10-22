@@ -39,6 +39,16 @@ pnpm dev
 bun dev
 ```
 
+Debug on phone
+```
+# Get your local IP address
+Ipconfig getifaddr en0
+# 10.10.18.30
+
+# Access the app on the phone
+# 10.10.18.30:3000
+```
+
 ## Viết Git commit message
 - CẤU TRÚC CHUNG CỦA 1 COMMIT MESSAGE: [type]: [description] [body]
 

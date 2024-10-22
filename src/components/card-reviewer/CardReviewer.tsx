@@ -8,7 +8,16 @@ import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
+import useSound from 'use-sound';
 
+const SoundPlayer = ({ url }: { url: string }) => {
+  const [play] = useSound(url);
+  return (
+    <button onClick={() => play()}>
+      <span>Play</span>
+    </button>
+  );
+}
 const Card = ({
   card,
   onNext,
@@ -19,7 +28,6 @@ const Card = ({
   const [showDefinition, setShowDefinition] = useState(false);
   const [shouldNext, setShouldNext] = useState(false);
   const [stringModal, setStringModal] = useState("");
-
   return (
     <>
       <CommonFlipCard
@@ -62,7 +70,7 @@ const Card = ({
                     event.stopPropagation();
                   }}
                 >
-                  <audio controls preload="metadata">
+                  {/* <audio controls preload="metadata">
                     <source
                       src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
                       type="audio/webm"
@@ -72,7 +80,9 @@ const Card = ({
                       type="audio/ogg"
                     /> 
                     not support
-                  </audio>
+                  </audio> */}
+                    {'??????'}
+                    <SoundPlayer url={getFile(FLASK_CARD_BUCKET, card.audio_url)} />
                 </div>
               )}
               <hr className="solid my-6" />
