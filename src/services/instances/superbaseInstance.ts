@@ -21,7 +21,12 @@ class SupabaseInstance {
     if (this.supabase) {
       return this.supabase;
     } else {
-      return new SupabaseInstance().getInstance();
+      try {
+        return new SupabaseInstance().getInstance();
+      } catch (e) {
+        console.error("supabase: ", e);
+        throw new Error("Supabase instance not initialized");
+      }
     }
   }
 }
