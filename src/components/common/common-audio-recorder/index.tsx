@@ -4,21 +4,13 @@ import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { memo } from "react";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import { Icons } from "../icons";
-import useSound from "use-sound";
 
 const SoundPlayer = ({ url }: { url: string }) => {
-  const [play] = useSound(url);
   return (
-    <button
-      type="button"
-      className="bg-slate-200 p-5"
-      onClick={() => {
-        console.log("play");
-        play();
-      }}
-    >
-      <span className="text-zinc-600">Play</span>
-    </button>
+    <audio controls>
+      <source src={url} type="audio/webm" />
+      <source src={url} type="audio/ogg" />
+    </audio>
   );
 };
 interface CommonAudioRecorderProps {

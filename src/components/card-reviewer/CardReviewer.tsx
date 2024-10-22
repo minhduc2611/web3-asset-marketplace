@@ -8,16 +8,14 @@ import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
-import useSound from 'use-sound';
 
 const SoundPlayer = ({ url }: { url: string }) => {
-  const [play] = useSound(url);
   return (
-    <button onClick={() => play()}>
-      <span>Play</span>
-    </button>
+    <audio controls>
+      <source src={url} type="audio/webm" />
+    </audio>
   );
-}
+};
 const Card = ({
   card,
   onNext,
@@ -81,8 +79,9 @@ const Card = ({
                     /> 
                     not support
                   </audio> */}
-                    {'??????'}
-                    <SoundPlayer url={getFile(FLASK_CARD_BUCKET, card.audio_url)} />
+                  <SoundPlayer
+                    url={getFile(FLASK_CARD_BUCKET, card.audio_url)}
+                  />
                 </div>
               )}
               <hr className="solid my-6" />
