@@ -6,6 +6,7 @@ import {
 import { FlashCardGetAllResponseModel } from "@/models/flash-card/flashCardResponseModel";
 import superbaseInstance from "@/services/instances/superbaseInstance";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
+// import { decode } from 'base64-arraybuffer'
 
 export const FLASK_CARD_BUCKET = "flashcard";
 const FLASK_CARD_TABLE = "cards";
@@ -42,7 +43,13 @@ const upload = (path: string, file: File) =>
   superbaseInstance
     .getInstance()
     .storage.from(FLASK_CARD_BUCKET)
-    .upload(path || "public/avatar1.png", file);
+    .upload(path || "public/avatar1.png", file, {
+    contentType: 'audio/mpeg'
+  });
+
+    // .upload('email'+ "/" + "audio.mp3", decode('mp3_file'), {
+    //   contentType: 'audio/mpeg'
+    // }
 
 const deleteOne = async (id: number) =>
   await superbaseInstance
