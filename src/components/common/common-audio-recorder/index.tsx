@@ -4,11 +4,13 @@ import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { memo } from "react";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import { Icons } from "../icons";
-
+// import ff from "@ffmpeg/ffmpeg";
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { fetchFile } from "@ffmpeg/util";
 const SoundPlayer = ({ url }: { url: string }) => {
   return (
     <audio controls>
-      <source src={url} type="audio/webm" />
+      <source src={url} type="audio/mpeg" />
       <source src={url} type="audio/ogg" />
     </audio>
   );
@@ -19,14 +21,24 @@ interface CommonAudioRecorderProps {
   onChange?: (file?: File) => void;
 }
 
+const convertToMP3 = async (blob: Blob) => {
+  // turn blob into a file by ffmpeg in audio/mpeg format
+  const ffmpeg = new FFmpeg();
+  await ffmpeg.load();
+  const data = await fetchFile(blob);
+  await ffmpeg.writeFile("input.wav", data);
+  // // ffmpeg -i audio.avi audio.mp3
+  await ffmpeg.exec(["-i", "input.wav", "audio.mp3"]);
+  const output = await ffmpeg.readFile("audio.mp3");
+  const mp3Blob = new Blob([output], { type: "audio/mpeg" });
+  return new File([mp3Blob], "recorded.mp3", { type: "audio/mpeg" });
+};
+
 const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
-  const onRecordDone = (blob: Blob) => {
-    var file = new File([blob], "recorded.mp3", {
-      type: "audio/webm",
-      lastModified: Date.now(),
-    });
-    console.log("file ", file);
-    props.onChange && props.onChange(file);
+  const onRecordDone = async (blob: Blob) => {
+    const convertedFile = await convertToMP3(blob);
+    console.log("Converted MP3 file: ", convertedFile);
+    props.onChange && props.onChange(convertedFile);
   };
 
   return (
@@ -38,12 +50,12 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
           echoCancellation: true,
         }}
         downloadOnSavePress={false}
-        downloadFileExtension="webm"
+        downloadFileExtension="mp3"
       />
       {props.value && (
         <div id="audio-review">
           {/* <audio controls preload="metadata">
-            <source src={URL.createObjectURL(props.value)} type="audio/webm" />
+            <source src={URL.createObjectURL(props.value)} type="audio/mpeg" />
             <source src={URL.createObjectURL(props.value)} type="audio/ogg" />
             not support
           </audio> */}
@@ -54,19 +66,7 @@ const CommonAudioRecorder = (props: CommonAudioRecorderProps) => {
       )}
       {props.initialValue && (
         <div className="flex">
-          {/* <audio controls preload="metadata">
-            <source
-              src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
-              type="audio/webm"
-            />
-            <source
-              src={getFile(FLASK_CARD_BUCKET, props.initialValue)}
-              type="audio/ogg"
-            />
-            not support
-          </audio> */}
           <SoundPlayer url={getFile(FLASK_CARD_BUCKET, props.initialValue)} />
-
           <button
             type="button"
             onClick={() => props.onChange && props.onChange()}
