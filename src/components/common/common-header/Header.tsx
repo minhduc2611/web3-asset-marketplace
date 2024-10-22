@@ -10,7 +10,8 @@ const Header = () => {
   const path = usePathname();
   const { isLoading, user } = useClientAuthStore();
 
-  const pathNoIconLogo = ["/tinder"];
+  const pathNoIconLogo = ["/tinder", "/components"];
+
   if (isLoading) {
     return <></>;
   }
