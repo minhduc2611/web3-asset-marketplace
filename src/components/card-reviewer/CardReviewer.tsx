@@ -8,12 +8,21 @@ import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
+import { Icons } from "../common/icons";
 
 const SoundPlayer = ({ url }: { url: string }) => {
   return (
-    <audio controls>
-      <source src={url} type="audio/webm" />
-    </audio>
+    <button
+      className="w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const audio = new Audio(url);
+        audio.play();
+      }}
+    >
+      <Icons.play />
+    </button>
   );
 };
 const Card = ({
@@ -62,26 +71,17 @@ const Card = ({
               <hr className="solid my-6" />
               {card.audio_url && (
                 <div
-                  className=""
+                  className="bg-slate-300 h-24 flex items-center justify-center rounded-lg"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
+                    const audio = new Audio(
+                      getFile(FLASK_CARD_BUCKET, card.audio_url || "")
+                    );
+                    audio.play();
                   }}
                 >
-                  {/* <audio controls preload="metadata">
-                    <source
-                      src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
-                      type="audio/webm"
-                    />
-                    <source
-                      src={getFile(FLASK_CARD_BUCKET, card.audio_url)}
-                      type="audio/ogg"
-                    /> 
-                    not support
-                  </audio> */}
-                  <SoundPlayer
-                    url={getFile(FLASK_CARD_BUCKET, card.audio_url)}
-                  />
+                  <Icons.volume2 />
                 </div>
               )}
               <hr className="solid my-6" />
