@@ -31,6 +31,8 @@ import {
   Blocks,
   Car,
   X,
+  Play,
+  Volume2,
 } from "lucide-react";
 
 export const Icons = {
@@ -61,6 +63,8 @@ export const Icons = {
   blocks: Blocks,
   remember: ScrollText,
   book: BookAIcon,
+  play: Play,
+  volume2: Volume2,
   car: Car,
   collections: BookCopy,
   gitHub: ({ ...props }: LucideProps) => (
