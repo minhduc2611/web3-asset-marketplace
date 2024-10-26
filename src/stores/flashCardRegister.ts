@@ -208,10 +208,10 @@ export const useFlashCardRegisterStore = zustandForm.create<
           newInterval = interval * 2; // Double the previous interval
           break;
         case Difficulty.MEDIUM:
-          newInterval = interval; // Keep the same interval
+          newInterval = Math.ceil(interval * 1.5); // Increase by 50%
           break;
         case Difficulty.HARD:
-          newInterval = interval / 2; // Halve the previous interval
+          newInterval = Math.max(Math.ceil(interval * 0.5), 1); // Halve the previous interval
           break;
         default:
           newInterval = interval; // Keep the same interval
@@ -222,7 +222,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       const nextReviewTime = timeUtils
         .dayjs(currentTime)
         .add(newInterval, "minute")
-        .format("YYYY-MM-DD HH:mm:ss");
+        .format("YYYY-MM-DD HH:mm:ssZ");
 
       // Update user card data
       userCardData.interval = newInterval;

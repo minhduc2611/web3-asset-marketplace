@@ -19,10 +19,7 @@ const Header = () => {
   return !pathNoIconLogo.includes(path) ? (
     <header className="bg-base-100 flex justify-between p-2  items-center">
       <div
-        className={cn(
-          path === "/" ? "top-10 left-10" : "top-1 left-1",
-          "flex"
-        )}
+        className={cn(path === "/" ? "top-10 left-10" : "top-1 left-1", "flex")}
       >
         <Logo />
       </div>
@@ -42,7 +39,7 @@ const Header = () => {
           </Link>
         )}
       </div>
-        {user && <AppDrawer />}
+      {user && <AppDrawer />}
     </header>
   ) : (
     <></>

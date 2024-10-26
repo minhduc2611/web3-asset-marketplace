@@ -143,7 +143,7 @@ const CardReviewer = () => {
   } = useFlashCardViewer();
 
   const handleNext = async (flashcardId: number, difficulty: Difficulty) => {
-    updateFlashCardNextReviewTime(flashcardId, difficulty);
+    await updateFlashCardNextReviewTime(flashcardId, difficulty);
     getCurrentFlashCard();
   };
 
