@@ -1,4 +1,3 @@
-import FlashCardViewer from "@/classes/FlashCardViewer";
 import { FormStatus } from "@/enum/common";
 import { Difficulty } from "@/enum/difficulty";
 import { getAuthenticatedUserId } from "@/helpers/auth";
@@ -10,14 +9,13 @@ import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { initUserCardDataModel } from "@/models/user-card-data/userCardDataModel";
 import FlashCardService from "@/services/flashCard";
 import UserCardDataService from "@/services/userCardData";
-import { toast } from "react-toastify";
 
+import { handleError } from "@/lib/utils";
 import {
   arrayToMap,
   flashCardFormStateToAddRequestModel,
   flashCardFormStateToUpdateRequestModel,
 } from "@/transform/flashcard";
-import { handleError } from "@/lib/utils";
 
 export interface FlashCardRegisterState {
   flashCardForm: FlashCardRegisterFormState;
@@ -25,6 +23,7 @@ export interface FlashCardRegisterState {
   flashCardMap: { [key: number]: FlashCardModel };
   isAdminOpen: boolean;
   currentCardId: number;
+  cardReviewed: number;
 }
 
 export interface FlashCardRegisterFormState {
@@ -76,6 +75,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
     flashCardMap: {},
     currentCardId: 0,
     isAdminOpen: false,
+    cardReviewed: 0,
   }),
   actions: (set, get) => {
     const addOneFlashCard = async (collectionId: number, author_id: string) => {
@@ -166,6 +166,8 @@ export const useFlashCardRegisterStore = zustandForm.create<
     const resetFlashCards = () => {
       set({
         flashCardMap: {},
+        cardReviewed: 0,
+        currentCardId: 0,
       });
     };
     const setAdminModal = (boo: boolean) => {
@@ -178,6 +180,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       const { flashCardMap } = get();
       const cards = Object.values(flashCardMap);
       const dueCards = filterAndSortDueCards(cards, Math.random() < 0.3).result;
+      console.log("dueCards", dueCards);
       if (dueCards.length === 0) return;
       set({ currentCardId: dueCards[0].id });
     };
@@ -186,7 +189,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       flashcardId: number,
       difficulty: Difficulty
     ) => {
-      const { flashCardMap } = get();
+      const { flashCardMap, cardReviewed } = get();
       const currentCard = flashCardMap[flashcardId];
       const userCardData =
         currentCard.user_card_datas[0] ||
@@ -199,6 +202,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       switch (difficulty) {
         case Difficulty.SUPER_EASY:
           newInterval = interval < 1000 ? 1440 : interval * 2; // Double the previous interval if less than 1000
+          set({ cardReviewed: cardReviewed + 1 });
           break;
         case Difficulty.EASY:
           newInterval = interval * 2; // Double the previous interval

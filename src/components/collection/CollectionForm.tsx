@@ -29,11 +29,11 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ onAddCollection }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
+    <form onSubmit={handleSubmit} className="mt-4 text-primary">
       <div className="mb-4">
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-primary"
         >
           Collection Name:
         </label>
@@ -42,14 +42,14 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ onAddCollection }) => {
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          className="mt-1 p-2 border border-gray-300 rounded-md w-full text-neutral"
         />
       </div>
 
       <div className="mb-4">
         <label
           htmlFor="description"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-primary"
         >
           Collection Description:
         </label>
@@ -58,7 +58,7 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ onAddCollection }) => {
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          className="mt-1 p-2 border border-gray-300 rounded-md w-full text-neutral"
         />
       </div>
 

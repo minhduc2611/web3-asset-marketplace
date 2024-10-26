@@ -33,7 +33,7 @@ const Uploader: ReactFCC<{
   };
   return (
     <div className="mb-4">
-      <label htmlFor="term" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="term" className="block text-sm font-medium text-primary">
         Upload Image:
       </label>
       {!value && (

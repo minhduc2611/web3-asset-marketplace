@@ -17,11 +17,11 @@ const Header = () => {
   }
 
   return !pathNoIconLogo.includes(path) ? (
-    <header className="h-16 z-50">
+    <header className="bg-base-100 flex justify-between p-2  items-center">
       <div
         className={cn(
           path === "/" ? "top-10 left-10" : "top-1 left-1",
-          "fixed flex"
+          "flex"
         )}
       >
         <Logo />
@@ -30,7 +30,7 @@ const Header = () => {
       <div
         className={cn(
           path === "/" ? "top-10 right-10" : "top-1 right-3",
-          "fixed flex"
+          "flex"
         )}
       >
         {!user && (
@@ -41,8 +41,8 @@ const Header = () => {
             Log in
           </Link>
         )}
-        {user && <AppDrawer />}
       </div>
+        {user && <AppDrawer />}
     </header>
   ) : (
     <></>

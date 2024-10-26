@@ -47,7 +47,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
       >
         <div
           ref={divRef}
-          className="h-full w-full` bg-white pt-8 px-4 rounded-md shadow-md overflow-y-scroll"
+          className="h-full w-full` bg-base-100 text-primary pt-8 px-4 rounded-md shadow-md overflow-y-scroll"
         >
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">FlashCards</h2>

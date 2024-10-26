@@ -21,7 +21,7 @@ const Debugger = ({ onClose }: { onClose: () => void }) => {
   const final = index === 0 ? deck.hasReviewTimeCards : deck.noReviewTimeCards;
   const styles = {
     cardTab:
-      "text-center text-xl font-semibold p-4 border-b border-gray-300 cursor-pointer bg-slate-100",
+      "text-center font-semibold p-2 border-b border-gray-300 cursor-pointer bg-slate-100",
     active: "bg-slate-400",
   };
   return (
@@ -106,15 +106,17 @@ export default function Home({ params }: { params: { id: string } }) {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
+    <main className="flex min-h-screen flex-col items-center justify-between bg-base-100 pt-4">
       {showCardList && <Debugger onClose={() => setShowCardList(false)} />}
-      <button className="absolute top-2 left-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+      <button className="absolute top-12 left-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
         <Link href="/collections" onClick={resetFlashCards}>
           <Icons.chevronLeft />
         </Link>
       </button>
       <div className="w-full p-5">
-        <h1 className="text-3xl font-semibold text-center my-8">Flashcards</h1>
+        <h1 className="text-3xl font-semibold text-primary text-center my-8">
+          Flashcards
+        </h1>
         <CardReviewer />
         <CardRegisterModal collectionId={Number(params?.id)} />
         <Button

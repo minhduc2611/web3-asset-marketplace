@@ -45,7 +45,7 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
           <div className="mb-4">
             <label
               htmlFor="id"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-primary"
             >
               Card Id :
             </label>
@@ -63,7 +63,7 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
         <div className="mb-4">
           <label
             htmlFor="term"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-primary"
           >
             Term:
           </label>
@@ -79,7 +79,7 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
         <div className="mb-4">
           <label
             htmlFor="definition"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-primary"
           >
             Audio:
           </label>
@@ -97,7 +97,7 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
         <div className="mb-4">
           <label
             htmlFor="definition"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-primary"
           >
             Definition:
           </label>
@@ -118,7 +118,7 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
         <button
           onClick={reset}
           type="reset"
-          className="px-4 py-2 text-black rounded-md border ml-2"
+          className="px-4 py-2 text-primary rounded-md border ml-2"
         >
           Reset
         </button>

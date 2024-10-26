@@ -38,15 +38,18 @@ export const filterAndSortDueCards = (
             : new Date().getTime())
       : -1;
   });
-  let result: FlashCardModel[] = [];
+  let result: FlashCardModel[] = hasReviewTimeCards;
   // 30% possibility to show a card without next_review_time
   if (prioritizeNoReviewTimeCard) {
+    console.log("filterAndSortDueCards 1", prioritizeNoReviewTimeCard);
     result = noReviewTimeCards.concat(hasReviewTimeCards);
   }
   if (hasReviewTimeCards.length < 5) {
+    console.log("filterAndSortDueCards 2", hasReviewTimeCards.length);
     result = noReviewTimeCards;
   }
   if (noReviewTimeCards.length < 1) {
+    console.log("filterAndSortDueCards 3", noReviewTimeCards.length);
     result = hasReviewTimeCards;
   }
   return {

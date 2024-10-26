@@ -12,8 +12,8 @@ const ThemeSelector = () => {
         type="checkbox"
         onChange={toggleMode}
       />
-      <Icons.sun className="swap-on fill-current w-10 h-10" />
-      <Icons.moon className="swap-off fill-current w-10 h-10" />
+      <Icons.sun className="swap-on fill-current stroke-primary w-10 h-10" />
+      <Icons.moon className="swap-off fill-primary stroke-primary w-10 h-10" />
     </label>
   );
 };
