@@ -24,6 +24,15 @@ export const filterAndSortDueCards = (
           (interval == null || (interval && interval < 1000));
   });
 
+  const twoMinutesCards = hasReviewTimeCards.filter((card) => {
+    const userCardData = card.user_card_datas[0];
+    if (!userCardData) return false;
+    const next_review_time = userCardData.next_review_time;
+    return next_review_time
+      ? new Date(next_review_time).getTime() - currentTime.getTime() < 120000
+      : false;
+  });
+
   hasReviewTimeCards.sort((a, b) => {
     const a_userCardData = a.user_card_datas[0];
     const b_userCardData = b.user_card_datas[0];
@@ -38,13 +47,13 @@ export const filterAndSortDueCards = (
             : new Date().getTime())
       : -1;
   });
-  let result: FlashCardModel[] = hasReviewTimeCards;
+  let result: FlashCardModel[] = twoMinutesCards;
   // 30% possibility to show a card without next_review_time
   if (prioritizeNoReviewTimeCard) {
     console.log("filterAndSortDueCards 1", prioritizeNoReviewTimeCard);
     result = noReviewTimeCards.concat(hasReviewTimeCards);
   }
-  if (hasReviewTimeCards.length < 5) {
+  if (hasReviewTimeCards.length < 5 || twoMinutesCards.length < 4) {
     console.log("filterAndSortDueCards 2", hasReviewTimeCards.length);
     result = noReviewTimeCards;
   }
