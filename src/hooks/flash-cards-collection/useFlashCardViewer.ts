@@ -1,8 +1,23 @@
 import { useFlashCardRegisterStore } from "@/stores/flashCardRegister";
 
 const useFlashCardViewer = () => {
-  const { values: {flashCardViewer, currentIndex} ,getFlashCards, resetFlashCards, updateCurrentIndex } = useFlashCardRegisterStore();
-  return { flashCardViewer, getFlashCards, resetFlashCards, currentIndex, updateCurrentIndex };
+  const {
+    values: { flashCardMap, currentCardId },
+    getFlashCards,
+    resetFlashCards,
+    updateCurrentIndex,
+    getCurrentFlashCard,
+    updateFlashCardNextReviewTime,
+  } = useFlashCardRegisterStore();
+  return {
+    flashCardMap,
+    getFlashCards,
+    resetFlashCards,
+    currentCardId,
+    updateCurrentIndex,
+    getCurrentFlashCard,
+    updateFlashCardNextReviewTime,
+  };
 };
 
 export default useFlashCardViewer;

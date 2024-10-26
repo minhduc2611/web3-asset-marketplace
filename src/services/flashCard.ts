@@ -17,7 +17,7 @@ const getAll = async (
   const response = await superbaseInstance
     .getInstance()
     .from("cards")
-    .select("*")
+    .select("*, user_card_datas(*)")
     .eq("collection_id", collectionId)
     .order("next_review_time", { ascending: false });
   // .range(0, 20);

@@ -7,79 +7,60 @@ import Link from "next/link";
 
 import timeUtils from "@/helpers/timeUtils";
 import { Button } from "primereact/button";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { filterAndSortDueCards } from "@/helpers/flashcard";
 
 const Debugger = () => {
-  const { currentIndex, flashCardViewer } = useFlashCardViewer();
+  const { flashCardMap, currentCardId } = useFlashCardViewer();
+  const cards = useMemo(() => filterAndSortDueCards(Object.values(flashCardMap), true), [currentCardId]);
   return (
     <div className="absolute top-0 left-0 bg-slate-200 z-50 w-full h-[85%] overflow-scroll">
-      <p className="hidden">{currentIndex}</p>
-      {/* <pre>
-        {JSON.stringify(flashCardViewer, null, 2)}
-        </pre>  */}
-      {flashCardViewer.cards
+      {cards.map((card, index) => {
+        return (
+          <div key={index} className="p-4 border-b border-gray-300">
+            <div
+              className="bg-slate-400 rounded-sm border p-3"
+              dangerouslySetInnerHTML={{ __html: card.term || "" }}
+            ></div>
+            <p className="text-blue-700">
+              - card_id: {card.id} | collection_id: {card.collection_id}
+            </p>
+            <p>
+              {card.user_card_datas.map((userCardData) => {
+                const timeDiff = timeUtils
+                  .dayjs(userCardData.next_review_time)
+                  .diff(timeUtils.dayjs(), "days");
+                // get relative due time
+                const relativeTime = timeUtils
+                  .dayjs(userCardData.next_review_time)
+                  .fromNow();
+                console.log("timeDiff", timeDiff);
+                const colorClass =
+                  timeDiff < 0
+                    ? "text-red-600"
+                    : timeDiff === 0
+                    ? "text-green-600"
+                    : "text-blue-600";
 
-        // sort by next_review_time
-        .sort((a, b) => {
-          // new Date(a.next_review_time).getTime() - new Date(b.next_review_time).getTime()
-          const dateA = a.next_review_time
-            ? new Date(a.next_review_time).getTime()
-            : 0;
-          const dateB = b.next_review_time
-            ? new Date(b.next_review_time).getTime()
-            : 0;
-          return dateA - dateB;
-        })
-        .map((card, index) => {
-          return (
-            <div key={index} className="p-4 border-b border-gray-300">
-              <div
-                className="bg-slate-400 rounded-sm border p-3"
-                dangerouslySetInnerHTML={{ __html: card.term || "" }}
-              ></div>
-              <p className="text-blue-700">
-                - Next review:{" "}
-                {timeUtils
-                  .dayjs(card.next_review_time)
-                  .format("YYYY-MM-DD HH:mm:ssZ[Z]")}
-                {/* next_review_time - now, in minute */}
-              </p>
-              <p>
-                - {" "}
-                {(() => {
-                  if (!card.next_review_time) {
-                    return (
-                      <span className="text-neutral-400">No next review time</span>
-                    );
-                  } else if (
-                    timeUtils
-                      .dayjs(card.next_review_time)
-                      .diff(timeUtils.dayjs(), "days") < 0
-                  ) {
-                    return <span className="text-red-600">Overdue</span>;
-                  } else if (
-                    timeUtils
-                      .dayjs(card.next_review_time)
-                      .diff(timeUtils.dayjs(), "days") === 0
-                  ) {
-                    return <span className="text-green-600">Today</span>;
-                  } else {
-                    return (
-                      <span className="text-blue-600">
-                        Upcoming in{" "}
-                        {timeUtils
-                          .dayjs(card.next_review_time)
-                          .diff(timeUtils.dayjs(), "days")}{" "}
-                        days
-                      </span>
-                    );
-                  }
-                })()}
-              </p>
-              <p>- Interval: {card.interval}</p>
-            </div>
-          );
-        })}
+                const message = timeDiff < 0 ? "Overdue" : "Upcoming in";
+                return (
+                  <>
+                    <p>
+                      Next review time:{" "}
+                      {timeUtils
+                        .dayjs(userCardData.next_review_time)
+                        .format("YYYY-MM-DD HH:mm:ssZ")}
+                    </p>
+                    <p className={colorClass}>
+                      {message} {relativeTime}
+                    </p>
+                  </>
+                );
+              })}
+            </p>
+          </div>
+        );
+      })}
       {/* <JsonViewer value={flashCardViewer} /> */}
     </div>
   );
