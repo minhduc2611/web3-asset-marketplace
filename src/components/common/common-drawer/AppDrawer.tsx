@@ -41,7 +41,7 @@ const AppDrawer = (props: AppDrawerProps) => {
   };
 
   return (
-    <>
+    <div>
       <Image
         onClick={toggleDrawer}
         width={40}
@@ -57,7 +57,7 @@ const AppDrawer = (props: AppDrawerProps) => {
         direction="right"
         className=""
       >
-        <div className="p-5">
+        <div className="p-5 h-full bg-base-100">
           <div className="w-full flex items-center justify-center">
             <label className="swap swap-flip text-4xl">
               <input type="checkbox" />
@@ -149,7 +149,7 @@ const AppDrawer = (props: AppDrawerProps) => {
           </button>
         </div>
       </Drawer>
-    </>
+    </div>
   );
 };
 

@@ -66,7 +66,7 @@ const Card = ({
                     audio.play();
                   }}
                 >
-                  <Icons.volume2 className="cursor-pointer"/>
+                  <Icons.volume2 className="cursor-pointer" />
                 </div>
               )}
               <hr className="solid my-6" />
@@ -141,11 +141,8 @@ const CardReviewer = () => {
     getCurrentFlashCard,
     updateFlashCardNextReviewTime,
   } = useFlashCardViewer();
-  // const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   const handleNext = async (flashcardId: number, difficulty: Difficulty) => {
-    // await flashCardViewer?.updateCard(currentIndex, difficulty);
-    // updateCurrentIndex(flashCardViewer?.getNextIndexToView() || 0);
     updateFlashCardNextReviewTime(flashcardId, difficulty);
     getCurrentFlashCard();
   };
@@ -153,9 +150,9 @@ const CardReviewer = () => {
   return (
     <div className="flex flex-wrap justify-center">
       <div className={`card-wrapper w-full lg:w-[652px]`}>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
-          {/* <CommonProgressBar percentage={flashCardViewer.getPercentage()} /> */}
-        </div>
+        {/* <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+          <CommonProgressBar percentage={flashCardViewer.getPercentage()} />
+        </div> */}
         {size(flashCardMap) > 0 && flashCardMap[currentCardId] && (
           <Card card={flashCardMap[currentCardId]} onNext={handleNext} />
         )}

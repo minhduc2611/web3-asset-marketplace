@@ -54,11 +54,11 @@ const Modal: ReactFCC<{
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="absolute bg-white p-4 rounded-md shadow-md overflow-y-scroll w-full h-full md:w-[600px] md:h-[80vh] ">
+      <div className="absolute bg-base-200 p-4 rounded-md shadow-md overflow-y-scroll w-full h-full md:w-[600px] md:h-[80vh] ">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Add A Collection</h2>
           <button
-            className="px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="px-2 py-1 bg-blue-500 text-primary rounded-md hover:bg-blue-600"
             onClick={onClose}
           >
             <Icons.close />

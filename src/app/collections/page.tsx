@@ -35,7 +35,7 @@ export default function Home() {
   const toast = useRef(null);
 
   return (
-    <main className="min-h-screen p-10 md:px-24">
+    <main className="min-h-screen p-10 md:px-24 bg-base-100 overflow-y-scroll">
       <CollectionRegisterModal />
       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 w-full">
         {collections.map((collection) => {
