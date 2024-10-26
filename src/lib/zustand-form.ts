@@ -57,11 +57,11 @@ const updateGlobalState = (formKey: string, newVals: ValueSetter) => {
   Object.keys(newVals).forEach((key) => {
     set(newOne, key, newVals[key]);
   });
-  console.log("prevState.formMap", prevState.formMap);
+  // console.log("prevState.formMap", prevState.formMap);
 
   prevState.formMap[formKey] = newOne //{ ...prevState.formMap[formKey], ...newOne };
   // prevState.formMap[formKey] = { ...prevState.formMap[formKey], ...newVals };
-  console.log("prevState.formMap[formKey]", prevState.formMap[formKey]);
+  // console.log("prevState.formMap[formKey]", prevState.formMap[formKey]);
   useStore.setState({
     // formValidationMap: prevState.formValidationMap,
     formMap: prevState.formMap,

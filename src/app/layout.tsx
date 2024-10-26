@@ -1,6 +1,5 @@
 import ClientAuthInitiator from "@/components/auth/ClientAuthInitiator";
 import Header from "@/components/common/common-header/Header";
-import Logo from "@/components/common/common-logo/Logo";
 import RecoilProvider from "@/stores";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import dayjs from "dayjs";
@@ -9,9 +8,11 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
-import "react-tooltip/dist/react-tooltip.css";
 import React from "react";
-import { PrimeReactProvider } from "primereact/api";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+import "react-tooltip/dist/react-tooltip.css";
 import "./globals.css";
 
 dayjs.locale("en");
@@ -38,6 +39,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <ToastContainer />
         {user ? (
           <div>
             <ClientAuthInitiator user={user}>
@@ -50,7 +52,7 @@ export default async function RootLayout({
         ) : (
           <div className="h-screen">
             {/* <div
-              className={ twMerge("fixed w-full flex items-center justify-center p-5")}
+              className={ cn("fixed w-full flex items-center justify-center p-5")}
             >
               <Logo />
             </div> */}
