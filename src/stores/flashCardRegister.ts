@@ -162,6 +162,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
       const { flashCardMap } = get();
       const cards = Object.values(flashCardMap);
       const dueCards = filterAndSortDueCards(cards, Math.random() < 0.3);
+      if (dueCards.length === 0) return;
       set({ currentCardId: dueCards[0].id });
     };
     // update flashcard next review time
