@@ -43,5 +43,8 @@ export const filterAndSortDueCards = (
   if (prioritizeNoReviewTimeCard) {
     return noReviewTimeCards.concat(hasReviewTimeCards);
   }
+  if (hasReviewTimeCards.length === 0) {
+    return noReviewTimeCards;
+  }
   return hasReviewTimeCards;
 };
