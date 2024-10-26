@@ -1,7 +1,7 @@
 import { AuthenticationStoreModel } from "@/models/authentication/authenticationStoreModel";
 import superbaseInstance from "@/services/instances/superbaseInstance";
 import { User } from "@supabase/supabase-js";
-import { useMemo } from "react";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 import { create } from "zustand";
 
@@ -13,72 +13,81 @@ interface Methods {
   signInWithPassword: (payload: { email: string; password: string }) => void;
 }
 
-export const useClientAuthStore = create<AuthenticationStoreModel & Methods>(
-  (set) => {
-    const getUser = async () => {
-      set({ isLoading: true });
-      const {
-        data: { user },
-      } = await superbaseInstance.getInstance().auth.getUser();
-      set({ user, isLoading: false });
-    };
-    const logout = async () => {
-      await superbaseInstance.getInstance().auth.signOut();
-      set({ user: null });
-    };
-    const signUp = async (payload: { email: string; password: string }) => {
-      const { email, password } = payload;
+export const useClientAuthStore = create<
+  AuthenticationStoreModel & Methods,
+  [["zustand/persist", unknown]]
+>(
+  persist(
+    (set) => {
+      const getUser = async () => {
+        set({ isLoading: true });
+        const {
+          data: { user },
+        } = await superbaseInstance.getInstance().auth.getUser();
+        set({ user, isLoading: false });
+      };
+      const logout = async () => {
+        await superbaseInstance.getInstance().auth.signOut();
+        set({ user: null });
+      };
+      const signUp = async (payload: { email: string; password: string }) => {
+        const { email, password } = payload;
 
-      const res = await superbaseInstance.getInstance().auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${location.origin}/auth/callback`,
-        },
-      });
-      if (res.error) {
-        throw new Error(res.error.message);
-      }
-      if (!res.data.user) {
-        return;
-      }
-    };
-
-    const signInWithPassword = async (payload: {
-      email: string;
-      password: string;
-    }) => {
-      set({ isLoading: true });
-      const { email, password } = payload;
-      const res = await superbaseInstance
-        .getInstance()
-        .auth.signInWithPassword({
+        const res = await superbaseInstance.getInstance().auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${location.origin}/auth/callback`,
+          },
         });
-      if (res.error) {
-        set({ isLoading: false });
-        throw new Error(res.error.message);
-      }
-      if (!res.data.user) {
-        set({ isLoading: false });
-        return;
-      }
-      set({ user: res.data.user, isLoading: false });
-    };
+        if (res.error) {
+          throw new Error(res.error.message);
+        }
+        if (!res.data.user) {
+          return;
+        }
+      };
 
-    const setUserFromServer = async (user: User) => {
-      set({ user });
-    };
+      const signInWithPassword = async (payload: {
+        email: string;
+        password: string;
+      }) => {
+        set({ isLoading: true });
+        const { email, password } = payload;
+        const res = await superbaseInstance
+          .getInstance()
+          .auth.signInWithPassword({
+            email,
+            password,
+          });
+        if (res.error) {
+          set({ isLoading: false });
+          throw new Error(res.error.message);
+        }
+        if (!res.data.user) {
+          set({ isLoading: false });
+          return;
+        }
+        set({ user: res.data.user, isLoading: false });
+      };
 
-    return {
-      user: null,
-      isLoading: false,
-      getUser,
-      logout,
-      signUp,
-      signInWithPassword,
-      setUserFromServer,
-    };
-  }
+      const setUserFromServer = async (user: User) => {
+        set({ user });
+      };
+
+      return {
+        user: null,
+        isLoading: false,
+        getUser,
+        logout,
+        signUp,
+        signInWithPassword,
+        setUserFromServer,
+      };
+    },
+    {
+      name: "authentication-storage", // name of the item in the storage (must be unique)
+      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+    }
+  )
 );

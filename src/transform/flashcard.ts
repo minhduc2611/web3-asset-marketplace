@@ -1,3 +1,4 @@
+import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import {
   FlashCardAddRequestModel,
   FlashCardUpdateRequestModel,
@@ -8,7 +9,7 @@ import { FlashCardRegisterFormState } from "@/stores/flashCardRegister";
  * from FlashCardRegisterFormState
  * to FlashCardAddRequestModel
  */
-const flashCardFormStateToAddRequestModel = (
+export const flashCardFormStateToAddRequestModel = (
   collectionId: number,
   state: FlashCardRegisterFormState,
   audioUrl?: string
@@ -27,7 +28,7 @@ const flashCardFormStateToAddRequestModel = (
  * from FlashCardRegisterFormState
  * to FlashCardUpdateRequestModel
  */
-const flashCardFormStateToUpdateRequestModel = (
+export const flashCardFormStateToUpdateRequestModel = (
   collectionId: number,
   state: FlashCardRegisterFormState,
   audioUrl?: string
@@ -47,8 +48,9 @@ const flashCardFormStateToUpdateRequestModel = (
   return request;
 };
 
-const FlashCardTransform = {
-  flashCardFormStateToAddRequestModel,
-  flashCardFormStateToUpdateRequestModel,
-};
-export default FlashCardTransform;
+export const arrayToMap = (array: FlashCardModel[]) => {
+  return array.reduce((acc, item) => {
+    acc[item.id] = item;
+    return acc;
+  }, {} as { [key: number]: FlashCardModel });
+}

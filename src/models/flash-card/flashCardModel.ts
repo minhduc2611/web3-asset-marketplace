@@ -1,7 +1,9 @@
 import { Tables } from "@/supabase/database.types";
 import { Builder } from "builder-pattern";
 
-export type FlashCardModel = Tables<'cards'>;
+export type FlashCardModel = Tables<'cards'> & {
+  user_card_datas: Tables<'user_card_datas'>[];
+};
 
 export const initFlashCardModel = () =>
   Builder<FlashCardModel>()

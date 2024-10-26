@@ -28,15 +28,7 @@ export type Database = {
           id?: string
           name?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "public_brain_log_types_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       brain_logs: {
         Row: {
@@ -62,13 +54,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "public_brain_logs_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "public_brain-log_brain_log_type_id_fkey"
             columns: ["brain_log_type_id"]
             isOneToOne: false
@@ -81,6 +66,7 @@ export type Database = {
         Row: {
           audio_url: string | null
           author_id: string | null
+          collaborator_ids: string[]
           collection_id: number | null
           created_at: string
           definition: string | null
@@ -96,6 +82,7 @@ export type Database = {
         Insert: {
           audio_url?: string | null
           author_id?: string | null
+          collaborator_ids?: string[]
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -111,6 +98,7 @@ export type Database = {
         Update: {
           audio_url?: string | null
           author_id?: string | null
+          collaborator_ids?: string[]
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -131,13 +119,6 @@ export type Database = {
             referencedRelation: "collections"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "public_cards_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       collections: {
@@ -148,6 +129,7 @@ export type Database = {
           description: string | null
           id: number
           name: string | null
+          shared_author_ids: string[] | null
         }
         Insert: {
           author_id?: string | null
@@ -156,6 +138,7 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string | null
+          shared_author_ids?: string[] | null
         }
         Update: {
           author_id?: string | null
@@ -164,16 +147,9 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string | null
+          shared_author_ids?: string[] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "public_collections_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       expense_types: {
         Row: {
@@ -223,17 +199,69 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "expenses_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "expenses_expense_type_fkey"
             columns: ["expense_type_id"]
             isOneToOne: false
             referencedRelation: "expense_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      public_users: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          image: string | null
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          image?: string | null
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          image?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
+      user_card_datas: {
+        Row: {
+          card_id: number | null
+          created_at: string
+          id: string
+          interval: number | null
+          next_review_time: string | null
+          user_id: string | null
+        }
+        Insert: {
+          card_id?: number | null
+          created_at?: string
+          id?: string
+          interval?: number | null
+          next_review_time?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          card_id?: number | null
+          created_at?: string
+          id?: string
+          interval?: number | null
+          next_review_time?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_card_datas_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
             referencedColumns: ["id"]
           },
         ]
@@ -334,4 +362,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

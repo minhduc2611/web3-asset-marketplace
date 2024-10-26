@@ -9,32 +9,17 @@ import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewe
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useState } from "react";
 import { Icons } from "../common/icons";
+import { size } from "@/helpers/listUtils";
 
-const SoundPlayer = ({ url }: { url: string }) => {
-  return (
-    <button
-      className="w-10 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const audio = new Audio(url);
-        audio.play();
-      }}
-    >
-      <Icons.play />
-    </button>
-  );
-};
 const Card = ({
   card,
   onNext,
 }: {
   card: FlashCardModel;
-  onNext: (difficulty: Difficulty) => void;
+  onNext: (flashcardId: number, difficulty: Difficulty) => void;
 }) => {
   const [showDefinition, setShowDefinition] = useState(false);
   const [shouldNext, setShouldNext] = useState(false);
-  const [stringModal, setStringModal] = useState("");
   return (
     <>
       <CommonFlipCard
@@ -109,7 +94,7 @@ const Card = ({
           onClick={() => {
             setShowDefinition(false);
             setShouldNext(false);
-            onNext(Difficulty.SUPER_EASY);
+            onNext(card.id, Difficulty.SUPER_EASY);
           }}
         >
           Super Easy {"~1d"}
@@ -120,7 +105,7 @@ const Card = ({
           onClick={() => {
             setShowDefinition(false);
             setShouldNext(false);
-            onNext(Difficulty.EASY);
+            onNext(card.id, Difficulty.EASY);
           }}
         >
           Easy {"~12min"}
@@ -130,7 +115,7 @@ const Card = ({
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
-            onNext(Difficulty.MEDIUM);
+            onNext(card.id, Difficulty.MEDIUM);
             setShouldNext(false);
           }}
         >
@@ -141,7 +126,7 @@ const Card = ({
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
             setShowDefinition(false);
-            onNext(Difficulty.HARD);
+            onNext(card.id, Difficulty.HARD);
             setShouldNext(false);
           }}
         >
@@ -153,28 +138,32 @@ const Card = ({
 };
 
 const CardReviewer = () => {
-  const { currentIndex, flashCardViewer, updateCurrentIndex } =
-    useFlashCardViewer();
+  const {
+    currentCardId,
+    flashCardMap,
+    getCurrentFlashCard,
+    updateFlashCardNextReviewTime,
+  } = useFlashCardViewer();
   // const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
-  const handleNext = async (difficulty: Difficulty) => {
-    await flashCardViewer?.updateCard(currentIndex, difficulty);
-    updateCurrentIndex(flashCardViewer?.getNextIndexToView() || 0);
+  const handleNext = async (flashcardId: number, difficulty: Difficulty) => {
+    // await flashCardViewer?.updateCard(currentIndex, difficulty);
+    // updateCurrentIndex(flashCardViewer?.getNextIndexToView() || 0);
+    updateFlashCardNextReviewTime(flashcardId, difficulty);
+    getCurrentFlashCard();
   };
 
   return (
     <div className="flex flex-wrap justify-center">
       <div className={`card-wrapper w-full lg:w-[652px]`}>
         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
-          <CommonProgressBar percentage={flashCardViewer.getPercentage()} />
+          {/* <CommonProgressBar percentage={flashCardViewer.getPercentage()} /> */}
         </div>
-        {flashCardViewer.cards.length > 0 && (
-          <Card
-            card={flashCardViewer.cards[currentIndex]}
-            onNext={handleNext}
-          />
+        {size(flashCardMap) > 0 && flashCardMap[currentCardId] && (
+          <Card card={flashCardMap[currentCardId]} onNext={handleNext} />
         )}
-        {flashCardViewer.cards.length == 0 && (
+
+        {size(flashCardMap) == 0 && (
           <h5 className="p-10">Please add a card to learn</h5>
         )}
       </div>

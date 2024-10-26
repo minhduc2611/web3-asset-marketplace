@@ -3,7 +3,7 @@ import { useFlashCardRegisterStore } from "@/stores/flashCardRegister";
 
 const useFlashCardAdmin = () => {
   const {
-    values: { currentIndex, flashCardForm, flashCardViewer, isAdminOpen },
+    values: { currentCardId, flashCardForm, flashCardMap, isAdminOpen },
     addOneFlashCard,
     updateOneFlashCard,
     deleteOneFlashCard,
@@ -35,7 +35,7 @@ const useFlashCardAdmin = () => {
   const editCard = (data?: FlashCardModel) => {
     let currentCard: FlashCardModel =
       data === undefined
-        ? flashCardViewer.cards[currentIndex]
+        ? flashCardMap[currentCardId]
         : data;
 
     if (currentCard) {
@@ -48,7 +48,7 @@ const useFlashCardAdmin = () => {
 
   return {
     isAdminOpen,
-    flashCards: flashCardViewer.cards,
+    flashCards: Object.values(flashCardMap),
     flashCardForm,
     formFields,
     editCard,
