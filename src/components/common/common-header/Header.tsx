@@ -2,9 +2,9 @@
 import { useClientAuthStore } from "@/stores/authentication";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { twMerge } from "tailwind-merge";
 import AppDrawer from "@/components/common/common-drawer/AppDrawer";
 import Logo from "@/components/common/common-logo/Logo";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const path = usePathname();
@@ -19,7 +19,7 @@ const Header = () => {
   return !pathNoIconLogo.includes(path) ? (
     <header className="h-16 z-50">
       <div
-        className={twMerge(
+        className={cn(
           path === "/" ? "top-10 left-10" : "top-1 left-1",
           "fixed flex"
         )}
@@ -28,7 +28,7 @@ const Header = () => {
       </div>
 
       <div
-        className={twMerge(
+        className={cn(
           path === "/" ? "top-10 right-10" : "top-1 right-3",
           "fixed flex"
         )}

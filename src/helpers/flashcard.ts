@@ -38,13 +38,20 @@ export const filterAndSortDueCards = (
             : new Date().getTime())
       : -1;
   });
-
+  let result: FlashCardModel[] = [];
   // 30% possibility to show a card without next_review_time
   if (prioritizeNoReviewTimeCard) {
-    return noReviewTimeCards.concat(hasReviewTimeCards);
+    result = noReviewTimeCards.concat(hasReviewTimeCards);
   }
-  if (hasReviewTimeCards.length === 0) {
-    return noReviewTimeCards;
+  if (hasReviewTimeCards.length < 5) {
+    result = noReviewTimeCards;
   }
-  return hasReviewTimeCards;
+  if (noReviewTimeCards.length < 1) {
+    result = hasReviewTimeCards;
+  }
+  return {
+    result,
+    hasReviewTimeCards,
+    noReviewTimeCards,
+  };
 };

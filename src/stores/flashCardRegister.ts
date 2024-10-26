@@ -10,11 +10,14 @@ import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { initUserCardDataModel } from "@/models/user-card-data/userCardDataModel";
 import FlashCardService from "@/services/flashCard";
 import UserCardDataService from "@/services/userCardData";
+import { toast } from "react-toastify";
+
 import {
   arrayToMap,
   flashCardFormStateToAddRequestModel,
   flashCardFormStateToUpdateRequestModel,
 } from "@/transform/flashcard";
+import { handleError } from "@/lib/utils";
 
 export interface FlashCardRegisterState {
   flashCardForm: FlashCardRegisterFormState;
@@ -92,9 +95,14 @@ export const useFlashCardRegisterStore = zustandForm.create<
         { ...flashCardForm, author_id },
         audio_url || flashCardForm.audio_url || undefined
       );
-      await FlashCardService.insertOne(request);
-      collectionId && (await getFlashCards(collectionId));
-      resetForm();
+      const res = await FlashCardService.insertOne(request);
+      handleError(res, {
+        successMessage: "Flashcard added successfully",
+        successCallback: async () => {
+          collectionId && (await getFlashCards(collectionId));
+          resetForm();
+        },
+      });
     };
     const updateCurrentIndex = (index: number) => {
       set({ currentIndex: index });
@@ -120,11 +128,14 @@ export const useFlashCardRegisterStore = zustandForm.create<
         audio_url || flashCardForm.audio_url || undefined
       );
 
-      // console.log("a", flashCardForm);
-      console.log("request", request);
-      await FlashCardService.updateOne(request);
-      collectionId && (await updateFlashCards(collectionId));
-      resetForm();
+      const res = await FlashCardService.updateOne(request);
+      handleError(res, {
+        successMessage: "Flashcard updated successfully",
+        successCallback: async () => {
+          collectionId && (await updateFlashCards(collectionId));
+          resetForm();
+        },
+      });
     };
     const getFlashCards = async (collectionId: number) => {
       const { data } = await FlashCardService.getAll(collectionId);
@@ -138,9 +149,14 @@ export const useFlashCardRegisterStore = zustandForm.create<
       }
     };
     const deleteOneFlashCard = async (collectionId: number, id: number) => {
-      await FlashCardService.deleteOne(id);
-      collectionId && (await updateFlashCards(collectionId));
-      resetForm();
+      const res = await FlashCardService.deleteOne(id);
+      handleError(res, {
+        successMessage: "Flashcard deleted successfully",
+        successCallback: async () => {
+          collectionId && (await updateFlashCards(collectionId));
+          resetForm();
+        },
+      });
     };
     const resetForm = () => {
       set({
@@ -161,7 +177,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
     const getCurrentFlashCard = () => {
       const { flashCardMap } = get();
       const cards = Object.values(flashCardMap);
-      const dueCards = filterAndSortDueCards(cards, Math.random() < 0.3);
+      const dueCards = filterAndSortDueCards(cards, Math.random() < 0.3).result;
       if (dueCards.length === 0) return;
       set({ currentCardId: dueCards[0].id });
     };

@@ -56,7 +56,7 @@ const Card = ({
               <hr className="solid my-6" />
               {card.audio_url && (
                 <div
-                  className="bg-slate-300 h-24 flex items-center justify-center rounded-lg"
+                  className=" h-12 flex items-center justify-center rounded-lg"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -66,7 +66,7 @@ const Card = ({
                     audio.play();
                   }}
                 >
-                  <Icons.volume2 />
+                  <Icons.volume2 className="cursor-pointer"/>
                 </div>
               )}
               <hr className="solid my-6" />
@@ -85,9 +85,6 @@ const Card = ({
         }}
       />
       <div className="flex justify-center gap-1">
-        {/* {stringModal} | {card.definition} | */}
-        {/* {stringModal && card.definition?.includes(stringModal) ? 't': 'f'}
-        <input value={stringModal} onChange={e => setStringModal(e.target.value)} /> */}
         <button
           disabled={!shouldNext}
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
