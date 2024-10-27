@@ -2,11 +2,12 @@ import dayjs from "dayjs";
 import "dayjs/locale/en";
 import "dayjs/locale/fi";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { getLang } from "./languageUtils";
 
 class TimeUtils {
   dayjs = dayjs;
   constructor() {
-    dayjs.locale("fi");
+    dayjs.locale(getLang());
     dayjs.extend(relativeTime);
   }
 }
