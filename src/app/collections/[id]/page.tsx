@@ -60,12 +60,11 @@ const Debugger = ({ onClose }: { onClose: () => void }) => {
                 {card.user_card_datas.map((userCardData) => {
                   const timeDiff = timeUtils
                     .dayjs(userCardData.next_review_time)
-                    .diff(timeUtils.dayjs(), "days");
+                    .diff(timeUtils.dayjs(), "hours");
                   // get relative due time
                   const relativeTime = timeUtils
                     .dayjs(userCardData.next_review_time)
                     .fromNow();
-                  console.log("timeDiff", timeDiff);
                   const colorClass =
                     timeDiff < 0
                       ? "text-red-600"
@@ -73,7 +72,7 @@ const Debugger = ({ onClose }: { onClose: () => void }) => {
                       ? "text-green-600"
                       : "text-blue-600";
 
-                  const message = timeDiff < 0 ? "Overdue" : "Upcoming in";
+                  const message = timeDiff < 0 ? "Overdue" : "Upcoming";
                   return (
                     <>
                       <p>
@@ -125,7 +124,7 @@ export default function Home({ params }: { params: { id: string } }) {
           }`}
           onClick={() => setShowCardList(!showCardList)}
         >
-          <Icons.collections />
+          <Icons.collections className="fill-primary-content stroke-primary" />
         </Button>
       </div>
     </main>

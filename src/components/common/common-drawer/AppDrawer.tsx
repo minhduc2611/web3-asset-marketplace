@@ -40,6 +40,48 @@ const AppDrawer = (props: AppDrawerProps) => {
     router.refresh();
   };
 
+  const routes = [
+    // {
+    //   name: "Learn",
+    //   icon: <Icons.book className="mr-4" />,
+    //   href: "/learn",
+    // },
+    // {
+    //   name: "Brain Log",
+    //   icon: <Icons.remember className="mr-4" />,
+    //   href: "/brain-log",
+    // },
+    {
+      name: "Flash cards",
+      icon: <Icons.collections className="mr-4" />,
+      href: "/collections",
+    },
+    // {
+    //   name: "Expenses & Finance",
+    //   icon: <Icons.billing className="mr-4" />,
+    //   href: "/expenses",
+    // },
+    // {
+    //   name: "Curriculum Crafting",
+    //   icon: <Icons.capperboard className="mr-4" />,
+    //   href: "/projects",
+    // },
+    // {
+    //   name: "Projects",
+    //   icon: <Icons.blocks className="mr-4" />,
+    //   href: "/projects",
+    // },
+    // {
+    //   name: "Drive",
+    //   icon: <Icons.car className="mr-4" />,
+    //   href: "/car",
+    // },
+    // {
+    //   name: "Setting",
+    //   icon: <Icons.settings className="mr-4" />,
+    //   href: "/settings",
+    // },
+  ];
   return (
     <div>
       <Image
@@ -78,71 +120,26 @@ const AppDrawer = (props: AppDrawerProps) => {
           <div className="divider"></div>
 
           <ThemeSelector />
-          <Link
+          {/* <Link
             onClick={close}
             href="/learn"
             className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
           >
             <Icons.book className="mr-4" />
             Learn
-          </Link>
-          <Link
-            onClick={close}
-            href="/brain-log"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.remember className="mr-4" />
-            Brain Log
-          </Link>
-          <Link
-            onClick={close}
-            href="/collections"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.collections className="mr-4" />
-            Flash cards
-          </Link>
-          <Link
-            onClick={close}
-            href="/expenses"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.billing className="mr-4" />
-            Expenses & Finance
-          </Link>
-          <Link
-            onClick={close}
-            href="/projects"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.capperboard className="mr-4" />
-            Curriculum Crafting
-          </Link>
-          <Link
-            onClick={close}
-            href="/projects"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.blocks className="mr-4" />
-            Projects
-          </Link>
-          <Link
-            onClick={close}
-            href="/car"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.car className="mr-4" />
-            Drive
-          </Link>
-          <div className="divider"></div>
-          <Link
-            onClick={close}
-            href="/settings"
-            className="w-full flex mt-3 text-left font-medium text-gray-500 hover:text-gray-800"
-          >
-            <Icons.settings className="mr-4" />
-            Setting
-          </Link>
+          </Link> */}
+
+          {routes.map((route, index) => (
+            <Link
+              key={index}
+              onClick={close}
+              href={route.href}
+              className="w-full flex mt-3 text-left font-medium text-primary hover:text-primary-700"
+            >
+              {route.icon}
+              {route.name}
+            </Link>
+          ))}
           <div className="divider"></div>
           <button type="button" onClick={handleLogout} className="btn w-full">
             Logout
