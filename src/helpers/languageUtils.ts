@@ -1,4 +1,8 @@
 export function getLang() {
-  if (navigator.languages != undefined) return navigator.languages[0];
-  return navigator.language;
+  if (typeof window !== "undefined") {
+    if (window.navigator.languages != undefined)
+      return window.navigator.languages[0];
+    return window.navigator.language;
+  }
+  return "en";
 }
