@@ -10,9 +10,10 @@
 - [x] Flashcard - Space repitition algorithm applied
 - [x] Flashcard - Shaditable (share and edit) Packs and Cards
 - [ ] Flashcard - Realtime collaboration
+- [ ] Flashcard - Drawing canvas
+- [ ] Flashcard - AI intergration
 - [ ] UX upgrade
 - [ ] Repo structure upgrade
-- [ ] Brain Log - AI intergration
 - [ ] MK Learn - Create Video Lessons
 - [ ] MK Learn - Create Video Lessons versioning
 - [ ] MK Learn - Create Curriculum
