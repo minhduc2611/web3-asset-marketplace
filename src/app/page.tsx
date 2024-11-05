@@ -40,6 +40,8 @@ export default function Home() {
         <p>Something</p>
         <ReactTypingEffect
           text={["Extraordinary", "Robust", "Extremely Fast"]}
+          speed={70}
+          eraseSpeed={50}
         />
       </div>
     </main>
