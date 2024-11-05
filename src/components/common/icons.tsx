@@ -37,9 +37,11 @@ import {
   User,
   Volume2,
   X,
+  Eye,
 } from "lucide-react";
 
 export const Icons = {
+  eye: Eye,
   checkCircle: CheckCircle,
   clock: Clock,
   alert: AlertCircle,

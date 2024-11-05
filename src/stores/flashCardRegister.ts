@@ -186,10 +186,10 @@ export const useFlashCardRegisterStore = zustandForm.create<
     };
     // get current flashcard
     const getCurrentFlashCard = () => {
-      const { flashCardMap } = get();
+      const { flashCardMap, newCardReviewedToday, userSettings:  { newCardADay } } = get();
       const cards = Object.values(flashCardMap);
       const dueCards = filterAndSortDueCards(cards, {
-        prioritizeNoReviewTimeCard: Math.random() < 0.3,
+        prioritizeNoReviewTimeCard: newCardReviewedToday < newCardADay ? Math.random() < 0.5 : Math.random() < 0.3,
       }).result;
       console.log("dueCards", dueCards);
       if (dueCards.length === 0) return;

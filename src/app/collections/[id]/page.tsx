@@ -147,7 +147,7 @@ export default function Home({ params }: { params: { id: string } }) {
               data-tooltip-id="totalNotDue"
               data-tooltip-content="New Card"
             >
-              <Icons.clock size={20} />
+              <Icons.eye size={20} />
               {totalNotDue}
             </span>
             <Tooltip id="totalNotDue" place={"top"} className="z-50" />
@@ -157,7 +157,7 @@ export default function Home({ params }: { params: { id: string } }) {
               data-tooltip-id="totalOverdue"
               data-tooltip-content={"Overdue"}
             >
-              <Icons.alert size={20} />
+              <Icons.clock size={20} />
               {totalDue}
             </span>
             <Tooltip id="totalOverdue" place={"top"} className="z-50" />
