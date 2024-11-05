@@ -1,29 +1,55 @@
 "use client";
-import { useClientAuthStore } from "@/stores/authentication";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import AppDrawer from "@/components/common/common-drawer/AppDrawer";
 import Logo from "@/components/common/common-logo/Logo";
 import { cn } from "@/lib/utils";
+import { useClientAuthStore } from "@/stores/authentication";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useDeviceSelectors } from "react-device-detect";
+import { Icons } from "../icons";
 
 const Header = () => {
   const path = usePathname();
+  const router = useRouter();
   const { isLoading, user } = useClientAuthStore();
+  const [selectors] = useDeviceSelectors(
+    typeof window !== undefined ? window.navigator.userAgent : ""
+  );
 
+  const { isMobile } = selectors;
   const pathNoIconLogo = ["/tinder", "/components"];
-
   if (isLoading) {
     return <></>;
   }
-
+  const showBackButton = isMobile && path !== "/";
   return !pathNoIconLogo.includes(path) ? (
     <header className="bg-base-100 flex justify-between p-2  items-center">
       <div
-        className={cn(path === "/" ? "top-10 left-10" : "top-1 left-1", "flex")}
+        className={cn(
+          path === "/" ? "top-10 left-10" : "",
+          "flex",
+          " flex justify-between items-center"
+        )}
       >
-        <Logo />
+        {showBackButton ? (
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={() => {
+              // going back, ex: /collections/1 -> /collections; /collections -> /; / -> /; /tinder -> /; /products/1 -> /products
+              const pathArr = path.split("/");
+              pathArr.pop();
+              const newPath = pathArr.join("/");
+              const final = newPath === "" ? "/" : newPath;
+              router.push(final);
+            }}
+          >
+            <Icons.chevronLeft />
+          </button>
+        ) : (
+          <Logo />
+        )}
       </div>
-
+      {showBackButton && <Logo />}
       <div
         className={cn(
           path === "/" ? "top-10 right-10" : "top-1 right-3",

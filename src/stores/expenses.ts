@@ -1,4 +1,3 @@
-import FlashCardViewer from "@/classes/FlashCardViewer";
 import { ExpenseStoreModel } from "@/models/expense/expenseStoreModel";
 import {
   FlashCardAddRequestModel,
@@ -27,7 +26,7 @@ export const useExpenseStore = create<ExpenseStoreModel & any>((set: any) => {
     data &&
       set((state: any) => ({
         ...state,
-        flashCardViewer: new FlashCardViewer(data),
+        // flashCardViewer: new FlashCardViewer(data),
       }));
   };
 

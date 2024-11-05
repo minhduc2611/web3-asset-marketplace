@@ -1,4 +1,3 @@
-import FlashCardViewer from "@/classes/FlashCardViewer";
 import { ExpenseModel } from "./expenseModel";
 
 

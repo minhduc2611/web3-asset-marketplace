@@ -1,8 +1,13 @@
+import { Difficulty } from "@/enum/difficulty";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
+import timeUtils from "./timeUtils";
 
 export const filterAndSortDueCards = (
   cards: FlashCardModel[],
-  prioritizeNoReviewTimeCard: boolean
+  options: {
+    prioritizeNoReviewTimeCard: boolean,
+    newCardADay?: number,
+  }
 ) => {
   const currentTime = new Date();
   const dueCards = [...cards];
@@ -49,8 +54,8 @@ export const filterAndSortDueCards = (
   });
   let result: FlashCardModel[] = twoMinutesCards;
   // 30% possibility to show a card without next_review_time
-  if (prioritizeNoReviewTimeCard) {
-    console.log("filterAndSortDueCards 1", prioritizeNoReviewTimeCard);
+  if (options.prioritizeNoReviewTimeCard) {
+    console.log("filterAndSortDueCards 1", options.prioritizeNoReviewTimeCard);
     result = noReviewTimeCards.concat(hasReviewTimeCards);
   }
   if (hasReviewTimeCards.length < 5 || twoMinutesCards.length < 4) {
@@ -66,4 +71,43 @@ export const filterAndSortDueCards = (
     hasReviewTimeCards,
     noReviewTimeCards,
   };
+};
+
+export const calculateNextReviewTime = (currentInterval: number, difficulty: Difficulty) => {
+  const A_DAY = 1440;
+  let newInterval: number;
+  const currentTime = new Date();
+
+  switch (difficulty) {
+    case Difficulty.SUPER_EASY:
+      newInterval = currentInterval < A_DAY * 2 ? A_DAY * 2 : currentInterval * 2; // Double the previous interval if less than 1000
+      break;
+    case Difficulty.EASY:
+      newInterval = currentInterval < A_DAY ? A_DAY : currentInterval * 2; // Double the previous interval if less than 1000
+      break;
+    case Difficulty.MEDIUM:
+      newInterval = Math.ceil(currentInterval * 2); // Increase by 50%
+      break;
+    case Difficulty.HARD:
+      newInterval = Math.max(Math.ceil(currentInterval * 0.5), 1); // Halve the previous interval
+      break;
+    default:
+      newInterval = currentInterval; // Keep the same interval
+      break;
+  }
+
+  // Calculate next review time
+  const nextReviewTime = timeUtils
+    .dayjs(currentTime)
+    .add(newInterval, "minute")
+    .format("YYYY-MM-DD HH:mm:ssZ");
+    // Calculate next review time
+    const { unit, timeDiffFromNow } = timeUtils.calculateTimeDiff(nextReviewTime);
+
+    return {
+      nextReviewTime,
+      newInterval,
+      timeDiffFromNow,
+      unit,
+    }
 };

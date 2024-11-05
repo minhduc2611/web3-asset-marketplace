@@ -9,16 +9,15 @@ import { filterAndSortDueCards } from "@/helpers/flashcard";
 import timeUtils from "@/helpers/timeUtils";
 import { cn } from "@/lib/utils";
 import { Button } from "primereact/button";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
+import { Tooltip } from "react-tooltip";
 
 const Debugger = ({ onClose }: { onClose: () => void }) => {
   const [index, setIndex] = useState(0);
-  const { flashCardMap, currentCardId } = useFlashCardViewer();
-  const deck = useMemo(
-    () => filterAndSortDueCards(Object.values(flashCardMap), true),
-    [currentCardId]
-  );
-  const final = index === 0 ? deck.hasReviewTimeCards : deck.noReviewTimeCards;
+  const { deckInfo } = useFlashCardViewer();
+
+  const final =
+    index === 0 ? deckInfo.hasReviewTimeCards : deckInfo.noReviewTimeCards;
   const styles = {
     cardTab:
       "text-center font-semibold p-2 border-b border-gray-300 cursor-pointer bg-slate-100",
@@ -98,7 +97,26 @@ const Debugger = ({ onClose }: { onClose: () => void }) => {
 export default function Home({ params }: { params: { id: string } }) {
   const [showCardList, setShowCardList] = useState(false);
 
-  const { getFlashCards, resetFlashCards } = useFlashCardViewer();
+  const {
+    deckInfo,
+    flashCardMap,
+    newCardReviewedToday,
+    getFlashCards,
+    resetFlashCards,
+  } = useFlashCardViewer();
+
+  const total = useMemo(
+    () => Object.values(flashCardMap).length,
+    [flashCardMap]
+  );
+  const totalDue = useMemo(
+    () => deckInfo.hasReviewTimeCards.length,
+    [deckInfo]
+  );
+  const totalNotDue = useMemo(
+    () => deckInfo.noReviewTimeCards.length,
+    [deckInfo]
+  );
 
   useEffect(() => {
     Number.isInteger(Number(params?.id)) && getFlashCards(Number(params?.id));
@@ -107,15 +125,52 @@ export default function Home({ params }: { params: { id: string } }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between bg-base-100 pt-4">
       {showCardList && <Debugger onClose={() => setShowCardList(false)} />}
-      <button className="absolute top-12 left-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+      {/* <button className="absolute top-12 left-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
         <Link href="/collections" onClick={resetFlashCards}>
           <Icons.chevronLeft />
         </Link>
-      </button>
+      </button> */}
       <div className="w-full p-5">
-        <h1 className="text-3xl font-semibold text-primary text-center my-8">
-          Flashcards
-        </h1>
+        <div className="text-xl font-semibold text-primary text-center my-2 flex justify-between">
+          <span
+            className="flex gap-2 items-center"
+            data-tooltip-id="newCardReviewedToday"
+            data-tooltip-content="New Card Reviewed Today"
+          >
+            <Icons.checkCircle size={20} className="text-primary" />
+            {newCardReviewedToday}/30
+          </span>
+          <Tooltip id="newCardReviewedToday" place={"top"} className="z-50" />
+          <span className="flex gap-2">
+            <span
+              className="text-emerald-500 flex gap-2 items-center"
+              data-tooltip-id="totalNotDue"
+              data-tooltip-content="New Card"
+            >
+              <Icons.clock size={20} />
+              {totalNotDue}
+            </span>
+            <Tooltip id="totalNotDue" place={"top"} className="z-50" />
+
+            <span
+              className="text-red-400 flex gap-2 items-center"
+              data-tooltip-id="totalOverdue"
+              data-tooltip-content={"Overdue"}
+            >
+              <Icons.alert size={20} />
+              {totalDue}
+            </span>
+            <Tooltip id="totalOverdue" place={"top"} className="z-50" />
+            <span
+              className="flex gap-2 items-center"
+              data-tooltip-id="total-flash-card"
+              data-tooltip-content={"Total Cards"}
+            >
+              <Icons.layers size={20} /> {total}
+            </span>
+            <Tooltip id="total-flash-card" place={"top"} className="z-50" />
+          </span>
+        </div>
         <CardReviewer />
         <CardRegisterModal collectionId={Number(params?.id)} />
         <Button
