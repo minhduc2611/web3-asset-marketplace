@@ -86,10 +86,10 @@ export const calculateNextReviewTime = (currentInterval: number, difficulty: Dif
       newInterval = currentInterval < A_DAY ? A_DAY : currentInterval * 2; // Double the previous interval if less than 1000
       break;
     case Difficulty.MEDIUM:
-      newInterval = Math.ceil(currentInterval * 2); // Increase by 50%
+      newInterval = Math.ceil(currentInterval * 4);
       break;
     case Difficulty.HARD:
-      newInterval = Math.max(Math.ceil(currentInterval * 0.5), 1); // Halve the previous interval
+      newInterval = Math.max(Math.ceil(currentInterval * 0.5), 2); // Halve the previous interval
       break;
     default:
       newInterval = currentInterval; // Keep the same interval

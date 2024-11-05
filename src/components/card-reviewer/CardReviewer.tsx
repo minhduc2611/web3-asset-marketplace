@@ -7,9 +7,10 @@ import { Difficulty } from "@/enum/difficulty";
 import { getFile } from "@/helpers/imageUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icons } from "../common/icons";
 import { size } from "@/helpers/listUtils";
+import { calculateNextReviewTime } from "@/helpers/flashcard";
 
 const Card = ({
   card,
@@ -20,6 +21,21 @@ const Card = ({
 }) => {
   const [showDefinition, setShowDefinition] = useState(false);
   const [shouldNext, setShouldNext] = useState(false);
+
+  const nextReviewTime = useMemo(() => {
+    const userCardData = card.user_card_datas[0];
+    const interval = userCardData?.interval || 1;
+    const superEasy = calculateNextReviewTime(interval, Difficulty.SUPER_EASY);
+    const easy = calculateNextReviewTime(interval, Difficulty.EASY);
+    const medium = calculateNextReviewTime(interval, Difficulty.MEDIUM);
+    const hard = calculateNextReviewTime(interval, Difficulty.HARD);
+    return {
+      [Difficulty.SUPER_EASY]: `${superEasy.timeDiffFromNow} ${superEasy.unit}`,
+      [Difficulty.EASY]: `${easy.timeDiffFromNow} ${easy.unit}`,
+      [Difficulty.MEDIUM]: `${medium.timeDiffFromNow} ${medium.unit}`,
+      [Difficulty.HARD]: `${hard.timeDiffFromNow} ${hard.unit}`,
+    };
+  }, [card.id]);
   return (
     <>
       <CommonFlipCard
@@ -84,8 +100,26 @@ const Card = ({
           );
         }}
       />
-      <div className="flex justify-center gap-1">
-        <button
+      <div className="grid grid-cols-2 gap-1 p-2">
+        {/* map Difficulty */}
+        {Object.keys(nextReviewTime).map((key) => {
+          return (
+            <div key={key}>
+              <button
+                className={`w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300`}
+                disabled={!shouldNext}
+                onClick={() => {
+                  setShowDefinition(false);
+                  setShouldNext(false);
+                  onNext(card.id, key as Difficulty);
+                }}
+              >
+                {key} {`~${nextReviewTime[key as Difficulty]}`}
+              </button>
+            </div>
+          );
+        })}
+        {/* <button
           disabled={!shouldNext}
           className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
           onClick={() => {
@@ -94,7 +128,7 @@ const Card = ({
             onNext(card.id, Difficulty.SUPER_EASY);
           }}
         >
-          Super Easy {"~1d"}
+          Super Easy {`~${nextReviewTime[Difficulty.SUPER_EASY]}`}
         </button>
         <button
           disabled={!shouldNext}
@@ -105,7 +139,7 @@ const Card = ({
             onNext(card.id, Difficulty.EASY);
           }}
         >
-          Easy {"~12min"}
+          Easy {`~${nextReviewTime[Difficulty.EASY]}`}
         </button>
         <button
           disabled={!shouldNext}
@@ -116,7 +150,7 @@ const Card = ({
             setShouldNext(false);
           }}
         >
-          Medium {"~9min"}
+          Medium {`~${nextReviewTime[Difficulty.MEDIUM]}`}
         </button>
         <button
           disabled={!shouldNext}
@@ -127,8 +161,8 @@ const Card = ({
             setShouldNext(false);
           }}
         >
-          Hard {"~2min"}
-        </button>
+          Hard {`~${nextReviewTime[Difficulty.HARD]}`}
+        </button> */}
       </div>
     </>
   );

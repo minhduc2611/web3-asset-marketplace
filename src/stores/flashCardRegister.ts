@@ -29,7 +29,7 @@ export interface FlashCardRegisterState {
   newCardReviewedToday: number;
   userSettings: {
     newCardADay: number;
-  }
+  };
 }
 
 export interface FlashCardRegisterFormState {
@@ -84,7 +84,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
     newCardReviewedToday: 0,
     userSettings: {
       newCardADay: 30, // todo: get from user settings
-    }
+    },
   }),
   actions: (set, get) => {
     const addOneFlashCard = async (collectionId: number, author_id: string) => {
@@ -186,10 +186,17 @@ export const useFlashCardRegisterStore = zustandForm.create<
     };
     // get current flashcard
     const getCurrentFlashCard = () => {
-      const { flashCardMap, newCardReviewedToday, userSettings:  { newCardADay } } = get();
+      const {
+        flashCardMap,
+        newCardReviewedToday,
+        userSettings: { newCardADay },
+      } = get();
       const cards = Object.values(flashCardMap);
       const dueCards = filterAndSortDueCards(cards, {
-        prioritizeNoReviewTimeCard: newCardReviewedToday < newCardADay ? Math.random() < 0.5 : Math.random() < 0.3,
+        prioritizeNoReviewTimeCard:
+          newCardReviewedToday < newCardADay / 2
+            ? Math.random() < 0.7
+            : Math.random() < 0.3,
       }).result;
       console.log("dueCards", dueCards);
       if (dueCards.length === 0) return;
@@ -198,7 +205,7 @@ export const useFlashCardRegisterStore = zustandForm.create<
 
     const updateNewCardReviewedToday = () => {
       set({ newCardReviewedToday: get().newCardReviewedToday + 1 });
-    }
+    };
     // update flashcard next review time
     const updateFlashCardNextReviewTime = async (
       flashcardId: number,
