@@ -2,7 +2,10 @@ import { FormStatus } from "@/enum/common";
 import { Difficulty } from "@/enum/difficulty";
 import { getAuthenticatedUserId } from "@/helpers/auth";
 import { generateUniqueFileName } from "@/helpers/fileUtils";
-import { filterAndSortDueCards } from "@/helpers/flashcard";
+import {
+  calculateNextReviewTime,
+  filterAndSortDueCards,
+} from "@/helpers/flashcard";
 import timeUtils from "@/helpers/timeUtils";
 import { zustandForm } from "@/lib/zustand-form";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
@@ -23,7 +26,10 @@ export interface FlashCardRegisterState {
   flashCardMap: { [key: number]: FlashCardModel };
   isAdminOpen: boolean;
   currentCardId: number;
-  cardReviewed: number;
+  newCardReviewedToday: number;
+  userSettings: {
+    newCardADay: number;
+  }
 }
 
 export interface FlashCardRegisterFormState {
@@ -75,7 +81,10 @@ export const useFlashCardRegisterStore = zustandForm.create<
     flashCardMap: {},
     currentCardId: 0,
     isAdminOpen: false,
-    cardReviewed: 0,
+    newCardReviewedToday: 0,
+    userSettings: {
+      newCardADay: 30, // todo: get from user settings
+    }
   }),
   actions: (set, get) => {
     const addOneFlashCard = async (collectionId: number, author_id: string) => {
@@ -179,51 +188,39 @@ export const useFlashCardRegisterStore = zustandForm.create<
     const getCurrentFlashCard = () => {
       const { flashCardMap } = get();
       const cards = Object.values(flashCardMap);
-      const dueCards = filterAndSortDueCards(cards, Math.random() < 0.3).result;
+      const dueCards = filterAndSortDueCards(cards, {
+        prioritizeNoReviewTimeCard: Math.random() < 0.3,
+      }).result;
       console.log("dueCards", dueCards);
       if (dueCards.length === 0) return;
       set({ currentCardId: dueCards[0].id });
     };
+
+    const updateNewCardReviewedToday = () => {
+      set({ newCardReviewedToday: get().newCardReviewedToday + 1 });
+    }
     // update flashcard next review time
     const updateFlashCardNextReviewTime = async (
       flashcardId: number,
       difficulty: Difficulty
     ) => {
-      const { flashCardMap, cardReviewed } = get();
+      const { flashCardMap } = get();
       const currentCard = flashCardMap[flashcardId];
+
+      if (!currentCard.next_review_time) {
+        updateNewCardReviewedToday();
+      }
+
       const userCardData =
         currentCard.user_card_datas[0] ||
         initUserCardDataModel(getAuthenticatedUserId() || "", currentCard.id);
       const interval = userCardData.interval || 1;
-      const currentTime = new Date();
-      let newInterval: number;
 
       // Base interval multiplier logic
-      switch (difficulty) {
-        case Difficulty.SUPER_EASY:
-          newInterval = interval < 1000 ? 1440 : interval * 2; // Double the previous interval if less than 1000
-          set({ cardReviewed: cardReviewed + 1 });
-          break;
-        case Difficulty.EASY:
-          newInterval = interval * 2; // Double the previous interval
-          break;
-        case Difficulty.MEDIUM:
-          newInterval = Math.ceil(interval * 1.5); // Increase by 50%
-          break;
-        case Difficulty.HARD:
-          newInterval = Math.max(Math.ceil(interval * 0.5), 1); // Halve the previous interval
-          break;
-        default:
-          newInterval = interval; // Keep the same interval
-          break;
-      }
-
-      // Calculate next review time
-      const nextReviewTime = timeUtils
-        .dayjs(currentTime)
-        .add(newInterval, "minute")
-        .format("YYYY-MM-DD HH:mm:ssZ");
-
+      const { newInterval, nextReviewTime } = calculateNextReviewTime(
+        interval,
+        difficulty
+      );
       // Update user card data
       userCardData.interval = newInterval;
       userCardData.next_review_time = nextReviewTime;
