@@ -1,18 +1,20 @@
 import { cn } from "@/lib/utils";
 import { Color } from "@tiptap/extension-color";
 import HighLight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import Link from "@tiptap/extension-link";
 import { BubbleMenu, Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import debounce from "lodash.debounce";
 import React, { useEffect, useImperativeHandle } from "react";
 import "./tiptap.scss";
+import { isImage } from "@/helpers/fileUtils";
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
+  onMediaAttached?: (file: File) => void;
 };
 export type TipTapEditorHandle = {
   setContent: (text: string) => void;
@@ -20,7 +22,7 @@ export type TipTapEditorHandle = {
 };
 // eslint-disable-next-line react/display-name
 const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
-  ({ value, onChange }, ref) => {
+  ({ value, onChange, onMediaAttached }, ref) => {
     const debounceChange = debounce((val) => onChange(val), 300);
     const editor = useEditor({
       extensions: [
@@ -51,7 +53,6 @@ const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
       onChange(editor?.getHTML() || "");
     }, [editor?.getHTML()]);
 
-    editor?.getHTML();
     return (
       <>
         {editor && (
@@ -59,7 +60,19 @@ const TipTapEditor = React.forwardRef<TipTapEditorHandle | null, Props>(
             <MenuBar editor={editor} />
           </BubbleMenu>
         )}
-        <EditorContent editor={editor} />
+        <EditorContent
+          onPasteCapture={(event) => {
+            console.log("onPasteCapture", event.clipboardData.files);
+            if (event.clipboardData.files.length > 0) {
+              const file = event.clipboardData.files[0];
+              // check if the file is an image
+              if (isImage(file)) {
+                onMediaAttached?.(file);
+              }
+            }
+          }}
+          editor={editor}
+        />
       </>
     );
   }
@@ -72,18 +85,16 @@ const LinkTool = ({ editor }: { editor: Editor }) => {
       <input value={url} onChange={(e) => setUrl(e.target.value)} type="text" />
       <button
         type="button"
-        onClick={() =>
-          {
-            editor
+        onClick={() => {
+          editor
             .chain()
             .focus()
             .setLink({
               href: url,
             })
-            .run()
-            setUrl("")
-          }
-        }
+            .run();
+          setUrl("");
+        }}
         disabled={!url}
         className={cn(
           editor.isActive("link") ? "is-active" : "",

@@ -1,9 +1,10 @@
 "use client";
 import { generateUniqueFileName } from "@/helpers/fileUtils";
-import FlashCardService from "@/services/flashCard";
+import FlashCardService, { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { ReactFCC } from "@/types/common";
 import { ChangeEvent } from "react";
 import { Icons } from "./icons";
+import { getFile } from "@/helpers/imageUtils";
 
 const Uploader: ReactFCC<{
   value: string;
@@ -40,18 +41,23 @@ const Uploader: ReactFCC<{
         <input
           onChange={handleFileChange}
           type="file"
-          accept={'image/*'}
+          accept={"image/*"}
           className="mt-1 p-2 border border-gray-300 rounded-md w-full"
         />
       )}
 
       {value && (
-        <>
-          {value}{" "}
-          <button type="button" onClick={() => change("")}>
+        <div className="relative w-[120px]">
+          {/* {value}{" "} */}
+          <img
+            alt="src"
+            className="object-scale-down h-full m-auto w-[100px]"
+            src={getFile(FLASK_CARD_BUCKET, value)}
+          />
+          <button className="absolute right-0 top-0" type="button" onClick={() => change("")}>
             <Icons.trash />
           </button>
-        </>
+        </div>
       )}
     </div>
   );
