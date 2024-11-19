@@ -2,15 +2,14 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 
 import CommonFlipCard from "@/components/common/common-flip-card/CommonFlipCard";
-import CommonProgressBar from "@/components/common/common-progress-bar";
 import { Difficulty } from "@/enum/difficulty";
+import { calculateNextReviewTime } from "@/helpers/flashcard";
 import { getFile } from "@/helpers/imageUtils";
+import { size } from "@/helpers/listUtils";
 import useFlashCardViewer from "@/hooks/flash-cards-collection/useFlashCardViewer";
 import { FLASK_CARD_BUCKET } from "@/services/flashCard";
 import { useMemo, useState } from "react";
 import { Icons } from "../common/icons";
-import { size } from "@/helpers/listUtils";
-import { calculateNextReviewTime } from "@/helpers/flashcard";
 
 const Card = ({
   card,
@@ -34,8 +33,15 @@ const Card = ({
       [Difficulty.EASY]: `${easy.timeDiffFromNow} ${easy.unit}`,
       [Difficulty.MEDIUM]: `${medium.timeDiffFromNow} ${medium.unit}`,
       [Difficulty.HARD]: `${hard.timeDiffFromNow} ${hard.unit}`,
-    };
+    } as Record<Difficulty, string>;
   }, [card.id]);
+
+  const nameMap = {
+    [Difficulty.SUPER_EASY]: "Super Easy",
+    [Difficulty.EASY]: "Easy",
+    [Difficulty.MEDIUM]: "Medium",
+    [Difficulty.HARD]: "Hard",
+  };
   return (
     <>
       <CommonFlipCard
@@ -52,7 +58,7 @@ const Card = ({
                 <div className="">
                   <img
                     alt="src"
-                    className="object-scale-down h-full m-auto"
+                    className="object-scale-down h-full m-auto max-h-[250px]"
                     src={getFile(FLASK_CARD_BUCKET, card.media_url)}
                   />
                 </div>
@@ -91,7 +97,7 @@ const Card = ({
                 <div className="">
                   <img
                     alt="src"
-                    className="object-scale-down h-full m-auto"
+                    className="object-scale-down h-full m-auto max-h-[250px]"
                     src={getFile(FLASK_CARD_BUCKET, card.media_url)}
                   />
                 </div>
@@ -114,55 +120,12 @@ const Card = ({
                   onNext(card.id, key as Difficulty);
                 }}
               >
-                {key} {`~${nextReviewTime[key as Difficulty]}`}
+                {nameMap[key as Difficulty]}{" "}
+                {`~${nextReviewTime[key as Difficulty]}`}
               </button>
             </div>
           );
         })}
-        {/* <button
-          disabled={!shouldNext}
-          className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
-          onClick={() => {
-            setShowDefinition(false);
-            setShouldNext(false);
-            onNext(card.id, Difficulty.SUPER_EASY);
-          }}
-        >
-          Super Easy {`~${nextReviewTime[Difficulty.SUPER_EASY]}`}
-        </button>
-        <button
-          disabled={!shouldNext}
-          className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
-          onClick={() => {
-            setShowDefinition(false);
-            setShouldNext(false);
-            onNext(card.id, Difficulty.EASY);
-          }}
-        >
-          Easy {`~${nextReviewTime[Difficulty.EASY]}`}
-        </button>
-        <button
-          disabled={!shouldNext}
-          className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
-          onClick={() => {
-            setShowDefinition(false);
-            onNext(card.id, Difficulty.MEDIUM);
-            setShouldNext(false);
-          }}
-        >
-          Medium {`~${nextReviewTime[Difficulty.MEDIUM]}`}
-        </button>
-        <button
-          disabled={!shouldNext}
-          className="w-full mt-10 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-slate-300 disabled:hover:bg-slate-300"
-          onClick={() => {
-            setShowDefinition(false);
-            onNext(card.id, Difficulty.HARD);
-            setShouldNext(false);
-          }}
-        >
-          Hard {`~${nextReviewTime[Difficulty.HARD]}`}
-        </button> */}
       </div>
     </>
   );

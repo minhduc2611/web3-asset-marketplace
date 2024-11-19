@@ -1,3 +1,6 @@
+import FlashCardService from "@/services/flashCard";
+import { toast } from "react-toastify";
+
 export function generateUniqueFileName(file: File) {
   const timestamp = Date.now();
   const randomString = Math.random().toString(36).substring(2, 8); // Random 6-character string
@@ -21,4 +24,27 @@ function getFileExtension(file: File) {
 
   const extension = fileName.slice(dotIndex + 1).toLowerCase();
   return extension;
+}
+
+export async function uploadFile(file: File) {
+  return toast.promise(
+    async () => {
+      const path = generateUniqueFileName(file);
+      const { data } = await FlashCardService.upload(path, file);
+      if (data && data.path) {
+        return data.path;
+      }
+      toast.error("Failed to upload file");
+      return null;
+    },
+    {
+      pending: "Uploading...",
+      success: "File uploaded successfully",
+      error: "Failed to upload file",
+    }
+  );
+}
+
+export function isImage(file: File) {
+  return file.type.startsWith("image/");
 }

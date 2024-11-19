@@ -6,6 +6,7 @@ import Uploader from "../common/Uploader";
 import { FormStatus } from "@/enum/common";
 import { useClientAuthStore } from "@/stores/authentication";
 import CommonAudioRecorder from "../common/common-audio-recorder";
+import { uploadFile } from "@/helpers/fileUtils";
 
 type CardFormProps = {
   collectionId: number;
@@ -106,6 +107,11 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
             onChange={(value) =>
               setValues({ "flashCardForm.definition": value })
             }
+            onMediaAttached={(file) => {
+              uploadFile(file).then((url) => {
+                if (url) setValues({ "flashCardForm.media_url": url });
+              });
+            }}
           />
         </div>
 
