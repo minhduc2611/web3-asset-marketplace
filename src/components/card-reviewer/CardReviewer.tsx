@@ -28,6 +28,12 @@ const Card = ({
     const easy = calculateNextReviewTime(interval, Difficulty.EASY);
     const medium = calculateNextReviewTime(interval, Difficulty.MEDIUM);
     const hard = calculateNextReviewTime(interval, Difficulty.HARD);
+    console.log("nextReviewTime", {
+      superEasy,
+      easy,
+      medium,
+      hard,
+    });
     return {
       [Difficulty.SUPER_EASY]: `${superEasy.timeDiffFromNow} ${superEasy.unit}`,
       [Difficulty.EASY]: `${easy.timeDiffFromNow} ${easy.unit}`,

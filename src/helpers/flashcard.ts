@@ -5,18 +5,27 @@ import timeUtils from "./timeUtils";
 export const filterAndSortDueCards = (
   cards: FlashCardModel[],
   options: {
-    prioritizeNoReviewTimeCard: boolean,
-    newCardADay?: number,
+    prioritizeNoReviewTimeCard: boolean;
+    newCardADay?: number;
   }
 ) => {
   const currentTime = new Date();
   const dueCards = [...cards];
 
   //  cards without next_review_time to start introducing them into the review cycle.
-  const noReviewTimeCards = dueCards.filter((card) => {
-    const userCardData = card.user_card_datas[0];
-    if (!userCardData) return true;
-  });
+  const noReviewTimeCards = dueCards
+    .filter((card) => {
+      const userCardData = card.user_card_datas[0];
+
+      if (!userCardData) return true;
+    })
+    // sort by newest: created_at
+    .sort((a, b) => {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+  console.log("noReviewTimeCards", noReviewTimeCards);
 
   const hasReviewTimeCards = dueCards.filter((card) => {
     const userCardData = card.user_card_datas[0];
@@ -73,20 +82,24 @@ export const filterAndSortDueCards = (
   };
 };
 
-export const calculateNextReviewTime = (currentInterval: number, difficulty: Difficulty) => {
+export const calculateNextReviewTime = (
+  currentInterval: number,
+  difficulty: Difficulty
+) => {
   const A_DAY = 1440;
   let newInterval: number;
   const currentTime = new Date();
 
   switch (difficulty) {
     case Difficulty.SUPER_EASY:
-      newInterval = currentInterval < A_DAY * 2 ? A_DAY * 2 : currentInterval * 2; // Double the previous interval if less than 1000
+      newInterval =
+        currentInterval < A_DAY * 2 ? A_DAY * 2 : currentInterval * 2; // Double the previous interval if less than 1000
       break;
     case Difficulty.EASY:
       newInterval = currentInterval < A_DAY ? A_DAY : currentInterval * 2; // Double the previous interval if less than 1000
       break;
     case Difficulty.MEDIUM:
-      newInterval = Math.ceil(currentInterval * 4);
+      newInterval = Math.ceil(currentInterval * 1.5);
       break;
     case Difficulty.HARD:
       newInterval = Math.max(Math.ceil(currentInterval * 0.5), 2); // Halve the previous interval
@@ -101,13 +114,13 @@ export const calculateNextReviewTime = (currentInterval: number, difficulty: Dif
     .dayjs(currentTime)
     .add(newInterval, "minute")
     .format("YYYY-MM-DD HH:mm:ssZ");
-    // Calculate next review time
-    const { unit, timeDiffFromNow } = timeUtils.calculateTimeDiff(nextReviewTime);
+  // Calculate next review time
+  const { unit, timeDiffFromNow } = timeUtils.calculateTimeDiff(nextReviewTime);
 
-    return {
-      nextReviewTime,
-      newInterval,
-      timeDiffFromNow,
-      unit,
-    }
+  return {
+    nextReviewTime,
+    newInterval,
+    timeDiffFromNow,
+    unit,
+  };
 };
