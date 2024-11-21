@@ -71,6 +71,11 @@ const CardRegisterForm = React.forwardRef<CardFormHandle | null, CardFormProps>(
           <TipTapEditor
             value={flashCardForm.term}
             onChange={(value) => setValues({ "flashCardForm.term": value })}
+            onMediaAttached={(file) => {
+              uploadFile(file).then((url) => {
+                if (url) setValues({ "flashCardForm.media_url": url });
+              });
+            }}
           />
         </div>
         <Uploader
