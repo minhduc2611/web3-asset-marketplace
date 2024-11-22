@@ -1,5 +1,6 @@
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { useFlashCardRegisterStore } from "@/stores/flashCardRegister";
+import { useMemo } from "react";
 
 const useFlashCardAdmin = () => {
   const {
@@ -34,9 +35,7 @@ const useFlashCardAdmin = () => {
 
   const editCard = (data?: FlashCardModel) => {
     let currentCard: FlashCardModel =
-      data === undefined
-        ? flashCardMap[currentCardId]
-        : data;
+      data === undefined ? flashCardMap[currentCardId] : data;
 
     if (currentCard) {
       setValues({ flashCardForm: currentCard });
@@ -46,9 +45,19 @@ const useFlashCardAdmin = () => {
     }
   };
 
+  const allCards = useMemo(() => {
+    const cards = Object.values(flashCardMap).sort((a, b) => {
+      // sort by latest created_at
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+    return cards;
+  }, [flashCardMap]);
+
   return {
     isAdminOpen,
-    flashCards: Object.values(flashCardMap),
+    flashCards: allCards,
     flashCardForm,
     formFields,
     editCard,
