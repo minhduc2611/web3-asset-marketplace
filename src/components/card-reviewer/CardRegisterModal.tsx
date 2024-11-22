@@ -17,8 +17,14 @@ import { useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
-  const { isAdminOpen, flashCards, setAdminModal, editCard, deleteOneFlashCard, resetForm } =
-    useFlashCardAdmin();
+  const {
+    isAdminOpen,
+    flashCards,
+    setAdminModal,
+    editCard,
+    deleteOneFlashCard,
+    resetForm,
+  } = useFlashCardAdmin();
   const formRef = useRef<CardFormHandle>(null);
   const { divRef, scrollTo } = useScrollTo();
 
@@ -72,7 +78,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
                   scrollTo();
                 }}
                 deleteCard={(data) => {
-                  if(confirm("Are you sure you want to delete this card?")){
+                  if (confirm("Are you sure you want to delete this card?")) {
                     deleteOneFlashCard(data.collection_id!, data.id);
                   }
                 }}
@@ -105,7 +111,7 @@ function Table({
             dangerouslySetInnerHTML={{ __html: info.getValue() || "" }}
           ></div>
         ),
-        header: () => <span>Definition</span>,
+        header: () => <span>Term</span>,
         size: 40,
       }),
       columnHelper.accessor((row) => row.definition, {
@@ -117,6 +123,20 @@ function Table({
         ),
         header: () => <span>Definition</span>,
         size: 40,
+      }),
+      columnHelper.accessor((row) => row.media_url, {
+        id: "media_url",
+        cell: (info) => <div>{info.getValue() && <Icons.check></Icons.check>}</div>,
+        header: () => <span>Image</span>,
+        size: 20,
+      }),
+      columnHelper.accessor((row) => row.audio_url, {
+        id: "audio_url",
+        cell: (info) => (
+          <div>{info.getValue() && <Icons.check></Icons.check>}</div>
+        ),
+        header: () => <span>Audio</span>,
+        size: 20,
       }),
       columnHelper.accessor((row) => row, {
         id: "id",
