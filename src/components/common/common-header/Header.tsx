@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useClientAuthStore } from "@/stores/authentication";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { Icons } from "@/components/common/icons";
 
 const Header = () => {
   const path = usePathname();
