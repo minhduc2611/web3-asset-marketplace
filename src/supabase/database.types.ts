@@ -66,7 +66,6 @@ export type Database = {
         Row: {
           audio_url: string | null
           author_id: string | null
-          collaborator_ids: string[]
           collection_id: number | null
           created_at: string
           definition: string | null
@@ -82,7 +81,6 @@ export type Database = {
         Insert: {
           audio_url?: string | null
           author_id?: string | null
-          collaborator_ids?: string[]
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -98,7 +96,6 @@ export type Database = {
         Update: {
           audio_url?: string | null
           author_id?: string | null
-          collaborator_ids?: string[]
           collection_id?: number | null
           created_at?: string
           definition?: string | null
@@ -209,25 +206,34 @@ export type Database = {
       }
       public_users: {
         Row: {
+          cards_goal: number
           created_at: string
           email: string | null
+          flash_card_streak: number
           id: string
-          image: string | null
-          name: string | null
+          raw_user_meta_data: Json | null
+          total_new_card_learnt: number
+          user_settings: Json
         }
         Insert: {
+          cards_goal?: number
           created_at?: string
           email?: string | null
+          flash_card_streak?: number
           id: string
-          image?: string | null
-          name?: string | null
+          raw_user_meta_data?: Json | null
+          total_new_card_learnt?: number
+          user_settings?: Json
         }
         Update: {
+          cards_goal?: number
           created_at?: string
           email?: string | null
+          flash_card_streak?: number
           id?: string
-          image?: string | null
-          name?: string | null
+          raw_user_meta_data?: Json | null
+          total_new_card_learnt?: number
+          user_settings?: Json
         }
         Relationships: []
       }
@@ -258,7 +264,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "user_card_datas_card_id_fkey"
+            foreignKeyName: "user_card_datas_card_id_fkey1"
             columns: ["card_id"]
             isOneToOne: false
             referencedRelation: "cards"
