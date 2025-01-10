@@ -75,6 +75,8 @@ const Card = ({
         renderBackCard={() => {
           return (
             <p className="text-gray-600 min-h-[200px] block">
+              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
+              <hr className="solid my-6" />
               {showDefinition && (
                 <div
                   className="mt-10"
@@ -97,8 +99,6 @@ const Card = ({
                   <Icons.volume2 className="cursor-pointer" />
                 </div>
               )}
-              <hr className="solid my-6" />
-              <div dangerouslySetInnerHTML={{ __html: card.term || "" }}></div>
               {card.media_url && (
                 <div className="">
                   <img

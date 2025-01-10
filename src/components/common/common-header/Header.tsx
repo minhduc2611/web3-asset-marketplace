@@ -1,22 +1,18 @@
 "use client";
 import AppDrawer from "@/components/common/common-drawer/AppDrawer";
 import Logo from "@/components/common/common-logo/Logo";
+import useIsMobile from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
 import { useClientAuthStore } from "@/stores/authentication";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useDeviceSelectors } from "react-device-detect";
-import { Icons } from "../icons";
 
 const Header = () => {
   const path = usePathname();
   const router = useRouter();
   const { isLoading, user } = useClientAuthStore();
-  const [selectors] = useDeviceSelectors(
-    typeof window !== undefined ? window.navigator.userAgent : ""
-  );
 
-  const { isMobile } = selectors;
+  const isMobile = useIsMobile();
   const pathNoIconLogo = ["/tinder", "/components"];
   if (isLoading) {
     return <></>;

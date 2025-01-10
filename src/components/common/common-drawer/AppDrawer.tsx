@@ -101,21 +101,13 @@ const AppDrawer = (props: AppDrawerProps) => {
       >
         <div className="p-5 h-full bg-base-100">
           <div className="w-full flex items-center justify-center">
-            <label className="swap swap-flip text-4xl">
-              <input type="checkbox" />
-              <div className="swap-on">
-                {Math.round(Math.random()) ? "😇" : "😈"}
-              </div>
-              <div className="swap-off">
-                <Image
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  src={userAvatar}
-                  alt="Rounded avatar"
-                />
-              </div>
-            </label>
+            <Image
+              width={40}
+              height={40}
+              className="rounded-full"
+              src={userAvatar}
+              alt="Rounded avatar"
+            />
           </div>
           <div className="divider"></div>
 

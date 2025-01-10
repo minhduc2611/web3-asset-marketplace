@@ -1,5 +1,3 @@
-import { useDeviceSelectors } from "react-device-detect";
-
 import { useLayoutEffect, useState } from 'react';
 import debounce from 'lodash.debounce';
 
