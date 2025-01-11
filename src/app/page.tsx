@@ -1,18 +1,13 @@
 "use client";
+import useIsMobile from "@/hooks/useIsMobile";
 import { cn } from "@/lib/utils";
 import { useClientAuthStore } from "@/stores/authentication";
 import "dayjs/locale/en";
 import Link from "next/link";
-import { useDeviceSelectors } from "react-device-detect";
-import ReactTypingEffect from "react-typing-effect";
 
 export default function Home() {
   const { user } = useClientAuthStore();
-  const [selectors] = useDeviceSelectors(
-    typeof window !== undefined ? window.navigator.userAgent : ""
-  );
-
-  const { isMobile } = selectors;
+  const isMobile = useIsMobile();
   return (
     <main
       className={cn(
@@ -33,16 +28,12 @@ export default function Home() {
       <div
         className={cn(
           "text-center",
-          isMobile ? "text-[2.5rem]" : "text-[6rem]"
+          "text-[2.5rem]",
+          "md:text-[6rem]"
         )}
       >
-        <p>We build</p>
-        <p>Something</p>
-        <ReactTypingEffect
-          text={["Extraordinary", "Robust", "Extremely Fast"]}
-          speed={70}
-          eraseSpeed={50}
-        />
+        <p>We are rebuilding the app</p>
+        <p>Please kindly wait</p>
       </div>
     </main>
   );

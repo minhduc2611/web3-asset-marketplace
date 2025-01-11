@@ -19,6 +19,7 @@ import {
   flashCardFormStateToAddRequestModel,
   flashCardFormStateToUpdateRequestModel,
 } from "@/transform/flashcard";
+import { isLink } from "@/helpers/url";
 
 export interface FlashCardRegisterState {
   flashCardForm: FlashCardRegisterFormState;
@@ -30,6 +31,8 @@ export interface FlashCardRegisterState {
   userSettings: {
     newCardADay: number;
   };
+  generativeUrl: string;
+  generativeFlashCards: FlashCardRegisterFormState[];
 }
 
 export interface FlashCardRegisterFormState {
@@ -57,6 +60,9 @@ interface Actions {
     index: number,
     difficulty: Difficulty
   ) => void;
+  updateGenerativeUrl: (url: string) => void;
+  getFlashCardFromGenerativeUrl: (author_id: string) => void;
+  createCardByGenerativeCards: (collectionId: number) => void;
 }
 
 export const createInitialValues = () => {
@@ -85,6 +91,8 @@ export const useFlashCardRegisterStore = zustandForm.create<
     userSettings: {
       newCardADay: 30, // todo: get from user settings
     },
+    generativeUrl: "",
+    generativeFlashCards: [],
   }),
   actions: (set, get) => {
     const addOneFlashCard = async (collectionId: number, author_id: string) => {
@@ -239,6 +247,43 @@ export const useFlashCardRegisterStore = zustandForm.create<
       flashCardMap[flashcardId] = currentCard;
       set({ flashCardMap });
     };
+    const updateGenerativeUrl = (url: string) => {
+      set({ generativeUrl: url });
+    };
+
+    const getFlashCardFromGenerativeUrl = async (author_id: string) => {
+      const { generativeUrl } = get();
+      if (!generativeUrl || !isLink(generativeUrl)) return;
+      const res = await FlashCardService.getFlashCardFromGenerativeUrl(
+        generativeUrl
+      );
+      if (res) {
+        set({
+          generativeFlashCards: res.map((item) => ({
+            term: item.front,
+            definition: item.back,
+            status: FormStatus.Add,
+            author_id: author_id,
+            media_url: "",
+            audio_url: "",
+          })),
+        });
+      }
+    };
+
+    const createCardByGenerativeCards = async (collectionId: number) => {
+      const { generativeFlashCards } = get();
+      if (generativeFlashCards.length === 0) return;
+      const payload = generativeFlashCards.map((item) =>
+        flashCardFormStateToAddRequestModel(collectionId, item)
+      );
+      const res = await FlashCardService.insertMany(payload);
+      if (res) {
+        getFlashCards(collectionId);
+        set({ generativeFlashCards: [] });
+      }
+    };
+
     return {
       addOneFlashCard,
       updateOneFlashCard,
@@ -251,6 +296,9 @@ export const useFlashCardRegisterStore = zustandForm.create<
       //
       getCurrentFlashCard,
       updateFlashCardNextReviewTime,
+      updateGenerativeUrl,
+      getFlashCardFromGenerativeUrl,
+      createCardByGenerativeCards,
     };
   },
 });

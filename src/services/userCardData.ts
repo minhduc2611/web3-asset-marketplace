@@ -19,7 +19,7 @@ const updateOne = async (a: UserCardDataUpdateRequestModel) =>
     .getInstance()
     .from(USER_CARD_TABLE)
     .update(a)
-    .eq("id", a.id || 0)
+    .eq("id", a.id)
     .select();
 
 const upsertOne = async (a: UserCardDataUpdateRequestModel) =>
@@ -29,7 +29,7 @@ const upsertOne = async (a: UserCardDataUpdateRequestModel) =>
     .upsert(a)
     .select();
 
-const deleteOne = async (id: number) =>
+const deleteOne = async (id: string) =>
   await superbaseInstance
     .getInstance()
     .from(USER_CARD_TABLE)

@@ -50,9 +50,9 @@ class ApiInstance {
     }
   }
 
-  public async post<T>(path: string, payload: T): Promise<void> {
+  public async post<T>(path: string, payload: T): Promise<any> {
     try {
-      await this.axiosInstance.post(path, payload);
+      return await this.axiosInstance.post(path, payload);
     } catch (error) {
       console.error(`Error during POST request to ${this.baseURL}${path}:`, error);
       throw error;

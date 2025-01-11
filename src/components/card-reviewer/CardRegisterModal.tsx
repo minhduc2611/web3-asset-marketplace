@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { FlashCardModel } from "@/models/flash-card/flashCardModel";
 import { useMemo, useRef, useState } from "react";
 import CardForm, { CardFormHandle } from "./CardRegisterForm";
+import CardGenerationByUrl from "./CardGenerationByUrl";
 
 const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
   const {
@@ -70,6 +71,7 @@ const CardRegisterModal = ({ collectionId }: { collectionId: number }) => {
           <div className="mt-4">
             <div className="w-full h-full md:h-[500px]">
               <CardForm ref={formRef} collectionId={collectionId} />
+              <CardGenerationByUrl collectionId={collectionId} />
               <Table
                 data={flashCards}
                 edit={(data) => {
