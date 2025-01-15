@@ -36,6 +36,7 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  console.log("user!!!!!", user);
   return (
     <html lang="en">
       <body className={inter.className}>
