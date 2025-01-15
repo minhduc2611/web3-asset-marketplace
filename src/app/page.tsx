@@ -8,7 +8,6 @@ import Link from "next/link";
 export default function Home() {
   const { user } = useClientAuthStore();
   const isMobile = useIsMobile();
-  console.log("user", user);
   return (
     <main
       className={cn(
