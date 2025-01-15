@@ -92,7 +92,6 @@ const AppDrawer = (props: AppDrawerProps) => {
         src={userAvatar}
         alt="Rounded avatar"
       />
-
       <Drawer
         open={isOpen}
         onClose={toggleDrawer}
