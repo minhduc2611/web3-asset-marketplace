@@ -11,26 +11,21 @@ async function Home() {
     <div className="w-full h-full overflow-y-scroll px-24 py-16">
       <ul className="my-3 list-disc list-inside">
         <li>
-          Hi, My name is Duc, I'm a Software Engineering student at Haaga-Helia University of
-          Applied Sciences.
-        </li>
-        <li>
+          Hi, My name is Duc, I'm a Software Engineering student at Haaga-Helia
+          University of Applied Sciences.
+          <br />
           I have a strong passion for software development and digital services
           design.
-        </li>
-        <li>
+          <br />
           I have experience in developing web applications using React, Node.js,
           Golang.
-        </li>
-        <li>
+          <br />
           I have also worked on a few projects that involve designing digital
           services.
-        </li>
-        <li>
+          <br />
           I have a good understanding of the principles of user experience
           design and I'm familiar with tools like Figma.
-        </li>
-        <li>
+          <br />
           I'm always eager to learn new technologies and improve my skills in
           digital services design.
         </li>
@@ -42,19 +37,28 @@ async function Home() {
         </li>
       </p>
       <p className="my-3">
-        <li>Tools and methods I know that can be used in digital service design and prototyping: I have experience in using Figma to design user flows, . I used</li>
+        <li>
+          Tools and methods I know that can be used in digital service design
+          and prototyping: I have experience in using Figma to design user
+          flows, site maps, and so on.
+        </li>
       </p>
-      Your aims and objectives: what are you interests within the field of
-      Digital Services/Information Technology in general and especially
-      concerning the objectives of this course?
       <p className="my-3">
-        My main objectives are to design a great service that meets the needs of
-        the users . Here is my current work, but I don't know if this is a good
-        design or not: So I am eager to learn more.
+        <li>
+          My main objectives are to design a great service that meets the needs
+          of the users . Here is my current work, but I don't know if this is a
+          good design or not:
+          <br />
+          <FrameFigma/>
+          <br />
+          So I am eager to learn more.
+        </li>
       </p>
-      <FrameFigma />
       <p className="my-3">
-        Are there any known obstacles on your way? yes, I don't know what is a beautiful design.
+        <li>
+          Are there any known obstacles on your way? yes, I don't know what is a
+          beautiful design.
+        </li>
       </p>
     </div>
   );
