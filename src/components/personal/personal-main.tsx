@@ -212,15 +212,341 @@ const FourthSlide = () => (
 );
 
 const FifthSlide = () => (
-  <div className="bg-purple-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16">
+  <div className="bg-purple-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16 px-48">
     <h2 className="text-2xl font-bold text-purple-800">
-      Fifth and Final Slide
+      A5: Working as a Digital Designer
     </h2>
+    <div>
+      <div className="flex flex-row justify-center">
+        <img
+          className="aspect-[16/3] h-60 object-contain"
+          src="https://media.geeksforgeeks.org/wp-content/uploads/20230209175403/Different-Between-UI-and-UX.png"
+          alt="w3css"
+        />
+      </div>
+      <ul className="my-3 list-disc list-inside">
+        <li>
+          I learned that there are different types of designers: graphic
+          designers, branding designers, website designers, UI designers, visual
+          designers, illustrators, UI/UX designers, and so on.
+        </li>
+        <li>
+          What kind of designer do I want to be? I want to be a UI/UX designer
+          who designs components and pages—and eventually, a product that
+          everyone can use to achieve their goals. I also want to focus more on
+          research and conceptual development.
+        </li>
+        <li>
+          In the video, the speaker introduced himself as a Product Designer. He
+          conducted research, checked with colleagues to understand customer
+          needs, wrote tickets, and held meetings to discuss solutions. Then, he
+          designed the product, focusing on UI elements.
+        </li>
+        <li>
+          He talked about the skills required to become a Product Designer,
+          which include both hard and soft skills. Hard skills involve tools
+          like Photoshop and Figma, while soft skills include time management,
+          communication, leadership, and collaboration.
+        </li>
+        <li>
+          He also emphasized that hard skills alone aren’t enough to land the
+          job I want. I need to develop strong soft skills because a Product
+          Designer must communicate with stakeholders, interview users,
+          facilitate workshops, and collaborate with developers.
+        </li>
+        <li>
+          He mentioned that he isn't the best UI/UX designer, but his soft
+          skills helped him secure the job he wanted. People enjoy working with
+          him and recommend him because of his ability to communicate and
+          collaborate effectively.
+        </li>
+        <li>
+          Everything he mentioned felt familiar to me, as I have already done
+          similar tasks during my course—working with users, collaborating with
+          team members, and developing app concepts.
+        </li>
+        <li>
+          I want to continue creating more apps and solutions in the future.
+        </li>
+      </ul>
+    </div>
+  </div>
+);
+
+const SixSlide = () => {
+  return (
+    <div className="flex flex-col items-center justify-start h-full bg-blue-100 rounded-lg overflow-y-scroll py-16 px-48">
+      <h2 className="text-2xl font-bold text-blue-800">
+        A6: Living with Complexity
+      </h2>
+      <div className="w-full h-auto px-24"></div>
+    </div>
+  );
+};
+
+const SevenSlide = () => (
+  <div className="bg-green-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16 px-52">
+    <h2 className="text-2xl font-bold text-green-800">
+      A7: Reflections on Map, Sketch, and Decide
+    </h2>
+    <div>
+      <div className="flex flex-row justify-center">
+        <img
+          className="aspect-[16/3] h-72  object-contain"
+          src="https://assets.justinmind.com/wp-content/uploads/2019/07/ui-sketch-app-evidence.png"
+          alt="w3css"
+        />
+      </div>
+      <ul className="my-3 list-disc list-inside">
+        <li>
+          Some techniques our team has used include Empathy Mapping, HMW (How
+          Might We), Lotus Blossom, Crazy 8, and sketching.
+        </li>
+        <li>
+          Personally, I find these techniques valuable for designing solutions
+          tailored to specific problems and users.
+        </li>
+        <li>
+          Initially, we felt overwhelmed because we didn’t know where to start.
+          There were thousands of possible solutions, making it difficult to
+          decide.
+        </li>
+        <li>
+          However, by taking it step by step—brainstorming pain points and
+          potential solutions—we identified two key user problems to solve. As I
+          progressed through the course, the solution became clearer. We gained
+          a crystal-clear vision of what we wanted to achieve and executed it
+          with confidence.
+        </li>
+        <li>
+          At first, I was skeptical about the sketching phase, assuming it could
+          be skipped in favor of jumping straight into Figma. However, I later
+          realized that sketching—especially with pen and paper—is incredibly
+          fast, practical, and highly effective for collaboration.
+        </li>
+      </ul>
+    </div>
+  </div>
+);
+const EightSlide = () => (
+  <div className="bg-yellow-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16 px-60">
+    <h2 className="text-2xl font-bold text-yellow-800">
+      A8: Reflections on Journey Mapping
+    </h2>
+    <div>
+      <div className="flex flex-row justify-center">
+        <img
+          className="h-48 w-96 object-contain"
+          src="https://www.crmsoftwareblog.com/wp-content/uploads/Customer-Journey-emfluence.png"
+          alt="w3css"
+        />
+      </div>
+      <ul className="my-3 list-disc list-inside">
+        <li>
+          When creating a customer journey map, I first list all the pain points
+          the user experiences, identify key touchpoints, and then design
+          services accordingly to address their problems—especially when dealing
+          with complex user interactions.
+        </li>
+        <li>
+          As I understand it, a customer journey map helps the entire team share
+          a unified vision of the user experience. It presents insights in a
+          clear and visual way, ensuring that any design decisions are grounded
+          in this framework. While we can be creative, the ultimate goal remains
+          the same: solving user pain points at every interaction.
+        </li>
+        <li>
+          In the future, I would use journey mapping whenever I need to solve
+          user problems. It helps me think creatively while staying aligned with
+          the goal. More importantly, it allows us to genuinely understand and
+          care about users' pain points.
+        </li>
+        <li>
+          One of the biggest challenges in this process is creating an accurate
+          customer persona. Often, both the persona and the journey map rely
+          more on assumptions than on meaningful data. To make the map truly
+          useful, we need to gather insights through user interviews and
+          analytics, ensuring that our design decisions are based on real user
+          behavior rather than guesswork.
+        </li>
+      </ul>
+    </div>
+  </div>
+);
+
+const NineSlide = () => (
+  <div className="bg-red-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16  px-60">
+    <h2 className="text-2xl font-bold text-red-800">
+      A9: UI Design Principles
+    </h2>
+    <div>
+      <div className="flex flex-row justify-center">
+        <img
+          className="h-48 w-96 object-contain"
+          src="https://miro.medium.com/v2/resize:fit:1400/1*JWStOGfx3DvZDDphuMNvgQ.jpeg"
+          alt="w3css"
+        />
+      </div>
+
+      <p>
+        Create a check list (7-10 items): what would you like to go through when
+        evaluating the work you/your team has done.
+      </p>
+      <ol className="my-3 list-disc list-inside">
+        <li>
+          [Balance] are the placement of components symmetrical, asymmetrical,
+          or radial?
+        </li>
+        <li>
+          [Proximity and Alignment] Grouping related elements enhances clarity
+          and organization.
+        </li>
+        <li>
+          [Proximity and Alignment] Proper alignment, especially when using
+          grids, makes designs appear more professional by reducing arbitrary
+          object placement.
+        </li>
+        <li>
+          [Contrast] Proper alignment, especially when using grids, makes
+          designs appear more professional by reducing arbitrary object
+          placement.
+        </li>
+        <li>
+          [White Space] Effective use of white space improves readability and
+          reduces clutter.
+        </li>
+        <li>
+          [Keep It Simple] Avoid using too many colors or unnecessary elements.
+        </li>
+        <li>
+          [Keep It Simple] Eliminate superfluous details to enhance clarity and
+          impact.
+        </li>
+        <li>
+          [Keep It Simple] Always ask yourself: What am I representing? How am I
+          representing it?
+        </li>
+        <li>
+          [File Management] Organize working files and finalized files properly.
+        </li>
+      </ol>
+
+      <p>
+        I have chosen these principles because they are the backbone of a
+        beautiful design. Always aim for balance, harmony, and clear
+        prioritization in your design.
+        <br />
+        It's helpful to have a checklist to evaluate team's design.
+      </p>
+    </div>
+  </div>
+);
+
+const TenSlide = () => (
+  <div className="bg-purple-100 flex flex-col items-center justify-start h-full rounded-lg overflow-y-scroll py-16 px-48">
+    <h2 className="text-2xl font-bold text-purple-800">
+      A10: Reflections from the Course
+    </h2>
+    <div>
+      <div className="flex flex-row justify-center">
+        <img
+          className="aspect-[16/3] h-60 object-contain"
+          src="https://media.licdn.com/dms/image/v2/C4D12AQFUi54jK-aYVg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1619555265597?e=2147483647&v=beta&t=N4xUY82C2j_UOJ_sTdDy-O6dgoAJFsZCtklhXtXKbQ8"
+          alt="w3css"
+        />
+      </div>
+      <ul className="my-3 list-disc list-inside">
+        <p>My 5 Key Learnings from This Course:</p>{" "}
+        <li>
+          Service Design and Stakeholders: This involves designing the backend
+          of the service, focusing on the aspects behind the scenes that enable
+          great user experiences and meet customers' needs.
+        </li>{" "}
+        <li>
+          Brainstorming: Techniques like How Might We (HMW), Lotus Blossom, and
+          Crazy 8 have helped me generate creative solutions and refine ideas
+          through structured ideation.
+        </li>{" "}
+        <li>
+          User Journey Mapping: I learned how to visualize and understand the
+          user’s experience through each touchpoint.
+        </li>{" "}
+        <li>
+          Feedback Loop: Gathering feedback is crucial for continuous
+          improvement. I can ensure the product evolves to better meet users’
+          expectations by gather user feedback into the design process
+          iteratively.
+        </li>{" "}
+        <li>
+          Principles of Good Design: I’ve learned that good design should be
+          clear, balanced, easy to understand, purposeful, and most importantly,
+          solve real problems for people.
+        </li>{" "}
+        <p>
+          When I compare these learnings to the objectives I set in my first
+          assignment (A1), I now have a clearer understanding of what makes a
+          design truly effective. A good design should not only be visually
+          appealing but also functional and user-centered.
+        </p>{" "}
+        <p>
+          Looking back at my Figma design from the first assignment, I realize
+          it was a solid design overall, but it still needs some modifications.
+          However, I am still so happy about the progress I’ve made and the
+          knowledge I have gained .
+        </p>
+        <p>
+          <b>ASSESSMENT</b>
+          <li>
+            I supported my teammates as much as possible by offering
+            recommendations and ideas. We all shared the workload equally. I
+            mostly worked on sketching, creating the Figma prototype, and making
+            iterative changes until it looked good enough.
+          </li>
+          <li>
+            Olga was very active in the group work, showing great enthusiasm for
+            the solution, the users, and the Figma design.
+          </li>
+          <li>
+            Kristina was very thoughtful and contributed many great ideas that
+            we could apply to the project. She was also meticulous with the team
+            slides and design. Additionally, she conducted some interviews to
+            gather feedback on the prototype.
+          </li>
+          <li>
+            Similarly, Yanli was very active and contributed to all tasks. She
+            created a lot of content for others to base their work on, and also
+            conducted interviews to collect feedback on the prototype.
+          </li>
+          <li>
+            I believe the result turned out really well because the team was
+            productive. There was a small disagreement at the beginning of the
+            course, but that's normal since we weren't sure what to focus on. In
+            the end, thanks to the private training, we all aligned on the same
+            vision.
+          </li>
+          <li>
+            Overall, I’m very happy with the course, the instructor, and my
+            teammates.
+          </li>
+        </p>
+      </ul>
+    </div>
   </div>
 );
 export default PersonalMain;
 
-const pages = [FirstSlide, SecondSlide, ThirdSlide, FourthSlide, FifthSlide];
+const pages = [
+  FirstSlide,
+  SecondSlide,
+  ThirdSlide,
+  FourthSlide,
+  FifthSlide,
+  SixSlide,
+  SevenSlide,
+  EightSlide,
+  NineSlide,
+  TenSlide,
+];
 
 function PersonalMain() {
   const [index, setIndex] = useState(0);
