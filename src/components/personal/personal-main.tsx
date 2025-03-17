@@ -125,7 +125,7 @@ const ThirdSlide = () => (
         </li>
         <li>
           Because it is super easy to build a web page with Canva, we just have
-          to drag and drop components to the the canvas And Canva handles the
+          to drag and drop components to the canvas and Canva handles the
           rest for us.
         </li>
         <li>
