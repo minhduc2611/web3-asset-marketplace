@@ -279,7 +279,9 @@ const SixSlide = () => {
       <h2 className="text-2xl font-bold text-blue-800">
         A6: Living with Complexity
       </h2>
-      <div className="w-full h-auto px-24"></div>
+      <div className="w-full h-auto px-24 flex justify-center">
+        The video link is broken.
+      </div>
     </div>
   );
 };
