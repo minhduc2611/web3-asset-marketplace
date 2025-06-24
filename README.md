@@ -1,29 +1,4 @@
-## Keys to win
-
-- Valuable **content**
-- Great app **UX**, learning **experience**
-- Practicing well prepared **drills and excercises**
-
-## Roadmap
-
-- [x] Authentication
-- [x] Flashcard - Space repitition algorithm applied
-- [x] Flashcard - Shaditable (share and edit) Packs and Cards
-- [ ] Flashcard - Realtime collaboration
-- [ ] UX upgrade
-- [ ] Repo structure upgrade
-- [ ] Brain Log - AI intergration
-- [ ] MK Learn - Create Video Lessons
-- [ ] MK Learn - Create Video Lessons versioning
-- [ ] MK Learn - Create Curriculum
-- [ ] Stripe one off payment integration
-- [ ] Stripe subcription payment integration
-- [ ] [Web3 wallet based authentication](https://supabase.com/partners/integrations/picket)
-- [ ] Crypto payment integration
-- [ ] Rust editor - creat Rust analyser
-- [ ] Rust editor - code
-- [ ] Rust editor - register test cases
-- [ ] Create customer chat bot, create chatbot knowledge.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -39,42 +14,31 @@ pnpm dev
 bun dev
 ```
 
-Debug on phone
-```
-# Get your local IP address
-Ipconfig getifaddr en0
-# 10.10.18.30
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-# Access the app on the phone
-# 10.10.18.30:3000
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Viết Git commit message
-- CẤU TRÚC CHUNG CỦA 1 COMMIT MESSAGE: [type]: [description] [body]
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-### Trong đó:
-type và description là phần BẮT BUỘC
-body là phần TÙY CHỌN, có thể có hoặc không
-Ví dụ:
-feat: add email notifications on new messages
-refers to JIRA-1234
-##### [type]
-- feat: Một tính năng mới (feature)
-- fix: Sửa lỗi (fix bug)
-- docs: Cập nhật tài liệu (sửa documents)
-- style: Thêm khoảng trắng, format code, thiếu dấu chấm phảy, ...
-- refactor: Đổi tên hàm, tên biến dễ hiểu hơn, tách hàm con, xóa code thừa, ...
-- perf: Cải tiến hiệu năng
-- test: Thêm test case còn thiếu, sửa unit test, ...
-- build: Những thay đổi ảnh hưởng đến quá trình build
-- ci: Thay đổi file cấu hình hoặc script CI
-##### [description]
-- Mô tả ngắn gọn về nội dung commit
-- Không dài quá 50 ký tự để có thể dễ dàng đọc trên GitHub, cũng như các git tool khác
-- Sử dụng câu mệnh lệnh, ở thì hiện tại. Ví dụ: “change ...“ thay vì “changed ...“
-- Không viết hoa chữ cái đầu tiên
-- Không sử dụng dấu chấm ở cuối câu
-##### [body]
-- Là phần TÙY CHỌN, sử dụng để mô tả chi tiết hơn về commit nếu cần
-- Cách phần <type>: <description> ở bên trên bởi 1 dòng trắng (blank line)
-- Nên dùng để giải thích câu hỏi What (để làm gì), hoặc Why (tại sao cần), chứ KHÔNG PHẢI How (làm như thế nào)
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+# Roadmap
+
+- [ ] Add new word to the Flashcard with AI generated content
+- [ ] Add flashcard to some collection
+- [ ] Generate keywords based on current trends and news.
+- [ ] Enable anonymous checkouts. If its anonymous add email to the checkout page.

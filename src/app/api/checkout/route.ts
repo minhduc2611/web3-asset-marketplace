@@ -1,35 +1,28 @@
-import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { NextRequest, NextResponse } from 'next/server';
+import stripe from '@/lib/stripe';
 
-export async function POST(request: Request) {
-    try {
-        const { priceId, email, userId } = await request.json();
+export async function POST(req: NextRequest) {
+  // You can receive plan details from req.json() if needed
+  // const { planId } = await req.json();
 
-        const session = await stripe.checkout.sessions.create({
-            metadata: {
-                user_id: userId,
-            },
-            customer_email: email,
-            payment_method_types: ['card'],
-            line_items: [
-                {
-                    // base subscription
-                    price: priceId,
-                },
-                {
-                    // one-time setup fee
-                    price: 'price_1OtHdOBF7AptWZlcPmLotZgW',
-                    quantity: 1,
-                },
-            ],
-            mode: 'subscription',
-            success_url: `${request.headers.get('origin')}/success`,
-            cancel_url: `${request.headers.get('origin')}/cancel`,
-        });
-
-        return NextResponse.json({ id: session.id });
-    } catch (error: any) {
-        console.error(error);
-        return NextResponse.json({ message: error.message }, { status: 500 });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [
+        {
+          price: process.env.STRIPE_PREMIUM_PRICE_ID!,
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
+    });
+    return NextResponse.json({ sessionId: session.id });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-}
+    return NextResponse.json({ error: 'An unknown error occurred' }, { status: 500 });
+  }
+} 
