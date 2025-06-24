@@ -243,7 +243,7 @@ export class Neo4jStorage implements INeo4jStorage {
     
     try {
       const setClause = [];
-      const params: any = { id };
+      const params: { id: string; name?: string; description?: string; knowledge?: string } = { id };
       
       if (updates.name !== undefined) {
         setClause.push('t.name = $name');

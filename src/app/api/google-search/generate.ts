@@ -1,114 +1,70 @@
-import { PromptTemplate } from "@langchain/core/prompts";
-import { ChatAnthropic } from "@langchain/anthropic";
-import { TavilySearch } from "@langchain/tavily";
 import "dotenv/config";
-import { AgentExecutor, createReactAgent } from "langchain/agents";
-import { DynamicTool } from "langchain/tools";
+import OpenAI from "openai";
+
 export const generate = async (question: string) => {
     try {
         // 1. Setup LLM
-        // const llm = new ChatOpenAI({
-        //     modelName: "gpt-4o",
-        //     temperature: 0.7,
-        // });
-
-        const llm = new ChatAnthropic({
-            model: "claude-3-5-sonnet-20240620",
-            temperature: 0.7,
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
         });
 
-        // 2. Setup Web Search Tool (Tavily)
-        const tool = new TavilySearch({
-            tavilyApiKey: process.env.TAVILY_API_KEY,
-            maxResults: 5,
-            topic: "general",
-            // includeAnswer: true,
-            // includeRawContent: true,
-            // includeImages: false,
-            // includeImageDescriptions: false,
-            // searchDepth: "basic",
-            timeRange: "year",
-            // includeDomains: [],
-            // excludeDomains: [],
-          });
-
-        const tavilyTool = new DynamicTool({
-            name: "tavily_search",
-            description: "Search the web for current information using Tavily search API. Input should be a search query string.",
-            func: async (input) => {
-                try {
-                    console.log("Starting Tavily search with input:", input);
-                    const result = await tool.invoke({ query: input });
-                    console.log("Tavily search completed");
-                    return result;
-                } catch {
-                    console.error("Tavily search error");
-                }
+        // 2. Perform Tavily search
+        const tavilyResponse = await fetch("https://api.tavily.com/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${process.env.TAVILY_API_KEY}`,
             },
+            body: JSON.stringify({
+                query: question,
+                max_results: 5,
+                search_depth: "basic",
+                include_answer: false,
+                include_raw_content: false,
+                include_images: false,
+            }),
         });
 
-        // 3. Define the custom ReAct-style prompt with strict format enforcement
-        const customPrompt = PromptTemplate.fromTemplate(`
-You are an AI assistant providing comprehensive insights, analysis, real world examples. When given a search query, provide detailed, informative explanations.
+        const tavilyResults = await tavilyResponse.json();
+        const searchResults = tavilyResults.results || [];
+
+        // 3. Create context from search results
+        const searchContext = searchResults.length > 0 
+            ? `\n\nRecent search results for context:\n${searchResults.map((result: { title: string; url: string; content?: string }, index: number) => 
+                `${index + 1}. ${result.title}\n   URL: ${result.url}\n   Content: ${result.content?.substring(0, 200)}...`
+              ).join('\n\n')}`
+            : '';
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                { 
+                    role: "system", 
+                    content: `
+You are an AI assistant providing comprehensive insights, analysis, and real world examples. When given a search query, provide detailed, informative explanations.
 
 Provide accurate, up to date, well-structured information that would be valuable for someone researching this topic.
-Use tavily search tool to get the latest information (2025, gather all the information you can find).
 
-Answer the following questions as best you can. You have access to the following tools:
+Please provide comprehensive analysis, be insightful and detailed in your response, using Markdown format when appropriate.
 
-{tools}
-
-CRITICAL: You MUST follow this EXACT format. DO NOT provide a final answer until you have completed your search and analysis.
-
-Question: the input question you must answer
-Thought: you should always think about what to do
-Action: the action to take, should be one of [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I now know the final answer
-Final Answer: Provide a comprehensive analysis, be insightful and detailed in your response, Markdown format.
-
-IMPORTANT RULES:
-- NEVER provide a Final Answer until you have completed your search
-- ALWAYS use the search tool first to get current information
-- ONLY provide Final Answer after you have gathered sufficient information
-- If search fails, try alternative search terms before giving up
-- Add sources links found in the search results under each section of the answer
-- If you don't have enough information, used the search results and add them to the answer
-
-Begin!
-
-Question: {input}
-Thought:{agent_scratchpad}
-`);
-
-        // 4. Initialize the ReAct Agent with custom prompt and error handling
-        const agent = await createReactAgent({
-            llm,
-            tools: [tavilyTool],
-            prompt: customPrompt,
+Use the search results provided to give current and accurate information. If search results are available, reference them in your response.
+                    `
+                },
+                { 
+                    role: "user", 
+                    content: `Question: ${question}${searchContext}` 
+                },
+            ],
+            temperature: 0.7,
         });
-
-        // 5. Create the AgentExecutor with retry logic and error handling
-        const executor = new AgentExecutor({
-            agent,
-            tools: [tavilyTool],
-            // verbose: true,
-        });
-
-        // 6. Ask the question with error handling
-        console.log(`🤔 Asking: ${question}`);
-
-        const result = await executor.invoke({
-            input: question
-        });
-
+        
         // 7. Handle the result with fallback
-        if (result.output) {
-            console.log("💡 Final Answer:\n", result.output);
-            return result.output;
+        if (response.choices[0]?.message?.content) {
+            console.log("💡 Final Answer:\n", response.choices[0].message.content);
+            return response.choices[0].message.content;
         }
+
+        return null;
 
     } catch (error) {
         console.error("🚨 Main error:", error);

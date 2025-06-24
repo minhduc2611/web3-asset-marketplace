@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateKeywordsSchema, type GenerateKeywordsResponse } from '@/shared/schema';
+import { NextResponse } from 'next/server';
+import { generateKeywordsSchema, Relationship, type GenerateKeywordsResponse } from '@/shared/schema';
 import { neo4jStorage } from '@/app/api/services/neo4j-storage';
 import OpenAI from 'openai';
-import { ResponseFormatJSONObject } from 'openai/resources/shared.mjs';
 
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || "default_key"
@@ -100,7 +99,7 @@ Consider the existing context and create keywords that are:
       // Create relationship if it doesn't exist
       const existingRelationships = await neo4jStorage.getRelationshipsByCanvas(canvasId);
       const relationshipExists = existingRelationships.some(
-        (rel: any) => rel.sourceId === sourceTopic.id && rel.targetId === keywordTopic!.id
+        (rel: Relationship) => rel.sourceId === sourceTopic.id && rel.targetId === keywordTopic!.id
       );
 
       if (!relationshipExists) {

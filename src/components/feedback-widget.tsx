@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,6 @@ import {
   MessageCircle,
   Star,
   Send,
-  Upload,
   X,
   Camera,
   FileVideo,
@@ -34,7 +32,6 @@ interface FeedbackData {
 
 export default function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData>({
     rating: 0,
     category: "",
@@ -331,6 +328,7 @@ export default function FeedbackWidget() {
                     <div key={index} className="relative">
                       <div className="bg-slate-700 rounded-lg p-2 text-center">
                         {file.type.startsWith('image/') ? (
+                          // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={URL.createObjectURL(file)}
                             alt={`Upload ${index + 1}`}

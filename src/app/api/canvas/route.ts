@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
     
     const newCanvas = await neo4jStorage.createCanvas({
       name,
-      authorId
+      authorId,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return NextResponse.json(newCanvas);

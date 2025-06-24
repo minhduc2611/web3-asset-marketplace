@@ -17,5 +17,6 @@ export function useOnce(effect: () => void | (() => void), deps: unknown[] = [])
       hasRun.current = true
       return effect()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 } 

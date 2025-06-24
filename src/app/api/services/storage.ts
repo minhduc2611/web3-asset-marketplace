@@ -1,12 +1,12 @@
-import { 
-  topics, 
-  relationships,
-  type Topic, 
-  type InsertTopic, 
-  type Relationship, 
+ 
+// TODO: fix this file
+import {
+  type Topic,
+  type InsertTopic,
+  type Relationship,
   type InsertRelationship,
   type GraphNode,
-  type GraphEdge 
+  type GraphEdge,
 } from "@/shared/schema";
 
 export interface IStorage {
@@ -15,15 +15,15 @@ export interface IStorage {
   getTopicByName(name: string): Promise<Topic | undefined>;
   getAllTopics(): Promise<Topic[]>;
   deleteTopic(id: number): Promise<void>;
-  
+
   // Relationship operations
   createRelationship(relationship: InsertRelationship): Promise<Relationship>;
   getRelationshipsBySourceId(sourceId: number): Promise<Relationship[]>;
   getAllRelationships(): Promise<Relationship[]>;
   deleteRelationshipsByTopicId(topicId: number): Promise<void>;
-  
+
   // Graph operations
-  getGraphData(): Promise<{ nodes: GraphNode[], edges: GraphEdge[] }>;
+  getGraphData(): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>;
 }
 
 export class MemStorage implements IStorage {
@@ -41,7 +41,15 @@ export class MemStorage implements IStorage {
 
   async createTopic(insertTopic: InsertTopic): Promise<Topic> {
     const id = this.topicIdCounter++;
-    const topic: Topic = { ...insertTopic, id };
+    const topic: Topic = {
+      ...insertTopic,
+      id: id.toString(),
+      description: insertTopic.description || null,
+      knowledge: insertTopic.knowledge || null,
+      positionX: insertTopic.positionX || null,
+      positionY: insertTopic.positionY || null,
+      createdAt: insertTopic.createdAt || null,
+    };
     this.topics.set(id, topic);
     return topic;
   }
@@ -60,12 +68,16 @@ export class MemStorage implements IStorage {
     this.topics.delete(id);
   }
 
-  async createRelationship(insertRelationship: InsertRelationship): Promise<Relationship> {
+  async createRelationship(
+    insertRelationship: InsertRelationship
+  ): Promise<Relationship> {
     const id = this.relationshipIdCounter++;
-    const relationship: Relationship = { 
-      id,
+    const relationship: Relationship = {
+      id: id.toString(),
       sourceId: insertRelationship.sourceId!,
-      targetId: insertRelationship.targetId!
+      targetId: insertRelationship.targetId!,
+      canvasId: insertRelationship.canvasId!,
+      createdAt: insertRelationship.createdAt || null,
     };
     this.relationships.set(id, relationship);
     return relationship;
@@ -73,7 +85,7 @@ export class MemStorage implements IStorage {
 
   async getRelationshipsBySourceId(sourceId: number): Promise<Relationship[]> {
     return Array.from(this.relationships.values()).filter(
-      (rel) => rel.sourceId === sourceId
+      (rel) => rel.sourceId === String(sourceId)
     );
   }
 
@@ -83,28 +95,32 @@ export class MemStorage implements IStorage {
 
   async deleteRelationshipsByTopicId(topicId: number): Promise<void> {
     const toDelete = Array.from(this.relationships.entries()).filter(
-      ([_, rel]) => rel.sourceId === topicId || rel.targetId === topicId
+      ([index, rel]) => {
+        console.log("index", index);
+        return rel.sourceId === String(topicId) || rel.targetId === String(topicId);
+      }
     );
-    
-    toDelete.forEach(([id, _]) => {
+
+    toDelete.forEach(([id, element]) => {
+      console.log("element", element);
       this.relationships.delete(id);
     });
   }
 
-  async getGraphData(): Promise<{ nodes: GraphNode[], edges: GraphEdge[] }> {
+  async getGraphData(): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }> {
     const allTopics = await this.getAllTopics();
     const allRelationships = await this.getAllRelationships();
 
-    const nodes: GraphNode[] = allTopics.map(topic => ({
+    const nodes: GraphNode[] = allTopics.map((topic) => ({
       id: `node-${topic.id}`,
       name: topic.name,
-      type: topic.type as 'original' | 'generated'
+      type: topic.type as "original" | "generated",
     }));
 
-    const edges: GraphEdge[] = allRelationships.map(rel => ({
+    const edges: GraphEdge[] = allRelationships.map((rel) => ({
       id: `edge-${rel.id}`,
       source: `node-${rel.sourceId}`,
-      target: `node-${rel.targetId}`
+      target: `node-${rel.targetId}`,
     }));
 
     return { nodes, edges };

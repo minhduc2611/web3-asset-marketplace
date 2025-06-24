@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { neo4jStorage } from '@/app/api/services/neo4j-storage';
 
+type PageProps = {
+  params: Promise<{
+    nodeId: string;
+  }>;
+};
 
-export async function DELETE(req: NextRequest, { params }: { params: { nodeId: string } }) {
+export async function DELETE(req: NextRequest, { params }: PageProps) {
   try {
     const paramsObject = await params;
     const nodeId = paramsObject.nodeId;
@@ -32,7 +37,13 @@ export async function DELETE(req: NextRequest, { params }: { params: { nodeId: s
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { nodeId: string } }) {
+type PagePropsPUT = {
+  params: Promise<{
+    nodeId: string;
+  }>;
+};
+
+export async function PUT(req: NextRequest, { params }: PagePropsPUT) {
   try {
     const paramsObject = await params;
     const nodeId = paramsObject.nodeId;

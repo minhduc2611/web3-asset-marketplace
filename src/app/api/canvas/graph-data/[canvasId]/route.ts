@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { neo4jStorage } from '@/app/api/services/neo4j-storage';
 
-export async function GET(req: NextRequest, { params }: { params: { canvasId: string } }) {
+type PageProps = {
+  params: Promise<{
+    canvasId: string;
+  }>;
+};
+
+export async function GET(req: NextRequest, { params }: PageProps) {
   try {
     const paramsObject = await params;
     const canvasId = paramsObject.canvasId;

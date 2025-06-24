@@ -1,9 +1,15 @@
 import ManageFlashcards from "@/components/pages/collection/collection-manage";
 
-export default function ManageFlashcardsPage({
+type PageProps = {
+  params: Promise<{
+    collectionId: string;
+  }>;
+};
+
+export default async function ManageFlashcardsPage({
   params,
-}: {
-  params: { collectionId: string };
-}) {
-  return <ManageFlashcards collectionId={params.collectionId} />;
+}: PageProps) {
+  const paramsObject = await params;
+
+  return <ManageFlashcards collectionId={paramsObject.collectionId} />;
 }
