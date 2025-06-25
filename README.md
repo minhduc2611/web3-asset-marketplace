@@ -5,13 +5,13 @@
 
 # Project Title
 
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)
-[![GitHub last commit](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)
-[![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)
-[![GitHub](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/minhduc2611/web3-asset-marketplace?include_prereleases)](https://img.shields.io/github/v/release/minhduc2611/web3-asset-marketplace?include_prereleases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/minhduc2611/web3-asset-marketplace)](https://img.shields.io/github/last-commit/minhduc2611/web3-asset-marketplace)
+[![GitHub issues](https://img.shields.io/github/issues-raw/minhduc2611/web3-asset-marketplace)](https://img.shields.io/github/issues-raw/minhduc2611/web3-asset-marketplace)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/minhduc2611/web3-asset-marketplace)](https://img.shields.io/github/issues-pr/minhduc2611/web3-asset-marketplace)
+[![GitHub](https://img.shields.io/github/license/minhduc2611/web3-asset-marketplace)](https://img.shields.io/github/license/minhduc2611/web3-asset-marketplace)
 
-The project title is a level 1 heading (`<h1>Project Title</h1>` or `# Project Title`).
+The project title is a level 1 heading (`<h1>MindGraph</h1>` or `# Project Title`).
 
 If your project has a name, then this is where it would go.
 
@@ -33,19 +33,19 @@ The badges used here are explained below:
 
 <!-- Add badges with link to Shields IO -->
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/minhduc2611/web3-asset-marketplace?include_prereleases)
 : Shows the current release version.
 
-![GitHub last commit](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)
+![GitHub last commit](https://img.shields.io/github/last-commit/minhduc2611/web3-asset-marketplace)
 : Shows the last commit time. Good indication of the project activity.
 
-![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)
+![GitHub issues](https://img.shields.io/github/issues-raw/minhduc2611/web3-asset-marketplace)
 : Dynamic badge that shows the number of open issues in the project.
 
-![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/minhduc2611/web3-asset-marketplace)
 : Similar dynamic badge, but for pull requests.
 
-![GitHub](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)
+![GitHub](https://img.shields.io/github/license/minhduc2611/web3-asset-marketplace)
 : Shows the open source license the project uses.
 
 # Quick Start Demo
@@ -81,7 +81,7 @@ This is where your installation instructions go.
 You can add snippets here that your readers can copy-paste with click:
 
 ```shell
-gh repo clone navendu-pottekkat/awesome-readme
+gh repo clone minhduc2611/web3-asset-marketplace
 ```
 
 
