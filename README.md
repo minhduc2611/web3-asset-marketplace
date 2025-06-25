@@ -1,7 +1,6 @@
 # MindGraph
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3d070cfe-8fb3-46fd-a385-b7ead06a6577/deploy-status)](https://app.netlify.com/projects/minh-kim-production/deploys)
 ## Getting Started
 
 First, run the development server:
