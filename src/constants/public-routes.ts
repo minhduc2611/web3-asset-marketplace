@@ -6,5 +6,4 @@ export const publicRoutes = [
   "/pricing",
   "/500",
   "/404",
-  "/dive",
 ];
