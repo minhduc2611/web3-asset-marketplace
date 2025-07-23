@@ -300,7 +300,7 @@ export default function CanvasList() {
       </section>
 
       {/* Floating Action Button for Create Canvas */}
-      {canvases && canvases.length > 0 && (
+      {canvases && canvases.length >= 0 && (
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <motion.div
             initial={{ scale: 0, opacity: 0 }}

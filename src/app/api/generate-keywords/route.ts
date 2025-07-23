@@ -42,7 +42,8 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are an expert knowledge mapper creating insightful keyword connections. Generate exactly ${nodeCount} related keywords/subtopics that:
+          content: `
+You are an expert knowledge mapper creating insightful keyword connections. Generate exactly ${nodeCount} related keywords/subtopics that:
 
 1. Are directly relevant to the given topic
 2. Show about 50% overlap with existing concepts (not exact duplicates, but related/connected themes)
