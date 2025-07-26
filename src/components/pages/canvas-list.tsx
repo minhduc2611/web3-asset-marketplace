@@ -35,6 +35,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import useLocalStorageState from "use-local-storage-state";
+import useAppState from "@/store/useAppState";
 interface Canvas {
   id: string;
   name: string;
@@ -46,9 +47,11 @@ interface Canvas {
 export default function CanvasList() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [canvasName, setCanvasName] = useState("");
-  const [authorId] = useLocalStorageState("userId", {
-    defaultValue: "9dde1fd0-371f-4028-a0f5-f32bb0cbc755",
-  });
+  const { user } = useAppState();
+  const authorId = user?.id || "";
+  // const [authorId] = useLocalStorageState("userId", {
+  //   defaultValue: "9dde1fd0-371f-4028-a0f5-f32bb0cbc755",
+  // });
   const router = useRouter();
   // Fetch user's canvases
   const { data: canvases, isLoading } = useQuery<Canvas[]>({
