@@ -6,16 +6,14 @@ import cytoscape, { Core } from "cytoscape";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import TextHighlighter from '@/components/text-highlighter';
-import MemoryViewer from '@/components/memory-viewer';
 import { toast } from "sonner"
+import {
+  EditNodeModal,
+  AddSubNodeModal,
+  GenerateKeywordsModal,
+  GoogleSearchModal,
+  NodeDetailModal
+} from '@/components/modals';
 
 interface GraphData {
   nodes: Array<{
@@ -917,461 +915,61 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
       )}
 
       {/* Edit Dialog */}
-      <Dialog open={editDialog.open} onOpenChange={(open) => setEditDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-800 border-slate-600 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-slate-50">Edit Node</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Update the node&apos;s title and description to better organize your mind map.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="node-name" className="text-slate-300">
-                Title
-              </Label>
-              <Input
-                id="node-name"
-                value={editDialog.name}
-                onChange={(e) => setEditDialog(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Enter node title"
-                className="bg-slate-700 border-slate-600 text-slate-50 placeholder-slate-400"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSaveEdit();
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="node-description" className="text-slate-300">
-                Description (optional)
-              </Label>
-              <Textarea
-                id="node-description"
-                value={editDialog.description}
-                onChange={(e) => setEditDialog(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Add notes or context for this topic"
-                className="bg-slate-700 border-slate-600 text-slate-50 placeholder-slate-400 min-h-[80px] resize-none"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setEditDialog({ open: false, nodeId: "", name: "", description: "" })}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSaveEdit}
-              disabled={!editDialog.name.trim() || editNodeMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {editNodeMutation.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditNodeModal
+        open={editDialog.open}
+        name={editDialog.name}
+        description={editDialog.description}
+        isLoading={editNodeMutation.isPending}
+        onOpenChange={(open) => setEditDialog(prev => ({ ...prev, open }))}
+        onNameChange={(name) => setEditDialog(prev => ({ ...prev, name }))}
+        onDescriptionChange={(description) => setEditDialog(prev => ({ ...prev, description }))}
+        onSave={handleSaveEdit}
+        onCancel={() => setEditDialog({ open: false, nodeId: "", name: "", description: "" })}
+      />
 
       {/* Add Sub Node Dialog */}
-      <Dialog open={addSubNodeDialog.open} onOpenChange={(open) => setAddSubNodeDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-800 border-slate-600 max-w-md mx-3 sm:mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-slate-50">Add Sub Node</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Create a new child node under &quot;{addSubNodeDialog.parentNodeName}&quot;. Add a title and optional metadata.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="sub-node-name" className="text-slate-300">
-                Node Title
-              </Label>
-              <Input
-                id="sub-node-name"
-                value={addSubNodeDialog.name}
-                onChange={(e) => setAddSubNodeDialog(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Enter node title"
-                className="bg-slate-700 border-slate-600 text-slate-50 placeholder-slate-400 text-base touch-manipulation"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSaveSubNode();
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="sub-node-description" className="text-slate-300">
-                Metadata (optional)
-              </Label>
-              <Textarea
-                id="sub-node-description"
-                value={addSubNodeDialog.description}
-                onChange={(e) => setAddSubNodeDialog(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Add notes, context, or metadata for this sub node"
-                className="bg-slate-700 border-slate-600 text-slate-50 placeholder-slate-400 min-h-[80px] resize-none text-base touch-manipulation"
-              />
-            </div>
-          </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setAddSubNodeDialog({ open: false, parentNodeId: "", parentNodeName: "", name: "", description: "" })}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto touch-manipulation"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSaveSubNode}
-              disabled={!addSubNodeDialog.name.trim() || addSubNodeMutation.isPending}
-              className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto touch-manipulation"
-            >
-              {addSubNodeMutation.isPending ? "Creating..." : "Create Sub Node"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AddSubNodeModal
+        open={addSubNodeDialog.open}
+        parentNodeName={addSubNodeDialog.parentNodeName}
+        name={addSubNodeDialog.name}
+        description={addSubNodeDialog.description}
+        isLoading={addSubNodeMutation.isPending}
+        onOpenChange={(open) => setAddSubNodeDialog(prev => ({ ...prev, open }))}
+        onNameChange={(name) => setAddSubNodeDialog(prev => ({ ...prev, name }))}
+        onDescriptionChange={(description) => setAddSubNodeDialog(prev => ({ ...prev, description }))}
+        onSave={handleSaveSubNode}
+        onCancel={() => setAddSubNodeDialog({ open: false, parentNodeId: "", parentNodeName: "", name: "", description: "" })}
+      />
 
       {/* Generate Keywords Modal */}
-      <Dialog open={generateKeywordsDialog.open} onOpenChange={(open) => setGenerateKeywordsDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-800 border-slate-600 max-w-md mx-3 sm:mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-slate-50">Generate Keywords</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Generate related keywords for &quot;{generateKeywordsDialog.nodeName}&quot;. Choose how many nodes to create.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="node-count" className="text-slate-300">
-                Number of nodes to generate
-              </Label>
-              <Input
-                id="node-count"
-                type="number"
-                min="1"
-                max="10"
-                value={generateKeywordsDialog.nodeCount}
-                onChange={(e) => setGenerateKeywordsDialog(prev => ({ ...prev, nodeCount: parseInt(e.target.value) || 3 }))}
-                className="bg-slate-700 border-slate-600 text-slate-50 text-base touch-manipulation"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleGenerateNodes();
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3 })}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto touch-manipulation"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={handleGenerateNodes}
-              className="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto touch-manipulation"
-            >
-              Generate
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <GenerateKeywordsModal
+        open={generateKeywordsDialog.open}
+        nodeName={generateKeywordsDialog.nodeName}
+        nodeCount={generateKeywordsDialog.nodeCount}
+        onOpenChange={(open) => setGenerateKeywordsDialog(prev => ({ ...prev, open }))}
+        onNodeCountChange={(nodeCount) => setGenerateKeywordsDialog(prev => ({ ...prev, nodeCount }))}
+        onGenerate={handleGenerateNodes}
+        onCancel={() => setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3 })}
+      />
 
       {/* Google Search with Gemini AI Modal */}
-      <Dialog open={googleSearchDialog.open} onOpenChange={(open) => setGoogleSearchDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-800 border-slate-600 mx-3 sm:mx-auto sm:max-h-[80vh] sm:max-w-4xl overflow-hidden flex flex-col">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="text-slate-50">Google Search: &quot;{googleSearchDialog.searchTerm}&quot;</DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  Search results and AI-generated insights
-                </DialogDescription>
-              </div>
-              <MemoryViewer />
-            </div>
-          </DialogHeader>
-          
-          <TextHighlighter>
-            <div className="flex-1 overflow-y-auto space-y-6 py-4">
-              {googleSearchDialog.isLoading ? (
-                <div className="text-center py-8">
-                  <div className="w-8 h-8 border-3 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-slate-300">Searching Google and generating AI insights...</p>
-                </div>
-              ) : (
-                <>
-                  {/* Gemini AI Answer */}
-                  {googleSearchDialog.geminiAnswer && (
-                  <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
-                    <h3 className="text-lg font-semibold text-slate-50 mb-3 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                      </svg>
-                      AI Insights
-                    </h3>
-                    <div className="text-slate-300 leading-relaxed prose prose-invert prose-slate max-w-none markdown-content">
-                      <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          // Custom styling for markdown elements
-                          h1: ({children}) => <h1 className="text-xl font-bold text-slate-50 mb-3 cursor-text select-text">{children}</h1>,
-                          h2: ({children}) => <h2 className="text-lg font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
-                          h3: ({children}) => <h3 className="text-base font-medium text-slate-200 mb-2 cursor-text select-text">{children}</h3>,
-                          p: ({children}) => <p className="text-slate-300 mb-3 leading-relaxed cursor-text select-text">{children}</p>,
-                          strong: ({children}) => <strong className="font-semibold text-slate-100 cursor-text select-text">{children}</strong>,
-                          em: ({children}) => <em className="italic text-slate-200 cursor-text select-text">{children}</em>,
-                          code: ({children}) => <code className="bg-slate-700 text-blue-300 px-1.5 py-0.5 rounded text-sm font-mono cursor-text select-text">{children}</code>,
-                          pre: ({children}) => <pre className="bg-slate-700 text-slate-200 p-3 rounded-lg overflow-x-auto text-sm font-mono mb-3 cursor-text select-text">{children}</pre>,
-                          ul: ({children}) => <ul className="list-disc list-inside text-slate-300 mb-3 space-y-1">{children}</ul>,
-                          ol: ({children}) => <ol className="list-decimal list-inside text-slate-300 mb-3 space-y-1">{children}</ol>,
-                          li: ({children}) => <li className="text-slate-300 cursor-text select-text">{children}</li>,
-                          blockquote: ({children}) => <blockquote className="border-l-4 border-purple-400 pl-4 italic text-slate-200 mb-3 cursor-text select-text">{children}</blockquote>,
-                          a: ({href, children}) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline cursor-pointer">{children}</a>,
-                        }}
-                      >
-                        {googleSearchDialog.geminiAnswer}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                )}
-
-                {/* Search Results */}
-                {googleSearchDialog.searchResults.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-50 mb-3 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                      </svg>
-                      Search Results
-                    </h3>
-                    <div className="space-y-3">
-                      {googleSearchDialog.searchResults.map((result: any, index: number) => (
-                        <div key={index} className="bg-slate-700/30 rounded-lg p-4 border border-slate-600 hover:border-slate-500 transition-colors">
-                          <a 
-                            href={result.link} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="block group"
-                          >
-                            <h4 className="text-blue-400 font-medium mb-2 group-hover:text-blue-300 transition-colors">
-                              {result.title}
-                            </h4>
-                            <p className="text-slate-400 text-sm mb-2 line-clamp-2">
-                              {result.snippet}
-                            </p>
-                            <span className="text-green-400 text-xs">
-                              {result.displayLink}
-                            </span>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {!googleSearchDialog.geminiAnswer && googleSearchDialog.searchResults.length === 0 && !googleSearchDialog.isLoading && (
-                  <div className="text-center py-8">
-                    <p className="text-slate-400">No results found. Try a different search term.</p>
-                  </div>
-                )}
-              </>
-            )}
-            </div>
-          </TextHighlighter>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setGoogleSearchDialog(prev => ({ ...prev, open: false }))}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700 touch-manipulation"
-            >
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <GoogleSearchModal
+        open={googleSearchDialog.open}
+        searchTerm={googleSearchDialog.searchTerm}
+        searchResults={googleSearchDialog.searchResults}
+        geminiAnswer={googleSearchDialog.geminiAnswer}
+        isLoading={googleSearchDialog.isLoading}
+        onOpenChange={(open) => setGoogleSearchDialog(prev => ({ ...prev, open }))}
+        onClose={() => setGoogleSearchDialog(prev => ({ ...prev, open: false }))}
+      />
 
       {/* Node Detail Modal */}
-      <Dialog open={nodeDetailDialog.open} onOpenChange={(open) => setNodeDetailDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-800 border-slate-600 sm:max-w-4xl mx-3 sm:mx-auto sm:max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="text-slate-50">Node Details: &quot;{nodeDetailDialog.node?.name}&quot;</DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  Complete information about this node
-                </DialogDescription>
-              </div>
-              <MemoryViewer />
-            </div>
-          </DialogHeader>
-          
-          <TextHighlighter>
-            <div className="flex-1 overflow-y-auto space-y-6 py-4">
-              {nodeDetailDialog.node && (
-                <>
-                  {/* Basic Information */}
-                  <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
-                    <h3 className="text-lg font-semibold text-slate-50 mb-3">Basic Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium text-slate-300">Name</label>
-                        <p className="text-slate-100 mt-1">{nodeDetailDialog.node.name}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-slate-300">Type</label>
-                        <p className="text-slate-100 mt-1 capitalize">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            nodeDetailDialog.node.type === 'original' 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-purple-100 text-purple-800'
-                          }`}>
-                            {nodeDetailDialog.node.type}
-                          </span>
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-slate-300">ID</label>
-                        <p className="text-slate-400 mt-1 text-xs font-mono">{nodeDetailDialog.node.id}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                {/* Description */}
-                {nodeDetailDialog.node.description && nodeDetailDialog.node.description.trim() && (
-                  <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
-                    <h3 className="text-lg font-semibold text-slate-50 mb-3">Description</h3>
-                    <div className="text-slate-300 whitespace-pre-wrap leading-relaxed">
-                      {nodeDetailDialog.node.description}
-                    </div>
-                  </div>
-                )}
-
-                {/* Knowledge (from Google Search) */}
-                {nodeDetailDialog.node.knowledge && (() => {
-                  try {
-                    const knowledgeData = JSON.parse(nodeDetailDialog.node.knowledge);
-                    return (
-                      <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
-                        <h3 className="text-lg font-semibold text-slate-50 mb-3 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                          </svg>
-                          Knowledge Base
-                          {knowledgeData.searchDate && (
-                            <span className="text-xs text-slate-400 ml-2">
-                              • {new Date(knowledgeData.searchDate).toLocaleDateString()}
-                            </span>
-                          )}
-                        </h3>
-                        
-                        {/* AI Insights */}
-                        {knowledgeData.geminiAnswer && (
-                          <div className="mb-6">
-                            <h4 className="text-base font-medium text-slate-200 mb-2">AI Insights</h4>
-                            <div className="text-slate-300 leading-relaxed prose prose-invert prose-slate max-w-none markdown-content">
-                              <ReactMarkdown 
-                                remarkPlugins={[remarkGfm]}
-                                components={{
-                                  h1: ({children}) => <h1 className="text-lg font-bold text-slate-50 mb-2 cursor-text select-text">{children}</h1>,
-                                  h2: ({children}) => <h2 className="text-base font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
-                                  h3: ({children}) => <h3 className="text-sm font-medium text-slate-200 mb-1 cursor-text select-text">{children}</h3>,
-                                  p: ({children}) => <p className="text-slate-300 mb-2 leading-relaxed cursor-text select-text">{children}</p>,
-                                  strong: ({children}) => <strong className="font-semibold text-slate-100 cursor-text select-text">{children}</strong>,
-                                  em: ({children}) => <em className="italic text-slate-200 cursor-text select-text">{children}</em>,
-                                  code: ({children}) => <code className="bg-slate-700 text-blue-300 px-1 py-0.5 rounded text-sm font-mono cursor-text select-text">{children}</code>,
-                                  ul: ({children}) => <ul className="list-disc list-inside text-slate-300 mb-2 space-y-1">{children}</ul>,
-                                  ol: ({children}) => <ol className="list-decimal list-inside text-slate-300 mb-2 space-y-1">{children}</ol>,
-                                  li: ({children}) => <li className="text-slate-300 cursor-text select-text">{children}</li>,
-                                  blockquote: ({children}) => <blockquote className="border-l-4 border-purple-400 pl-3 italic text-slate-200 mb-2 cursor-text select-text">{children}</blockquote>,
-                                }}
-                              >
-                                {knowledgeData.geminiAnswer}
-                              </ReactMarkdown>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Search Results */}
-                        {knowledgeData.searchResults && knowledgeData.searchResults.length > 0 && (
-                          <div>
-                            <h4 className="text-base font-medium text-slate-200 mb-3">Search Results</h4>
-                            <div className="space-y-3">
-                              {knowledgeData.searchResults.map((result: any, index: number) => (
-                                <div key={index} className="bg-slate-600/30 rounded-lg p-3 border border-slate-600/50">
-                                  <a 
-                                    href={result.link} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="block group"
-                                  >
-                                    <h5 className="text-blue-400 font-medium mb-1 group-hover:text-blue-300 transition-colors text-sm">
-                                      {result.title}
-                                    </h5>
-                                    <p className="text-slate-400 text-xs mb-2 line-clamp-2">
-                                      {result.snippet}
-                                    </p>
-                                    <span className="text-green-400 text-xs">
-                                      {result.displayLink}
-                                    </span>
-                                  </a>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  } catch {
-                    return (
-                      <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
-                        <h3 className="text-lg font-semibold text-slate-50 mb-3">Knowledge</h3>
-                        <p className="text-slate-400">Invalid knowledge data format</p>
-                      </div>
-                    );
-                  }
-                })()}
-
-                {/* No additional information */}
-                {!nodeDetailDialog.node.description?.trim() && !nodeDetailDialog.node.knowledge && (
-                  <div className="text-center py-8">
-                    <p className="text-slate-400">No additional information available for this node.</p>
-                    <p className="text-slate-500 text-sm mt-2">Use &quot;Search with Google&quot; to add knowledge or &quot;Edit Node&quot; to add a description.</p>
-                  </div>
-                )}
-              </>
-            )}
-            </div>
-          </TextHighlighter>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setNodeDetailDialog(prev => ({ ...prev, open: false }))}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700 touch-manipulation"
-            >
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NodeDetailModal
+        open={nodeDetailDialog.open}
+        node={nodeDetailDialog.node}
+        onOpenChange={(open) => setNodeDetailDialog(prev => ({ ...prev, open }))}
+        onClose={() => setNodeDetailDialog(prev => ({ ...prev, open: false }))}
+      />
     </div>
   );
 });

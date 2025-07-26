@@ -63,7 +63,7 @@ export default function Landing() {
           <div className="flex items-center gap-4">
             {!user && (
               <>
-               <Link href="/pricing">
+                <Link href="/pricing">
                   <Button
                     variant="ghost"
                     className="text-blue-600 hover:bg-white/10"
@@ -122,7 +122,7 @@ export default function Landing() {
             </motion.div>
 
             <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent leading-tight">
-              Transform How You
+              Build Lasting Knowledge
               <br />
               <motion.span
                 animate={{

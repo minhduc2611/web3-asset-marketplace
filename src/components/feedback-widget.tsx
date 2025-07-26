@@ -1,10 +1,15 @@
 "use client";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -19,7 +24,7 @@ import {
   Heart,
   Lightbulb,
   Bug,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 interface FeedbackData {
@@ -37,26 +42,41 @@ export default function FeedbackWidget() {
     category: "",
     message: "",
     email: "",
-    files: []
+    files: [],
   });
   const [hoveredStar, setHoveredStar] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const feedbackCategories = [
-    { id: "general", label: "General Feedback", icon: Heart, color: "text-pink-400" },
-    { id: "feature", label: "Feature Request", icon: Lightbulb, color: "text-yellow-400" },
+    {
+      id: "general",
+      label: "General Feedback",
+      icon: Heart,
+      color: "text-pink-400",
+    },
+    {
+      id: "feature",
+      label: "Feature Request",
+      icon: Lightbulb,
+      color: "text-yellow-400",
+    },
     { id: "bug", label: "Bug Report", icon: Bug, color: "text-red-400" },
-    { id: "improvement", label: "Improvement", icon: Sparkles, color: "text-purple-400" }
+    {
+      id: "improvement",
+      label: "Improvement",
+      icon: Sparkles,
+      color: "text-purple-400",
+    },
   ];
 
   const submitFeedbackMutation = useMutation({
     mutationFn: async (feedbackData: FeedbackData) => {
       const formData = new FormData();
-      formData.append('rating', feedbackData.rating.toString());
-      formData.append('category', feedbackData.category);
-      formData.append('message', feedbackData.message);
-      formData.append('email', feedbackData.email);
-      
+      formData.append("rating", feedbackData.rating.toString());
+      formData.append("category", feedbackData.category);
+      formData.append("message", feedbackData.message);
+      formData.append("email", feedbackData.email);
+
       feedbackData.files.forEach((file, index) => {
         formData.append(`file_${index}`, file);
       });
@@ -65,7 +85,8 @@ export default function FeedbackWidget() {
     },
     onSuccess: () => {
       toast.success("Feedback Submitted! 🎉", {
-        description: "Thank you for helping us improve MindGraph. We'll review your feedback soon.",
+        description:
+          "Thank you for helping us improve MindGraph. We'll review your feedback soon.",
       });
       setIsOpen(false);
       setFeedback({
@@ -73,20 +94,21 @@ export default function FeedbackWidget() {
         category: "",
         message: "",
         email: "",
-        files: []
+        files: [],
       });
     },
     onError: () => {
       toast.error("Submission Failed", {
         description: "Failed to submit feedback. Please try again.",
       });
-    }
+    },
   });
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const validFiles = files.filter(file => {
-      const isValidType = file.type.startsWith('image/') || file.type.startsWith('video/');
+    const validFiles = files.filter((file) => {
+      const isValidType =
+        file.type.startsWith("image/") || file.type.startsWith("video/");
       const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
       return isValidType && isValidSize;
     });
@@ -97,33 +119,34 @@ export default function FeedbackWidget() {
       });
     }
 
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
-      files: [...prev.files, ...validFiles].slice(0, 5) // Max 5 files
+      files: [...prev.files, ...validFiles].slice(0, 5), // Max 5 files
     }));
   };
 
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragOver(false);
-    
+
     const files = Array.from(event.dataTransfer.files);
-    const validFiles = files.filter(file => {
-      const isValidType = file.type.startsWith('image/') || file.type.startsWith('video/');
+    const validFiles = files.filter((file) => {
+      const isValidType =
+        file.type.startsWith("image/") || file.type.startsWith("video/");
       const isValidSize = file.size <= 10 * 1024 * 1024;
       return isValidType && isValidSize;
     });
 
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
-      files: [...prev.files, ...validFiles].slice(0, 5)
+      files: [...prev.files, ...validFiles].slice(0, 5),
     }));
   };
 
   const removeFile = (index: number) => {
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
-      files: prev.files.filter((_, i) => i !== index)
+      files: prev.files.filter((_, i) => i !== index),
     }));
   };
 
@@ -139,13 +162,19 @@ export default function FeedbackWidget() {
   };
 
   const getRatingText = (rating: number) => {
-    switch(rating) {
-      case 1: return "Poor";
-      case 2: return "Fair";
-      case 3: return "Good";
-      case 4: return "Very Good";
-      case 5: return "Excellent";
-      default: return "Rate your experience";
+    switch (rating) {
+      case 1:
+        return "Poor";
+      case 2:
+        return "Fair";
+      case 3:
+        return "Good";
+      case 4:
+        return "Very Good";
+      case 5:
+        return "Excellent";
+      default:
+        return "Rate your experience";
     }
   };
 
@@ -153,15 +182,12 @@ export default function FeedbackWidget() {
     <>
       {/* Fixed Feedback Button */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-6 left-6 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 2, duration: 0.5, type: "spring" }}
       >
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
           <Button
             onClick={() => setIsOpen(true)}
             className="h-14 w-14 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300"
@@ -169,13 +195,19 @@ export default function FeedbackWidget() {
             <MessageCircle className="w-6 h-6 text-white" />
           </Button>
         </motion.div>
-        
+
         {/* Floating tooltip */}
         <motion.div
-          className="absolute bottom-16 right-0 bg-slate-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
+          className="absolute bottom-16 left-0 bg-slate-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3 }}
+          animate={{
+            // Animate opacity in a sequence: 0 -> 1 -> 0
+            opacity: [0, 1, 1, 1, 0],
+            // You can also animate other properties in the same sequence
+            y: [10, 0, 0, 0, 10],
+          }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ delay: 1, duration: 10, ease: "linear" }}
         >
           Share your feedback
           <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
@@ -191,10 +223,11 @@ export default function FeedbackWidget() {
               Help Us Improve MindGraph
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6">
             <p className="text-slate-300 text-sm">
-              Your feedback helps us build a better learning experience. Tell us what you think!
+              Your feedback helps us build a better learning experience. Tell us
+              what you think!
             </p>
 
             {/* Rating Section */}
@@ -206,7 +239,9 @@ export default function FeedbackWidget() {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <motion.button
                     key={star}
-                    onClick={() => setFeedback(prev => ({ ...prev, rating: star }))}
+                    onClick={() =>
+                      setFeedback((prev) => ({ ...prev, rating: star }))
+                    }
                     onMouseEnter={() => setHoveredStar(star)}
                     onMouseLeave={() => setHoveredStar(0)}
                     whileHover={{ scale: 1.2 }}
@@ -216,8 +251,8 @@ export default function FeedbackWidget() {
                     <Star
                       className={`w-8 h-8 transition-colors ${
                         star <= (hoveredStar || feedback.rating)
-                          ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-slate-600'
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-slate-600"
                       }`}
                     />
                   </motion.button>
@@ -237,18 +272,25 @@ export default function FeedbackWidget() {
                 {feedbackCategories.map((category) => (
                   <motion.button
                     key={category.id}
-                    onClick={() => setFeedback(prev => ({ ...prev, category: category.id }))}
+                    onClick={() =>
+                      setFeedback((prev) => ({
+                        ...prev,
+                        category: category.id,
+                      }))
+                    }
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={`p-3 rounded-lg border text-left transition-all ${
                       feedback.category === category.id
-                        ? 'border-purple-500 bg-purple-600/10'
-                        : 'border-slate-600 bg-slate-800/50 hover:bg-slate-700/50'
+                        ? "border-purple-500 bg-purple-600/10"
+                        : "border-slate-600 bg-slate-800/50 hover:bg-slate-700/50"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <category.icon className={`w-4 h-4 ${category.color}`} />
-                      <span className="text-sm font-medium">{category.label}</span>
+                      <span className="text-sm font-medium">
+                        {category.label}
+                      </span>
                     </div>
                   </motion.button>
                 ))}
@@ -263,7 +305,9 @@ export default function FeedbackWidget() {
               <Textarea
                 placeholder="Share your thoughts, suggestions, or report any issues you've encountered..."
                 value={feedback.message}
-                onChange={(e) => setFeedback(prev => ({ ...prev, message: e.target.value }))}
+                onChange={(e) =>
+                  setFeedback((prev) => ({ ...prev, message: e.target.value }))
+                }
                 className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 min-h-[100px] resize-none"
               />
             </div>
@@ -277,7 +321,9 @@ export default function FeedbackWidget() {
                 type="email"
                 placeholder="your.email@example.com"
                 value={feedback.email}
-                onChange={(e) => setFeedback(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(e) =>
+                  setFeedback((prev) => ({ ...prev, email: e.target.value }))
+                }
                 className="bg-slate-800 border-slate-600 text-white placeholder-slate-400"
               />
             </div>
@@ -290,8 +336,8 @@ export default function FeedbackWidget() {
               <div
                 className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                   isDragOver
-                    ? 'border-purple-500 bg-purple-600/10'
-                    : 'border-slate-600 bg-slate-800/50'
+                    ? "border-purple-500 bg-purple-600/10"
+                    : "border-slate-600 bg-slate-800/50"
                 }`}
                 onDrop={handleDrop}
                 onDragOver={(e) => {
@@ -327,7 +373,7 @@ export default function FeedbackWidget() {
                   {feedback.files.map((file, index) => (
                     <div key={index} className="relative">
                       <div className="bg-slate-700 rounded-lg p-2 text-center">
-                        {file.type.startsWith('image/') ? (
+                        {file.type.startsWith("image/") ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={URL.createObjectURL(file)}
@@ -368,7 +414,12 @@ export default function FeedbackWidget() {
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={!feedback.rating || !feedback.category || !feedback.message.trim() || submitFeedbackMutation.isPending}
+                disabled={
+                  !feedback.rating ||
+                  !feedback.category ||
+                  !feedback.message.trim() ||
+                  submitFeedbackMutation.isPending
+                }
                 className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50"
               >
                 {submitFeedbackMutation.isPending ? (

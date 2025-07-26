@@ -7,6 +7,7 @@ import AuthCheck from "@/components/auth-check";
 import { Toaster } from "@/components/ui/sonner";
 import User from "@/components/user";
 import FeedbackWidget from "@/components/feedback-widget";
+import GlobalTextHighlighter from "@/components/global-text-highlighter";
 initializeNeo4j();
 
 const geistSans = Geist({
@@ -39,6 +40,7 @@ export default async function RootLayout({
           <User />
           <FeedbackWidget />
           {children}
+          <GlobalTextHighlighter />
         </AuthCheck>
       </body>
     </html>

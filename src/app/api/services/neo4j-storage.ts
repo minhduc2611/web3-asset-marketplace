@@ -23,13 +23,15 @@ export interface INeo4jStorage {
   getTopicByName(name: string, canvasId: string): Promise<Topic | undefined>;
   getTopicsByCanvas(canvasId: string): Promise<Topic[]>;
   updateTopic(id: string, updates: { name?: string; description?: string }): Promise<Topic | undefined>;
-
   deleteTopic(id: string): Promise<void>;
+  getTopicPath(topicId: string, canvasId: string): Promise<string[]>;
+  getExistingSiblings(topicId: string, canvasId: string): Promise<string[]>;
   
   // Relationship operations
   createRelationship(relationship: InsertRelationship): Promise<Relationship>;
   getRelationshipsByCanvas(canvasId: string): Promise<Relationship[]>;
   deleteRelationshipsByTopicId(topicId: string): Promise<void>;
+  relationshipExists(sourceId: string, targetId: string): Promise<boolean>;
   
   // Graph operations
   getGraphData(canvasId: string): Promise<{ nodes: GraphNode[], edges: GraphEdge[] }>;
@@ -300,6 +302,48 @@ export class Neo4jStorage implements INeo4jStorage {
     }
   }
 
+  async getTopicPath(topicId: string, canvasId: string): Promise<string[]> {
+    const session = getSession();
+    
+    try {
+      const result = await session.run(`
+        MATCH path = (root:Topic)-[:RELATED_TO*0..]->(target:Topic {id: $topicId})
+        WHERE NOT ()-[:RELATED_TO]->(root:Topic {canvasId: $canvasId})
+        AND root.canvasId = $canvasId
+        RETURN [node IN nodes(path) | node.name] AS pathNames
+        ORDER BY length(path) ASC
+        LIMIT 1
+      `, { topicId, canvasId });
+
+      if (result.records.length === 0) return [];
+
+      const pathNames = result.records[0].get('pathNames');
+      return pathNames || [];
+    } finally {
+      await session.close();
+    }
+  }
+
+  async getExistingSiblings(topicId: string, canvasId: string): Promise<string[]> {
+    const session = getSession();
+    
+    try {
+      const result = await session.run(`
+        MATCH (parent:Topic)-[:RELATED_TO]->(current:Topic {id: $topicId, canvasId: $canvasId})
+        MATCH (parent)-[:RELATED_TO]->(sibling:Topic)
+        WHERE sibling.id <> $topicId
+        RETURN COLLECT(sibling.name) AS siblings
+      `, { topicId, canvasId });
+
+      if (result.records.length === 0) return [];
+
+      const siblings = result.records[0].get('siblings');
+      return siblings || [];
+    } finally {
+      await session.close();
+    }
+  }
+
   async createRelationship(insertRelationship: Omit<InsertRelationship, 'id'>): Promise<Relationship> {
     const session = getSession();
     const id = uuidv4();
@@ -369,6 +413,21 @@ export class Neo4jStorage implements INeo4jStorage {
         WHERE r.sourceId = $topicId OR r.targetId = $topicId
         DELETE r
       `, { topicId });
+    } finally {
+      await session.close();
+    }
+  }
+
+  async relationshipExists(sourceId: string, targetId: string): Promise<boolean> {
+    const session = getSession();
+    
+    try {
+      const result = await session.run(`
+        MATCH (s:Topic {id: $sourceId})-[r:RELATED_TO]->(t:Topic {id: $targetId})
+        RETURN COUNT(r) > 0 AS exists
+      `, { sourceId, targetId });
+
+      return result.records[0].get('exists');
     } finally {
       await session.close();
     }

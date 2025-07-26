@@ -1,14 +1,10 @@
 "use client"
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Save, MoreHorizontal } from 'lucide-react';
 import { toast } from "sonner"
-
-interface TextHighlighterProps {
-  children: React.ReactNode;
-  containerRef?: React.RefObject<HTMLElement>;
-}
 
 interface HighlightPosition {
   x: number;
@@ -16,11 +12,17 @@ interface HighlightPosition {
   selectedText: string;
 }
 
-export default function TextHighlighter({ children, containerRef }: TextHighlighterProps) {
+export default function GlobalTextHighlighter() {
   const [highlightPosition, setHighlightPosition] = useState<HighlightPosition | null>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [mounted, setMounted] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Ensure component is mounted before rendering portals
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const saveTextToMemory = (text: string) => {
     try {
@@ -29,7 +31,7 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
         id: Date.now().toString(),
         text: text.trim(),
         timestamp: new Date().toISOString(),
-        source: 'graph-explorer'
+        source: 'global-text-selection'
       };
       
       savedTexts.push(newEntry);
@@ -58,14 +60,13 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
     
-    // Use viewport-relative positioning for better accuracy
+    // Use screen-relative positioning for better accuracy
     const x = rect.left + (rect.width / 2);
     const y = rect.top - 45;
     
     // Ensure the button stays within viewport bounds
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    
     const finalX = Math.max(30, Math.min(x, viewportWidth - 30));
     const finalY = Math.max(10, Math.min(y, viewportHeight - 60));
     
@@ -93,16 +94,13 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
 
     mouseEvent.preventDefault();
     
-    // Use viewport-relative positioning for context menu
+    // Use screen-relative positioning for context menu
     const x = mouseEvent.clientX;
     const y = mouseEvent.clientY;
     
     // Ensure context menu stays within viewport bounds
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    const finalX = Math.max(10, Math.min(x, viewportWidth - 200));
-    const finalY = Math.max(10, Math.min(y, viewportHeight - 100));
+    const finalX = Math.max(10, Math.min(x, window.innerWidth - 200));
+    const finalY = Math.max(10, Math.min(y, window.innerHeight - 100));
     
     setContextMenuPosition({ x: finalX, y: finalY });
     setShowContextMenu(true);
@@ -114,32 +112,31 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
   };
 
   useEffect(() => {
-    const container = containerRef?.current || document;
-    
     const mouseUpHandler = () => handleTextSelection();
     const contextMenuHandler = (e: Event) => handleContextMenu(e);
     const clickHandler = () => handleClickOutside();
     
-    container.addEventListener('mouseup', mouseUpHandler);
-    container.addEventListener('contextmenu', contextMenuHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+    document.addEventListener('contextmenu', contextMenuHandler);
     document.addEventListener('click', clickHandler);
     
     return () => {
-      container.removeEventListener('mouseup', mouseUpHandler);
-      container.removeEventListener('contextmenu', contextMenuHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+      document.removeEventListener('contextmenu', contextMenuHandler);
       document.removeEventListener('click', clickHandler);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [containerRef]);
+  }, []);
+
+  // Don't render anything until mounted (prevents SSR issues)
+  if (!mounted) return null;
 
   return (
     <>
-      {children}
-      
-      {/* Floating highlight button */}
-      {highlightPosition && (
+      {/* Floating highlight button - only shows when text is selected */}
+      {highlightPosition && createPortal(
         <div
           className="absolute z-50 animate-in fade-in-0 zoom-in-95 pointer-events-auto"
           style={{
@@ -162,7 +159,9 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-48">
               <DropdownMenuItem
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   saveTextToMemory(highlightPosition.selectedText);
                   setHighlightPosition(null);
                 }}
@@ -173,11 +172,12 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Context menu */}
-      {showContextMenu && (
+      {/* Context menu - only shows when right-clicking on selected text */}
+      {showContextMenu && createPortal(
         <div
           className="fixed z-50 animate-in fade-in-0 zoom-in-95 pointer-events-auto"
           style={{
@@ -200,8 +200,9 @@ export default function TextHighlighter({ children, containerRef }: TextHighligh
               Add text into memory
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
-}
+} 

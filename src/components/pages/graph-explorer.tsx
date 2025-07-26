@@ -290,7 +290,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         />
 
         {/* Info Panel - Mobile responsive */}
-        <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-3 sm:p-4 max-w-[calc(100vw-120px)] sm:max-w-sm">
+        <div className="absolute top-3 left-3 sm:top-6 sm:left-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-3 sm:p-4 max-w-[calc(100vw-120px)] sm:max-w-sm">
           <h3 className="text-sm font-semibold text-slate-200 mb-2">
             Instructions
           </h3>
