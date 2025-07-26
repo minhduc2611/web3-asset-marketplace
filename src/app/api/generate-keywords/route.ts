@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
-import {
-  generateKeywordsSchema,
-  Relationship,
-  type GenerateKeywordsResponse,
-} from "@/shared/schema";
+import { generateKeywordsSchema, type GenerateKeywordsResponse } from "@/shared/schema";
 import { neo4jStorage } from "@/app/api/services/neo4j-storage";
 import OpenAI from "openai";
-import { ResponseFormatJSONObject } from "openai/resources/shared";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || "default_key",
