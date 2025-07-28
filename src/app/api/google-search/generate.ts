@@ -12,9 +12,10 @@ export const generate = async (
   topicPath?: string
 ) => {
   try {
-    // Setup LLM
+    // Setup LLM with timeout
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+      timeout: 20000, // 20 second timeout
     });
 
     const systemInstructionSection = systemInstruction
@@ -32,86 +33,73 @@ ${topicPath}
 </topic-path>`
       : "";
 
+    // Optimize: Use the question directly as search query instead of generating one
+    // This saves one API call and reduces latency
+    const searchQuery =
+      question.length > 100 ? question.substring(0, 100) : question;
+
+    // Get search results from Tavily with timeout and reduced content
+    const searchPromise = Promise.race([
+      client.search(searchQuery, {
+        searchDepth: "basic", // Changed from "advanced" to "basic" for speed
+        includeRawContent: false, // Disable raw content to reduce processing time
+        maxResults: 3, // Limit results for faster processing
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Tavily search timeout")), 15000)
+      ),
+    ]) as Promise<{
+      results: { title: string; url: string; content: string }[];
+    }>;
+
+    const TAVILY_search_result = await searchPromise;
+
+    // Simplified result processing
+    const TAVILY_search_result_json = TAVILY_search_result.results
+      .slice(0, 3) // Only process first 3 results
+      .map((result: { title: string; url: string; content: string }) => ({
+        title: result.title,
+        link: result.url,
+        knowledge: result.content, // Use content instead of rawContent for speed
+      }));
+
+    // Combined instruction for single API call
     const instructions = `
 <instructions>
     ${systemInstructionSection}
     ${topicPathSection}
-    <format>
-        Please provide comprehensive analysis, be insightful and detailed in your response, using Markdown format when appropriate.
-    </format>
-    <search_guidance>
-        Use web search to give current and accurate information and trends. Reference search results in your response when available.
-    </search_guidance>
-</instructions>
-        `;
-
-    const gen_search_query_instructions = `
-    <user_instructions>
-      <user_wants>
-        ${systemInstructionSection}
-      <user_wants>
-        ${topicPathSection}
-        <search_guidance>
-            Use web search to give current and accurate information and trends. Reference search results in your response when available.
-            The current time is ${new Date().toLocaleString()}.
-        </search_guidance>
-        <format>
-            Short string for tavily search query.
-        </format>
-    </user_instructions>
-            `;
-    const search_query = await openai.responses.create({
-      model: "gpt-4o",
-      input: `Generate a search query for the following topic: ${question}`,
-      instructions: gen_search_query_instructions,
-      max_output_tokens: 900,
-    });
-    // Get search results from Tavily
-    const TAVILY_search_result = await client.search(search_query.output_text, {
-      searchDepth: "advanced",
-      includeRawContent: "text",
-    });
-    const TAVILY_search_result_json = TAVILY_search_result.results.map(
-      (result, index) => {
-        if (index === 0) {
-          //  do this to safe tokens
-          return {
-            title: result.title,
-            link: result.url,
-            knowledge: result.rawContent,
-          };
-        }
-        return {
-          title: result.title,
-          link: result.url,
-          knowledge: result.content,
-        };
-      }
-    );
-
-    // Handle the result with fallback
-    if (TAVILY_search_result_json) {
-      const response2 = await openai.responses.create({
-        model: "gpt-4o",
-        tools: [{ type: "web_search_preview" }],
-        input: `
-<instructions>
-    <google-search-result>
+    <search-results>
         ${JSON.stringify(TAVILY_search_result_json)}
-    </google-search-result>
+    </search-results>
     <format>
-        Please provide comprehensive analysis, be insightful and detailed in your response, using Markdown format when appropriate.
+        Please provide comprehensive analysis about "${question}", be insightful and detailed in your response, using Markdown format when appropriate.
         ALWAYS reference the search results in your response when available.
+        Current time: ${new Date().toLocaleString()}
     </format>
-</instructions>`,
+</instructions>`;
+
+    // Single optimized API call instead of two separate calls
+    const response = (await Promise.race([
+      openai.responses.create({
+        model: "gpt-4o",
+        input: `Provide a comprehensive analysis of: ${question}`,
         instructions,
-      });
-      return response2.output_text;
+        max_output_tokens: 1500, // Reduced token limit for faster response
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("OpenAI timeout")), 18000)
+      ),
+    ])) as { output_text: string };
+
+    return response.output_text;
+  } catch (error: unknown) {
+    console.error("🚨 Generate function error:", error);
+
+    // Fallback: Return a basic response if all else fails
+    if (error instanceof Error && error.message.includes("timeout")) {
+      return `# ${question}\n\nI encountered a timeout while gathering real-time information. Please try again or rephrase your query for faster results.`;
     }
 
-    return null;
-  } catch (error) {
-    console.error("🚨 Main error:", error);
     return null;
   }
 };

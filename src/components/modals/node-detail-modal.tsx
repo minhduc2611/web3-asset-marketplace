@@ -19,7 +19,6 @@ function NodeDetailModal({
   onOpenChange,
   onClose
 }: NodeDetailModalProps) {
-    console.log("node", node);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-slate-800 border-slate-600 sm:max-w-4xl mx-3 sm:mx-auto max-h-[80vh] overflow-hidden flex flex-col">
@@ -102,9 +101,9 @@ function NodeDetailModal({
                             <ReactMarkdown 
                               remarkPlugins={[remarkGfm]}
                               components={{
-                                h1: ({children}) => <h1 className="text-lg font-bold text-slate-50 mb-2 cursor-text select-text">{children}</h1>,
-                                h2: ({children}) => <h2 className="text-base font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
-                                h3: ({children}) => <h3 className="text-sm font-medium text-slate-200 mb-1 cursor-text select-text">{children}</h3>,
+                                h1: ({children}) => <h1 className="text-2xl font-bold text-slate-50 mb-2 cursor-text select-text">{children}</h1>,
+                                h2: ({children}) => <h2 className="text-xl font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
+                                h3: ({children}) => <h3 className="text-lg font-medium text-slate-200 mb-1 cursor-text select-text">{children}</h3>,
                                 p: ({children}) => <p className="text-slate-300 mb-2 leading-relaxed cursor-text select-text">{children}</p>,
                                 strong: ({children}) => <strong className="font-semibold text-slate-100 cursor-text select-text">{children}</strong>,
                                 em: ({children}) => <em className="italic text-slate-200 cursor-text select-text">{children}</em>,

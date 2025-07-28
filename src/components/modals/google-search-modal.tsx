@@ -40,7 +40,7 @@ function GoogleSearchModal({
           </div>
         </DialogHeader>
         
-        <div className="flex-1 overflow-y-auto space-y-6 py-4">
+        <div className="flex-1 overflow-y-scroll space-y-6 py-4">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="w-8 h-8 border-3 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
@@ -62,9 +62,9 @@ function GoogleSearchModal({
                       remarkPlugins={[remarkGfm]}
                       components={{
                         // Custom styling for markdown elements
-                        h1: ({children}) => <h1 className="text-xl font-bold text-slate-50 mb-3 cursor-text select-text">{children}</h1>,
-                        h2: ({children}) => <h2 className="text-lg font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
-                        h3: ({children}) => <h3 className="text-base font-medium text-slate-200 mb-2 cursor-text select-text">{children}</h3>,
+                        h1: ({children}) => <h1 className="text-2xl font-bold text-slate-50 mb-3 cursor-text select-text">{children}</h1>,
+                        h2: ({children}) => <h2 className="text-xl font-semibold text-slate-100 mb-2 cursor-text select-text">{children}</h2>,
+                        h3: ({children}) => <h3 className="text-lg font-medium text-slate-200 mb-2 cursor-text select-text">{children}</h3>,
                         p: ({children}) => <p className="text-slate-300 mb-3 leading-relaxed cursor-text select-text">{children}</p>,
                         strong: ({children}) => <strong className="font-semibold text-slate-100 cursor-text select-text">{children}</strong>,
                         em: ({children}) => <em className="italic text-slate-200 cursor-text select-text">{children}</em>,

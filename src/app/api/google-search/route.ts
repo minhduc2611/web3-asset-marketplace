@@ -39,7 +39,17 @@ export async function POST(req: NextRequest) {
       systemInstruction = canvas?.systemInstruction || "";
     }
 
-    const aiResponse = await generate(nodeName, systemInstruction, topicPath.join(" > "));
+    // Run both AI generation and search in parallel for faster execution
+    const [aiResponse, searchResults] = await Promise.all([
+      generate(nodeName, systemInstruction, topicPath.join(" > ")),
+      client.search(query, {
+        topic: "news",
+        searchDepth: "basic", // Changed to basic for faster execution
+        includeRawContent: false, // Disabled for faster execution
+        maxResults: 5 // Limit results
+      })
+    ]);
+
     const geminiAnswer = aiResponse || "";
     if (!aiResponse) {
       return NextResponse.json(
@@ -47,46 +57,14 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    // Mock Google search results for demonstration
-    const searchResults =  await client.search(query, {
-      topic: "news",
-      searchDepth: "advanced",
-      includeRawContent: "text"
-  })
-    const searchResultsJson = searchResults.results.map((result) => ({
+
+    const searchResultsJson = searchResults.results.map((result: { title: string; url: string; content: string }) => ({
       title: result.title,
       link: result.url,
       snippet: result.content,
-      knowledge: result.rawContent,
+      knowledge: result.content, // Use content instead of rawContent since rawContent is disabled
       displayLink: result.title
     }));
-    
-    // [
-    //   {
-    //     title: `${query} - Wikipedia`,
-    //     link: `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
-    //     snippet: `Learn about ${query} from the world's largest encyclopedia. Comprehensive information, history, and related topics.`,
-    //     displayLink: "en.wikipedia.org"
-    //   },
-    //   {
-    //     title: `${query} - Latest News and Updates`,
-    //     link: `https://news.google.com/search?q=${encodeURIComponent(query)}`,
-    //     snippet: `Stay updated with the latest news and developments about ${query}. Real-time coverage from trusted sources.`,
-    //     displayLink: "news.google.com"
-    //   },
-    //   {
-    //     title: `Research and Analysis: ${query}`,
-    //     link: `https://scholar.google.com/scholar?q=${encodeURIComponent(query)}`,
-    //     snippet: `Academic research and scholarly articles about ${query}. Peer-reviewed papers and scientific studies.`,
-    //     displayLink: "scholar.google.com"
-    //   },
-    //   {
-    //     title: `${query} - Complete Guide and Resources`,
-    //     link: `https://example.com/${encodeURIComponent(query)}`,
-    //     snippet: `Comprehensive guide covering everything you need to know about ${query}. Tutorials, tips, and expert insights.`,
-    //     displayLink: "example.com"
-    //   }
-    // ];
 
     return NextResponse.json({
       searchResults: searchResultsJson,
