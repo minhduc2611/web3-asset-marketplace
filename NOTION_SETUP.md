@@ -55,7 +55,7 @@ NOTION_INTEGRATION_API_KEY=secret_your_integration_token_here
 NOTION_FEEDBACK_DATABASE_ID=your_database_id_here
 ```
 
-## Step 5: Test the Integration
+## Step 6: Test the Integration
 
 1. Start your development server: `npm run dev`
 2. Navigate to any page in your app

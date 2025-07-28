@@ -15,11 +15,17 @@ export interface FeedbackData {
   userAgent?: string;
   timestamp: Date;
   files?: string[];
+  fileUrls?: Array<{
+    name: string;
+    url: string;
+    path: string;
+    type: string;
+  }>;
 }
 
 export async function createFeedbackPage(feedbackData: FeedbackData, databaseId: string) {
   try {
-    const { rating, category, message, email, userEmail, userId, currentRoute, userAgent, timestamp, files } = feedbackData;
+    const { rating, category, message, email, userEmail, userId, currentRoute, userAgent, timestamp, files, fileUrls } = feedbackData;
     
     // Create rich text for the message
     const messageRichText = [
@@ -32,6 +38,7 @@ export async function createFeedbackPage(feedbackData: FeedbackData, databaseId:
     ];
 
     // Create properties for the Notion page
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const properties: any = {
       'Title': {
         title: [
@@ -89,6 +96,7 @@ export async function createFeedbackPage(feedbackData: FeedbackData, databaseId:
     };
 
     // Create the page content
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const children: any[] = [
       {
         object: 'block',
@@ -109,8 +117,8 @@ export async function createFeedbackPage(feedbackData: FeedbackData, databaseId:
       },
     ];
 
-    // Add files section if files exist
-    if (files && files.length > 0) {
+    // Add uploaded files section
+    if (fileUrls && fileUrls.length > 0) {
       children.push({
         object: 'block',
         type: 'heading_3',
@@ -118,6 +126,66 @@ export async function createFeedbackPage(feedbackData: FeedbackData, databaseId:
           rich_text: [{
             type: 'text',
             text: { content: 'Attached Files' },
+          }],
+        },
+      });
+
+      fileUrls.forEach((file, index) => {
+        // Check if it's an image to embed it
+        const isImage = file.type.startsWith('image/');
+        
+        if (isImage) {
+          // Add image block for images
+          children.push({
+            object: 'block',
+            type: 'image',
+            image: {
+              type: 'external',
+              external: {
+                url: file.url,
+              },
+              caption: [{
+                type: 'text',
+                text: { content: file.name },
+              }],
+            },
+          });
+        } else {
+          // Add rich text link for videos and other files
+          children.push({
+            object: 'block',
+            type: 'paragraph',
+            paragraph: {
+              rich_text: [{
+                type: 'text',
+                text: { content: `${index + 1}. ` },
+              }, {
+                type: 'text',
+                text: { 
+                  content: file.name, 
+                  link: { url: file.url } 
+                },
+                annotations: { 
+                  bold: true,
+                  color: 'blue' 
+                },
+              }, {
+                type: 'text',
+                text: { content: ` (${file.type.includes('video') ? 'Video' : 'File'})` },
+              }],
+            },
+          });
+        }
+      });
+    } else if (files && files.length > 0) {
+      // Fallback for when we only have file names without URLs
+      children.push({
+        object: 'block',
+        type: 'heading_3',
+        heading_3: {
+          rich_text: [{
+            type: 'text',
+            text: { content: 'Attached Files (Names Only)' },
           }],
         },
       });

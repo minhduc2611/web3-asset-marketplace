@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createFeedbackPage, ensureFeedbackDatabase, FeedbackData } from '@/lib/notion';
 import { createServerSupabaseClient } from '@/lib/supabase.server';
+import { storageService } from '@/lib/storage';
 
 export async function POST(req: NextRequest) {
   try {
@@ -55,14 +56,39 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Handle file uploads
+    // Handle file uploads - Upload to Supabase Storage
     const files: string[] = [];
+    const uploadedFiles: Array<{ name: string; url: string; path: string; type: string }> = [];
     const fileKeys = Array.from(formData.keys()).filter(key => key.startsWith('file_'));
     
+    // // Ensure storage bucket exists
+    // try {
+    //   await storageService.ensureBucketExists();
+    // } catch (error) {
+    //   console.log('Warning: Could not ensure bucket exists:', error);
+    //   // Continue without stopping the process
+    // }
+    
+    // Upload files to Supabase Storage
     for (const key of fileKeys) {
       const file = formData.get(key) as File;
       if (file) {
         files.push(file.name);
+        
+        try {
+          console.log(`Uploading file to Supabase: ${file.name} (${file.type})`);
+          const uploadResult = await storageService.uploadFile(file, userId);
+          uploadedFiles.push({
+            name: file.name,
+            url: uploadResult.url,
+            path: uploadResult.path,
+            type: file.type,
+          });
+          console.log(`Successfully uploaded file: ${file.name} to ${uploadResult.url}`);
+        } catch (uploadError) {
+          console.error(`Failed to upload file ${file.name}:`, uploadError);
+          // Continue with other files even if one fails
+        }
       }
     }
 
@@ -78,6 +104,7 @@ export async function POST(req: NextRequest) {
       userAgent,
       timestamp: new Date(),
       files: files.length > 0 ? files : undefined,
+      fileUrls: uploadedFiles.length > 0 ? uploadedFiles : undefined,
     };
 
     // Get Notion database ID
@@ -86,17 +113,21 @@ export async function POST(req: NextRequest) {
     // Create page in Notion
     const notionResponse = await createFeedbackPage(feedbackData, databaseId);
 
-    console.log('Feedback submitted successfully:', {
-      notionPageId: notionResponse.id,
-      userEmail,
-      category,
-      rating,
-    });
+    // console.log('Feedback submitted successfully:', {
+    //   notionPageId: notionResponse.id,
+    //   userEmail,
+    //   category,
+    //   rating,
+    //   filesUploaded: uploadedFiles.length,
+    //   fileUrls: uploadedFiles.map(f => f.url),
+    // });
 
     return NextResponse.json({
       success: true,
       message: 'Feedback submitted successfully',
       notionPageId: notionResponse.id,
+      filesUploaded: uploadedFiles.length,
+      fileUrls: uploadedFiles.map(f => ({ name: f.name, url: f.url })),
     });
 
   } catch (error) {

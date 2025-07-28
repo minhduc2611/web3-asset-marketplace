@@ -371,7 +371,6 @@ export default function FeedbackWidget() {
                 />
               </div>
 
-              {/* File Preview */}
               {feedback.files.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {feedback.files.map((file, index) => (
