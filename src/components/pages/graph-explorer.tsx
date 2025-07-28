@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import TopicInput from "@/components/topic-input";
 import GraphCanvas, { GraphCanvasRef } from "@/components/graph-canvas";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Target, ArrowLeft, Users, Zap, Settings } from "lucide-react";
+import { RotateCcw, Target, ArrowLeft, Users, Zap, Settings, X, Info } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Canvas } from "@/shared/schema";
@@ -36,6 +36,9 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     name: "",
     systemInstruction: ""
   });
+  
+  // Instructions panel state
+  const [instructionsExpanded, setInstructionsExpanded] = useState(true);
 
   if (!canvasId) {
     return <div>Canvas ID not found</div>;
@@ -348,18 +351,37 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         />
 
         {/* Info Panel - Mobile responsive */}
-        <div className="absolute top-3 left-3 sm:top-6 sm:left-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-3 sm:p-4 max-w-[calc(100vw-120px)] sm:max-w-sm">
-          <h3 className="text-sm font-semibold text-slate-200 mb-2">
-            Instructions
-          </h3>
-          <ul className="text-xs text-slate-400 space-y-1">
-            <li className="hidden sm:block">• Right-click nodes for options</li>
-            <li className="sm:hidden">• Long-press nodes for options</li>
-            <li>• Add topics using input above</li>
-            <li className="hidden sm:block">• Drag to pan, scroll to zoom</li>
-            <li className="sm:hidden">• Pinch zoom, drag to pan</li>
-          </ul>
-        </div>
+        {instructionsExpanded ? (
+          <div className="absolute top-3 left-3 sm:top-6 sm:left-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-3 sm:p-4 max-w-[calc(100vw-120px)] sm:max-w-sm">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-slate-200">
+                Instructions
+              </h3>
+              <button
+                onClick={() => setInstructionsExpanded(false)}
+                className="text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-md hover:bg-slate-700/50"
+                aria-label="Close instructions"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <ul className="text-xs text-slate-400 space-y-1">
+              <li className="hidden sm:block">• Right-click nodes for options</li>
+              <li className="sm:hidden">• Long-press nodes for options</li>
+              <li>• Add topics using input above</li>
+              <li className="hidden sm:block">• Drag to pan, scroll to zoom</li>
+              <li className="sm:hidden">• Pinch zoom, drag to pan</li>
+            </ul>
+          </div>
+        ) : (
+          <button
+            onClick={() => setInstructionsExpanded(true)}
+            className="absolute top-3 left-3 sm:top-6 sm:left-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-2 sm:p-3 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors"
+            aria-label="Show instructions"
+          >
+            <Info size={16} />
+          </button>
+        )}
 
         {/* Statistics Panel - Mobile responsive */}
         <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 bg-slate-800/90 backdrop-blur-sm border border-slate-600 rounded-lg p-2 sm:p-4">

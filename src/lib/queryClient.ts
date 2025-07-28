@@ -8,10 +8,13 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export const apiRequest = async (method: string, url: string, data?: unknown | undefined,) => {
+  // Check if data is FormData - if so, don't set Content-Type header and don't stringify
+  const isFormData = data instanceof FormData;
+  
   const response = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
+    headers: isFormData ? {} : (data ? { "Content-Type": "application/json" } : {}),
+    body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     credentials: "include",
   });
   if (!response.ok) {

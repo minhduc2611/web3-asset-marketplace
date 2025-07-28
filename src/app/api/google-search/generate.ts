@@ -33,10 +33,8 @@ ${topicPath}
 </topic-path>`
       : "";
 
-    // Optimize: Use the question directly as search query instead of generating one
-    // This saves one API call and reduces latency
-    const searchQuery =
-      question.length > 100 ? question.substring(0, 100) : question;
+      // get year
+    const searchQuery = question + " " + new Date().getFullYear();
 
     // Get search results from Tavily with timeout and reduced content
     const searchPromise = Promise.race([
@@ -72,7 +70,7 @@ ${topicPath}
         ${JSON.stringify(TAVILY_search_result_json)}
     </search-results>
     <format>
-        Please provide comprehensive analysis about "${question}", be insightful and detailed in your response, using Markdown format when appropriate.
+        Using Markdown format when appropriate.
         ALWAYS reference the search results in your response when available.
         Current time: ${new Date().toLocaleString()}
     </format>

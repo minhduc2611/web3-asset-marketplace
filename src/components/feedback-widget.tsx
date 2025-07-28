@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -46,6 +47,7 @@ export default function FeedbackWidget() {
   });
   const [hoveredStar, setHoveredStar] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
+  const pathname = usePathname();
 
   const feedbackCategories = [
     {
@@ -76,6 +78,8 @@ export default function FeedbackWidget() {
       formData.append("category", feedbackData.category);
       formData.append("message", feedbackData.message);
       formData.append("email", feedbackData.email);
+      formData.append("currentRoute", pathname);
+      formData.append("userAgent", navigator.userAgent);
 
       feedbackData.files.forEach((file, index) => {
         formData.append(`file_${index}`, file);
