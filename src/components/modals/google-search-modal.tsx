@@ -27,7 +27,7 @@ function GoogleSearchModal({
 }: GoogleSearchModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-slate-800 border-slate-600 mx-3 sm:mx-auto sm:max-h-[80vh] sm:max-w-4xl overflow-hidden flex flex-col">
+      <DialogContent className="bg-slate-800 border-slate-600 mx-3 sm:mx-auto max-h-[80vh] sm:max-w-4xl overflow-hidden flex flex-col">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>

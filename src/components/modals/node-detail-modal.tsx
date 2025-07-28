@@ -22,7 +22,7 @@ function NodeDetailModal({
     console.log("node", node);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-slate-800 border-slate-600 sm:max-w-4xl mx-3 sm:mx-auto sm:max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="bg-slate-800 border-slate-600 sm:max-w-4xl mx-3 sm:mx-auto max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>

@@ -142,7 +142,7 @@ export default function Landing() {
             <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
               Master any subject with AI-generated flashcards and visualize
               knowledge connections through interactive mind maps. Your complete
-              intelligent learning ecosystem.
+              intelligent knowledge building ecosystem.
             </p>
 
             <motion.div

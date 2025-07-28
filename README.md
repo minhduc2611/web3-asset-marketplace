@@ -125,3 +125,36 @@ You can also mention what license the project uses. I usually add it like this:
 [MIT license](./LICENSE)
 
 
+
+act as a SaaS strategist,
+help me create super useful app. 
+this is what I already did: 
+
+<apps>
+<keyword_explorer>
+Keyword Explorer: Create and explore AI-powered mind maps with interactive visualizations
+<features>
+- create keywords mindmap, generate insightful keywords
+- right click on a keyword, click "generate keywords" to generate more keywords based on the base keyword
+- right click on a keyword, click "search and generate article" to read more about the keyword
+- right click on a keyword, click "edit" to edit the keyword description, manage and check if we are really understanding the keyword. I also use this to track my progress of creating reels video for this keyword.
+- right click on a keyword, click "generate flashcards" to generate flashcards based on the keyword
+</features>
+<keyword_explorer>
+Flashcard Studio: Master any subject with spaced repetition
+<features>
+- create flashcards, generate bulk flashcards with AI 
+- create flashcards from pdfs, excel files.
+- learn flashcards with spaced repetition
+- learn flashcards audio, images, video and so on
+- share flashcards with friends
+</features>
+</apps>
+so all apps are in 1 platform, With the main goal and motto is: Build lasting knowledge!
+
+1. can you help me with brainstorming possible usecases, new features, new products that really help and create value for users? 
+2. with the ideas, give critique
+3. after all the thoughts, give me a table with records of suggestions.
+
+
+
