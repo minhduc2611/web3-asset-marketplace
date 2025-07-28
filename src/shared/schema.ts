@@ -7,6 +7,7 @@ export const canvases = pgTable("canvases", {
   id: varchar("id").primaryKey(),
   authorId: varchar("author_id").notNull(),
   name: text("name").notNull(),
+  systemInstruction: text("system_instruction").default(""),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -58,6 +59,12 @@ export type Relationship = typeof relationships.$inferSelect;
 export const createCanvasSchema = z.object({
   name: z.string().min(1).max(100),
   authorId: z.string().min(1),
+  systemInstruction: z.string().optional(),
+});
+
+export const updateCanvasSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  systemInstruction: z.string().optional(),
 });
 
 export const createNodeSchema = z.object({
@@ -70,10 +77,12 @@ export const createNodeSchema = z.object({
 export const generateKeywordsSchema = z.object({
   name: z.string().min(1).max(100),
   canvasId: z.string().min(1),
-  nodeCount: z.number().min(1).max(10).optional(),
+  nodeCount: z.number().min(1).max(15).optional(),
+  isAutomatic: z.boolean().optional(),
 });
 
 export type CreateCanvasRequest = z.infer<typeof createCanvasSchema>;
+export type UpdateCanvasRequest = z.infer<typeof updateCanvasSchema>;
 export type CreateNodeRequest = z.infer<typeof createNodeSchema>;
 export type GenerateKeywordsRequest = z.infer<typeof generateKeywordsSchema>;
 

@@ -16,6 +16,7 @@ export interface INeo4jStorage {
   createCanvas(canvas: InsertCanvas): Promise<Canvas>;
   getCanvas(id: string): Promise<Canvas | undefined>;
   getCanvasesByAuthor(authorId: string): Promise<Canvas[]>;
+  updateCanvas(id: string, updates: { name?: string; systemInstruction?: string }): Promise<Canvas | undefined>;
   deleteCanvas(id: string): Promise<void>;
   
   // Topic operations
@@ -26,6 +27,7 @@ export interface INeo4jStorage {
   deleteTopic(id: string): Promise<void>;
   getTopicPath(topicId: string, canvasId: string): Promise<string[]>;
   getExistingSiblings(topicId: string, canvasId: string): Promise<string[]>;
+  getTopicChildren(topicId: string, canvasId: string): Promise<string[]>;
   
   // Relationship operations
   createRelationship(relationship: InsertRelationship): Promise<Relationship>;
@@ -49,6 +51,7 @@ export class Neo4jStorage implements INeo4jStorage {
           id: $id,
           authorId: $authorId,
           name: $name,
+          systemInstruction: $systemInstruction,
           createdAt: datetime(),
           updatedAt: datetime()
         })
@@ -56,7 +59,8 @@ export class Neo4jStorage implements INeo4jStorage {
       `, {
         id,
         authorId: insertCanvas.authorId,
-        name: insertCanvas.name
+        name: insertCanvas.name,
+        systemInstruction: insertCanvas.systemInstruction || ""
       });
 
       const canvas = result.records[0]?.get('c').properties;
@@ -64,6 +68,7 @@ export class Neo4jStorage implements INeo4jStorage {
         id: canvas.id,
         authorId: canvas.authorId,
         name: canvas.name,
+        systemInstruction: canvas.systemInstruction || "",
         createdAt: new Date(canvas.createdAt.toString()),
         updatedAt: new Date(canvas.updatedAt.toString())
       };
@@ -88,6 +93,7 @@ export class Neo4jStorage implements INeo4jStorage {
         id: canvas.id,
         authorId: canvas.authorId,
         name: canvas.name,
+        systemInstruction: canvas.systemInstruction || "",
         createdAt: new Date(canvas.createdAt.toString()),
         updatedAt: new Date(canvas.updatedAt.toString())
       };
@@ -112,10 +118,57 @@ export class Neo4jStorage implements INeo4jStorage {
           id: canvas.id,
           authorId: canvas.authorId,
           name: canvas.name,
+          systemInstruction: canvas.systemInstruction || "",
           createdAt: new Date(canvas.createdAt.toString()),
           updatedAt: new Date(canvas.updatedAt.toString())
         };
       });
+    } finally {
+      await session.close();
+    }
+  }
+
+  async updateCanvas(id: string, updates: { name?: string; systemInstruction?: string }): Promise<Canvas | undefined> {
+    const session = getSession();
+    
+    try {
+      const setClause = [];
+      const params: Record<string, string> = { id };
+      
+      if (updates.name !== undefined) {
+        setClause.push("c.name = $name");
+        params.name = updates.name;
+      }
+      
+      if (updates.systemInstruction !== undefined) {
+        setClause.push("c.systemInstruction = $systemInstruction");
+        params.systemInstruction = updates.systemInstruction;
+      }
+      
+      if (setClause.length === 0) {
+        // No updates provided, just return the current canvas
+        return this.getCanvas(id);
+      }
+      
+      setClause.push("c.updatedAt = datetime()");
+      
+      const result = await session.run(`
+        MATCH (c:Canvas {id: $id})
+        SET ${setClause.join(', ')}
+        RETURN c
+      `, params);
+
+      if (result.records.length === 0) return undefined;
+
+      const canvas = result.records[0].get('c').properties;
+      return {
+        id: canvas.id,
+        authorId: canvas.authorId,
+        name: canvas.name,
+        systemInstruction: canvas.systemInstruction || "",
+        createdAt: new Date(canvas.createdAt.toString()),
+        updatedAt: new Date(canvas.updatedAt.toString())
+      };
     } finally {
       await session.close();
     }
@@ -339,6 +392,24 @@ export class Neo4jStorage implements INeo4jStorage {
 
       const siblings = result.records[0].get('siblings');
       return siblings || [];
+    } finally {
+      await session.close();
+    }
+  }
+
+  async getTopicChildren(topicId: string, canvasId: string): Promise<string[]> {
+    const session = getSession();
+    
+    try {
+      const result = await session.run(`
+        MATCH (current:Topic {id: $topicId, canvasId: $canvasId})-[:RELATED_TO]->(child:Topic)
+        RETURN COLLECT(child.name) AS children
+      `, { topicId, canvasId });
+
+      if (result.records.length === 0) return [];
+
+      const children = result.records[0].get('children');
+      return children || [];
     } finally {
       await session.close();
     }

@@ -33,7 +33,7 @@ interface GraphData {
 interface GraphCanvasProps {
   graphData?: GraphData;
   isLoading?: boolean;
-  onGenerateKeywords: (topic: string, nodeCount?: number) => void;
+  onGenerateKeywords: (topic: string, nodeCount?: number, isAutomatic?: boolean) => void;
   onDeleteNode: (nodeId: string) => void;
   onNodeSelect: (nodeId: string | null) => void;
   selectedNodeId: string | null;
@@ -86,7 +86,8 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
     open: boolean;
     nodeName: string;
     nodeCount: number;
-  }>({ open: false, nodeName: "", nodeCount: 3 });
+    isAutomatic: boolean;
+  }>({ open: false, nodeName: "", nodeCount: 3, isAutomatic: false });
 
   const [googleSearchDialog, setGoogleSearchDialog] = useState<{
     open: boolean;
@@ -154,7 +155,8 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
   const googleSearchMutation = useMutation({
     mutationFn: async (data: { searchTerm: string; nodeId: string }) => {
       const response = await apiRequest('POST', '/api/google-search', {
-        query: data.searchTerm
+        query: data.searchTerm,
+        canvasId
       });
       const result = await response.json();
       return { ...result, nodeId: data.nodeId };
@@ -767,7 +769,8 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
     setGenerateKeywordsDialog({
       open: true,
       nodeName: contextMenu.nodeName,
-      nodeCount: 3
+      nodeCount: 3,
+      isAutomatic: false
     });
     hideContextMenu();
   };
@@ -815,8 +818,8 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
   };
 
   const handleGenerateNodes = () => {
-    onGenerateKeywords(generateKeywordsDialog.nodeName, generateKeywordsDialog.nodeCount);
-    setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3 });
+    onGenerateKeywords(generateKeywordsDialog.nodeName, generateKeywordsDialog.nodeCount, generateKeywordsDialog.isAutomatic);
+    setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3, isAutomatic: false });
   };
 
   const handleSaveSubNode = () => {
@@ -946,10 +949,12 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(({
         open={generateKeywordsDialog.open}
         nodeName={generateKeywordsDialog.nodeName}
         nodeCount={generateKeywordsDialog.nodeCount}
+        isAutomatic={generateKeywordsDialog.isAutomatic}
         onOpenChange={(open) => setGenerateKeywordsDialog(prev => ({ ...prev, open }))}
         onNodeCountChange={(nodeCount) => setGenerateKeywordsDialog(prev => ({ ...prev, nodeCount }))}
+        onAutomaticChange={(isAutomatic) => setGenerateKeywordsDialog(prev => ({ ...prev, isAutomatic }))}
         onGenerate={handleGenerateNodes}
-        onCancel={() => setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3 })}
+        onCancel={() => setGenerateKeywordsDialog({ open: false, nodeName: "", nodeCount: 3, isAutomatic: false })}
       />
 
       {/* Google Search with Gemini AI Modal */}

@@ -6,11 +6,12 @@ import { toast } from "sonner";
 import TopicInput from "@/components/topic-input";
 import GraphCanvas, { GraphCanvasRef } from "@/components/graph-canvas";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Target, ArrowLeft, Users, Zap } from "lucide-react";
+import { RotateCcw, Target, ArrowLeft, Users, Zap, Settings } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Canvas } from "@/shared/schema";
 import { motion } from "framer-motion";
+import { CanvasSettingsModal } from "@/components/modals";
 
 interface GraphData {
   nodes: Array<{
@@ -26,10 +27,15 @@ interface GraphData {
 }
 
 export default function GraphExplorer({ canvasId }: { canvasId: string }) {
-  console.log("canvasId", canvasId);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  // const [canvas, setCanvas] = useState<any>(null);
   const graphCanvasRef = useRef<GraphCanvasRef>(null);
+  
+  // Settings modal state
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsData, setSettingsData] = useState({
+    name: "",
+    systemInstruction: ""
+  });
 
   if (!canvasId) {
     return <div>Canvas ID not found</div>;
@@ -82,15 +88,17 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     mutationFn: async ({
       topic,
       nodeCount,
+      isAutomatic,
     }: {
       topic: string;
       nodeCount?: number;
+      isAutomatic?: boolean;
     }) => {
-      console.log("topic", topic);
       const response = await apiRequest("POST", "/api/generate-keywords", {
         name: topic,
         canvasId,
         nodeCount,
+        isAutomatic,
       });
       return response.json();
     },
@@ -134,12 +142,35 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     },
   });
 
+  // Update canvas mutation
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const updateCanvasMutation = useMutation({
+    mutationFn: async (updates: { name?: string; systemInstruction?: string }) => {
+      const response = await apiRequest("PUT", `/api/canvas/${canvasId}`, updates);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`/api/canvas/${canvasId}`],
+      });
+      setSettingsOpen(false);
+      toast.success("Settings Updated", {
+        description: "Canvas settings have been saved successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast.error("Update Failed", {
+        description: error.message || "Failed to update canvas settings",
+      });
+    },
+  });
+
   const handleCreateNode = (topic: string) => {
     createNodeMutation.mutate(topic);
   };
 
-  const handleGenerateKeywords = (topic: string, nodeCount?: number) => {
-    generateKeywordsMutation.mutate({ topic, nodeCount });
+  const handleGenerateKeywords = (topic: string, nodeCount?: number, isAutomatic?: boolean) => {
+    generateKeywordsMutation.mutate({ topic, nodeCount, isAutomatic });
   };
 
   const handleDeleteNode = (nodeId: string) => {
@@ -152,6 +183,22 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
 
   const handleResetView = () => {
     graphCanvasRef.current?.resetView();
+  };
+
+  const handleOpenSettings = () => {
+    const canvas = canvasData as Canvas;
+    setSettingsData({
+      name: canvas?.name || "",
+      systemInstruction: canvas?.systemInstruction || ""
+    });
+    setSettingsOpen(true);
+  };
+
+  const handleSaveSettings = () => {
+    updateCanvasMutation.mutate({
+      name: settingsData.name,
+      systemInstruction: settingsData.systemInstruction
+    });
   };
 
   const nodeCount = graphData?.nodes.length || 0;
@@ -238,6 +285,17 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
               />
             </div>
 
+            {/* Settings */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenSettings}
+              className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
+              title="Canvas Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+
             {/* Graph Controls - Mobile friendly */}
             <div className="flex items-center space-x-1 sm:space-x-2">
               <Button
@@ -321,6 +379,19 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
           </div>
         </div>
       </div>
+      
+      {/* Canvas Settings Modal */}
+      <CanvasSettingsModal
+        open={settingsOpen}
+        canvasName={settingsData.name}
+        systemInstruction={settingsData.systemInstruction}
+        isLoading={updateCanvasMutation.isPending}
+        onOpenChange={setSettingsOpen}
+        onCanvasNameChange={(name) => setSettingsData(prev => ({ ...prev, name }))}
+        onSystemInstructionChange={(systemInstruction) => setSettingsData(prev => ({ ...prev, systemInstruction }))}
+        onSave={handleSaveSettings}
+        onCancel={() => setSettingsOpen(false)}
+      />
     </div>
   );
 }
