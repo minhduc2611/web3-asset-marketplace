@@ -1,4 +1,4 @@
-import GraphExplorer from "@/components/pages/graph-explorer";
+import GraphExplorer from "@/components/pages/graph-explorer/graph-explorer";
 
 type PageProps = {
   params: Promise<{

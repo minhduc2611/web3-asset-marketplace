@@ -3,15 +3,13 @@ import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { toast } from "sonner";
-import TopicInput from "@/components/topic-input";
 import GraphCanvas, { GraphCanvasRef } from "@/components/graph-canvas";
-import { Button } from "@/components/ui/button";
-import { RotateCcw, Target, ArrowLeft, Users, Zap, Settings, X, Info } from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { X, Info } from "lucide-react";
 import { Canvas } from "@/shared/schema";
 import { motion } from "framer-motion";
 import { CanvasSettingsModal } from "@/components/modals";
+import AIPartnerModal from "@/components/modals/ai-partner-modal";
+import GraphNavigationBar from "./graph-navigation-bar";
 
 interface GraphData {
   nodes: Array<{
@@ -32,6 +30,9 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   
   // Settings modal state
   const [settingsOpen, setSettingsOpen] = useState(false);
+  
+  // AI Partner modal state
+  const [aiPartnerOpen, setAiPartnerOpen] = useState(false);
   
   // Instructions panel state
   const [instructionsExpanded, setInstructionsExpanded] = useState(true);
@@ -188,6 +189,10 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     setSettingsOpen(true);
   };
 
+  const handleOpenAIPartner = () => {
+    setAiPartnerOpen(true);
+  };
+
   const handleSaveSettings = async (data: { canvasName: string; systemInstruction: string }) => {
     return new Promise<void>((resolve, reject) => {
       updateCanvasMutation.mutate({
@@ -234,106 +239,18 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         ))}
       </div>
       {/* Top Navigation - Mobile Responsive */}
-      <nav className=" backdrop-blur-sm border-b border-slate-700 px-3 sm:px-6 py-3 sm:py-4 relative z-10">
-        <div className="flex items-center justify-between">
-          {/* Left section - Mobile optimized */}
-          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
-            <Link
-              href="/canvas"
-              className="flex items-center space-x-1 sm:space-x-2 text-slate-400 hover:text-slate-50 transition-colors touch-manipulation"
-            >
-              <ArrowLeft className="w-4 h-4 flex-shrink-0" />
-              <span className="hidden sm:inline">Back to Canvases</span>
-              <span className="sm:hidden text-sm">Back</span>
-            </Link>
-            <div className="w-px h-4 sm:h-6 bg-slate-600 hidden sm:block"></div>
-            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent truncate">
-                {(canvasData as Canvas)?.name || "Loading..."}
-              </h1>
-              <div className="hidden sm:flex items-center space-x-2">
-                <Badge
-                  variant="secondary"
-                  className="bg-blue-600/20 text-blue-300 border-blue-600/30 text-xs"
-                >
-                  <Zap className="w-3 h-3 mr-1" />
-                  {nodeCount} nodes
-                </Badge>
-                <Badge
-                  variant="secondary"
-                  className="bg-green-600/20 text-green-300 border-green-600/30 text-xs"
-                >
-                  <Users className="w-3 h-3 mr-1" />
-                  {connectionCount} connections
-                </Badge>
-              </div>
-            </div>
-          </div>
-
-          {/* Right section - Mobile optimized */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Mobile node count */}
-            <div className="sm:hidden">
-              <span className="bg-gradient-to-r from-blue-600 to-blue-700 text-xs px-2 py-1 rounded-full text-white font-medium">
-                {nodeCount}
-              </span>
-            </div>
-
-            {/* Topic Input - Responsive */}
-            {!hasOriginalNode && (
-              <div className="hidden sm:block">
-                <TopicInput
-                  onSubmit={handleCreateNode}
-                  isLoading={createNodeMutation.isPending}
-                />
-              </div>
-            )}
-
-            {/* Settings */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleOpenSettings}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
-              title="Canvas Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
-
-            {/* Graph Controls - Mobile friendly */}
-            <div className="flex items-center space-x-1 sm:space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleResetView}
-                className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
-                title="Reset View"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCenterGraph}
-                className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
-                title="Center Graph"
-              >
-                <Target className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Topic Input - Below main nav */}
-        {!hasOriginalNode && (
-          <div className="sm:hidden mt-3 pt-3 border-t border-slate-700">
-            <TopicInput
-              onSubmit={handleCreateNode}
-              isLoading={createNodeMutation.isPending}
-            />
-          </div>
-        )}
-      </nav>
+      <GraphNavigationBar
+        canvasData={canvasData as Canvas}
+        nodeCount={nodeCount}
+        connectionCount={connectionCount}
+        hasOriginalNode={hasOriginalNode}
+        onCreateNode={handleCreateNode}
+        isCreatingNode={createNodeMutation.isPending}
+        onOpenSettings={handleOpenSettings}
+        onResetView={handleResetView}
+        onCenterGraph={handleCenterGraph}
+        onOpenAIPartner={handleOpenAIPartner}
+      />
 
       {/* Graph Canvas */}
       <div className="relative h-[calc(100vh-100px)] sm:h-[calc(100vh-60px)]">
@@ -412,6 +329,12 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         initialSystemInstruction={(canvasData as Canvas)?.systemInstruction || ""}
         onOpenChange={setSettingsOpen}
         onSave={handleSaveSettings}
+      />
+      
+      {/* AI Partner Modal */}
+      <AIPartnerModal
+        isOpen={aiPartnerOpen}
+        onClose={() => setAiPartnerOpen(false)}
       />
     </div>
   );

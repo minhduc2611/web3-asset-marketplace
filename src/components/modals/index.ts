@@ -6,4 +6,5 @@ export { default as GoogleSearchConfirmModal } from './google-search-confirm-mod
 export { default as NodeDetailModal } from './node-detail-modal';
 export { default as CanvasSettingsModal } from './canvas-settings-modal';
 export { default as DocumentUploadModal } from './document-upload-modal';
-export { default as DocumentUploadArea } from './document-upload-area'; 
+export { default as DocumentUploadArea } from './document-upload-area';
+export { default as AIPartnerModal } from './ai-partner-modal'; 
