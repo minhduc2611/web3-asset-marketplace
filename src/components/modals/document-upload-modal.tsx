@@ -86,21 +86,63 @@ export default function DocumentUploadModal({
 
     setIsBeautifying(true);
     try {
-      const response = await fetch('/api/beautify-text', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: editedText }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to beautify text');
+      // Split text into chunks of max 1000 words
+      const words = editedText.split(/\s+/);
+      const chunks: string[] = [];
+      const maxWordsPerChunk = 1000;
+      
+      for (let i = 0; i < words.length; i += maxWordsPerChunk) {
+        const chunk = words.slice(i, i + maxWordsPerChunk).join(' ');
+        chunks.push(chunk);
       }
 
-      const data = await response.json();
-      setEditedText(data.beautifiedText);
+      // If text is small enough, process as single chunk
+      if (chunks.length === 1) {
+        const response = await fetch('/api/beautify-text', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text: editedText }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to beautify text');
+        }
+
+        const data = await response.json();
+        setEditedText(data.beautifiedText);
+      } else {
+        // Process multiple chunks in parallel
+        toast.info(`Processing ${chunks.length} chunks in parallel...`);
+        
+        const beautifyPromises = chunks.map(async (chunk, index) => {
+          const response = await fetch('/api/beautify-text', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: chunk }),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Failed to beautify chunk ${index + 1}: ${errorData.message || 'Unknown error'}`);
+          }
+
+          const data = await response.json();
+          return data.beautifiedText;
+        });
+
+        // Wait for all chunks to be processed
+        const beautifiedChunks = await Promise.all(beautifyPromises);
+        
+        // Combine the results
+        const combinedText = beautifiedChunks.join('\n\n');
+        setEditedText(combinedText);
+      }
+
       toast.success("Text beautified successfully!");
     } catch (error) {
       console.error("Beautify error:", error);
@@ -134,30 +176,27 @@ export default function DocumentUploadModal({
       }
     };
 
-    // For now, just console.log the JSON (API call will be added later)
-    console.log("Chunks to save:", JSON.stringify(chunksData, null, 2));
-    
-    // TODO: Replace with actual API call
-    // try {
-    //   const response = await fetch('/api/save-chunks', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(chunksData),
-    //   });
-    //   
-    //   if (!response.ok) {
-    //     throw new Error('Failed to save chunks');
-    //   }
-    //   
-    //   toast.success("Chunks saved successfully!");
-    // } catch (error) {
-    //   console.error("Save chunks error:", error);
-    //   toast.error("Failed to save chunks");
-    // }
-    
-    toast.success(`${chunks.length} chunks prepared for saving!`);
+    try {
+      const response = await fetch('/api/save-chunks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chunksData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save chunks');
+      }
+      
+      const result = await response.json();
+      toast.success(`Successfully saved ${result.chunksCount} chunks to Weaviate!`);
+    } catch (error) {
+      console.error("Save chunks error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save chunks';
+      toast.error(errorMessage);
+    }
   };
 
   if (!parsedData) return null;

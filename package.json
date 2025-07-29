@@ -80,6 +80,7 @@
     "use-local-storage-state": "^19.5.0",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
+    "weaviate-client": "^3.8.0",
     "ws": "^8.18.2",
     "zod": "^3.25.64",
     "zustand": "^5.0.5"

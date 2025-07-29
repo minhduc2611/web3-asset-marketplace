@@ -170,12 +170,12 @@ export default function TextChunker({
     });
 
     // Renumber all chunks
-    const renumberedChunks = newChunks.map((c, index) => ({
-      ...c,
-      name: `${getCleanFilename()} Chunk ${index + 1}`,
-    }));
+    // const renumberedChunks = newChunks.map((c, index) => ({
+    //   ...c,
+    //   name: `${getCleanFilename()} Chunk ${index + 1}`,
+    // }));
 
-    setChunks(renumberedChunks);
+    setChunks(newChunks);
   };
 
   const updateChunk = (
