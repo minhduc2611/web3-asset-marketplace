@@ -24,6 +24,15 @@ interface DocumentUploadModalProps {
   } | null;
 }
 
+interface Chunk {
+  id: string;
+  text: string;
+  name: string;
+  description: string;
+  startIndex: number;
+  endIndex: number;
+}
+
 export default function DocumentUploadModal({
   open,
   onOpenChange,
@@ -32,6 +41,7 @@ export default function DocumentUploadModal({
   const [editedText, setEditedText] = useState(parsedData?.text || "");
   const [isBeautifying, setIsBeautifying] = useState(false);
   const [activeTab, setActiveTab] = useState("edit");
+  const [chunks, setChunks] = useState<Chunk[]>([]);
 
   // Update edited text when parsedData changes
   useEffect(() => {
@@ -39,6 +49,11 @@ export default function DocumentUploadModal({
       setEditedText(parsedData.text);
     }
   }, [parsedData?.text]);
+
+  // Handle chunks change from TextChunker
+  const handleChunksChange = (newChunks: Chunk[]) => {
+    setChunks(newChunks);
+  };
 
   const handleCopyText = async () => {
     try {
@@ -93,6 +108,56 @@ export default function DocumentUploadModal({
     } finally {
       setIsBeautifying(false);
     }
+  };
+
+  const handleSaveChunks = async () => {
+    if (!chunks.length) {
+      toast.error("No chunks to save");
+      return;
+    }
+
+    const chunksData = {
+      filename: parsedData?.filename || "document",
+      originalText: editedText,
+      chunks: chunks.map((chunk) => ({
+        id: chunk.id,
+        name: chunk.name,
+        description: chunk.description,
+        text: chunk.text,
+        startIndex: chunk.startIndex,
+        endIndex: chunk.endIndex,
+      })),
+      metadata: {
+        totalChunks: chunks.length,
+        totalCharacters: editedText.length,
+        createdAt: new Date().toISOString(),
+      }
+    };
+
+    // For now, just console.log the JSON (API call will be added later)
+    console.log("Chunks to save:", JSON.stringify(chunksData, null, 2));
+    
+    // TODO: Replace with actual API call
+    // try {
+    //   const response = await fetch('/api/save-chunks', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(chunksData),
+    //   });
+    //   
+    //   if (!response.ok) {
+    //     throw new Error('Failed to save chunks');
+    //   }
+    //   
+    //   toast.success("Chunks saved successfully!");
+    // } catch (error) {
+    //   console.error("Save chunks error:", error);
+    //   toast.error("Failed to save chunks");
+    // }
+    
+    toast.success(`${chunks.length} chunks prepared for saving!`);
   };
 
   if (!parsedData) return null;
@@ -178,7 +243,11 @@ export default function DocumentUploadModal({
 
             <TabsContent value="chunk" className="flex-1 min-h-0 mt-4">
               <div className="h-full overflow-y-auto bg-slate-800 rounded-lg p-4">
-                <TextChunker text={editedText} />
+                <TextChunker 
+                  text={editedText} 
+                  filename={parsedData?.filename}
+                  onChunksChange={handleChunksChange} 
+                />
               </div>
             </TabsContent>
           </Tabs>
@@ -191,6 +260,13 @@ export default function DocumentUploadModal({
             className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto"
           >
             Close
+          </Button>
+          <Button
+            onClick={handleSaveChunks}
+            variant="outline"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto"
+          >
+            Save Chunks
           </Button>
         </div>
       </DialogContent>
