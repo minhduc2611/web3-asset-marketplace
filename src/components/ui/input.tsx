@@ -77,15 +77,15 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
           <button
             type="button"
             onClick={handleDecrement}
-            className="flex h-7 w-7 items-center justify-center rounded-md bg-muted hover:bg-muted/80 transition-colors"
+            className="text-black flex h-7 w-7 items-center justify-center rounded-md bg-muted hover:bg-muted/80 transition-colors"
             tabIndex={-1}
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-3 w-3 " />
           </button>
           <button
             type="button"
             onClick={handleIncrement}
-            className="flex h-7 w-7 items-center justify-center rounded-md bg-muted hover:bg-muted/80 transition-colors"
+            className="text-black flex h-7 w-7 items-center justify-center rounded-md bg-muted hover:bg-muted/80 transition-colors"
             tabIndex={-1}
           >
             <Plus className="h-3 w-3" />

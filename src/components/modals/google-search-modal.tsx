@@ -94,7 +94,7 @@ function GoogleSearchModal({
       pollSearchStatus();
       
       // Set up polling interval
-      const pollInterval = setInterval(pollSearchStatus, 10000);
+      const pollInterval = setInterval(pollSearchStatus, 25000);
       
       return () => clearInterval(pollInterval);
     }

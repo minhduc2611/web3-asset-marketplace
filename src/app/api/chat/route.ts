@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         
         // Add timeout to prevent hanging
         const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Tavily search timeout")), 10000)
+          setTimeout(() => reject(new Error("Tavily search timeout")), 15000)
         );
         
         return await Promise.race([searchPromise, timeoutPromise]);
