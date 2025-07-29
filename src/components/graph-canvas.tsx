@@ -245,7 +245,6 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           isLoading: data.status === "processing" ? true : false,
           nodeId: data.nodeId,
         }));
-
         // Show initial response message for background processing
         if (data.status === "processing") {
           toast.info("Search Started", {
