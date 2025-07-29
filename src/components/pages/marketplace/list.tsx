@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { toast } from "sonner";
 
 // Mock marketplace data
@@ -401,15 +401,19 @@ export default function Marketplace() {
                         <div className="space-y-2">
                           <div>
                             <h5 className="font-medium text-purple-300 text-sm">Front:</h5>
-                            <div className="text-sm text-white">
-                              <ReactMarkdown>{card.front}</ReactMarkdown>
-                            </div>
+                            <MarkdownRenderer 
+                              content={card.front}
+                              theme="dark"
+                              className="text-sm"
+                            />
                           </div>
                           <div>
                             <h5 className="font-medium text-blue-300 text-sm">Back:</h5>
-                            <div className="text-sm text-slate-300">
-                              <ReactMarkdown>{card.back}</ReactMarkdown>
-                            </div>
+                            <MarkdownRenderer 
+                              content={card.back}
+                              theme="dark"
+                              className="text-sm text-slate-300"
+                            />
                           </div>
                         </div>
                       </CardContent>

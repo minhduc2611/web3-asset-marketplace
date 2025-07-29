@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import FlashcardModal from "@/components/pages/collection/flashcard-modal";
-import ReactMarkdown from "react-markdown";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { 
   ArrowLeft, 
   RotateCcw, 
@@ -556,11 +556,10 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
                         </div>
                         
                         <div className="flex-1 overflow-y-auto">
-                          <div className="prose prose-invert prose-slate max-w-none text-white">
-                            <ReactMarkdown>
-                              {currentCard.front}
-                            </ReactMarkdown>
-                          </div>
+                          <MarkdownRenderer 
+                            content={currentCard.front}
+                            theme="dark"
+                          />
                           {getMediaElement(currentCard.frontMedia)}
                         </div>
                         
@@ -638,11 +637,10 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
                         </div>
                         
                         <div className="flex-1 overflow-y-auto">
-                          <div className="prose prose-invert prose-blue max-w-none text-white">
-                            <ReactMarkdown>
-                              {currentCard.back}
-                            </ReactMarkdown>
-                          </div>
+                          <MarkdownRenderer 
+                            content={currentCard.back}
+                            theme="dark"
+                          />
                           {getMediaElement(currentCard.backMedia)}
                         </div>
                         

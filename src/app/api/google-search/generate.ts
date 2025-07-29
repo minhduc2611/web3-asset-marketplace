@@ -33,7 +33,7 @@ ${topicPath}
 </topic-path>`
       : "";
 
-      // get year
+    // get year
     const searchQuery = question + " " + new Date().getFullYear();
 
     // Get search results from Tavily with timeout and reduced content
@@ -77,17 +77,12 @@ ${topicPath}
 </instructions>`;
 
     // Single optimized API call instead of two separate calls
-    const response = (await Promise.race([
-      openai.responses.create({
-        model: "gpt-4o",
-        input: `Provide a comprehensive analysis of: ${question}`,
-        instructions,
-        max_output_tokens: 1500, // Reduced token limit for faster response
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("OpenAI timeout")), 18000)
-      ),
-    ])) as { output_text: string };
+    const response = await openai.responses.create({
+      model: "gpt-4o",
+      input: `Provide a comprehensive analysis of: ${question}`,
+      instructions,
+      max_output_tokens: 1500, // Reduced token limit for faster response
+    });
 
     return response.output_text;
   } catch (error: unknown) {

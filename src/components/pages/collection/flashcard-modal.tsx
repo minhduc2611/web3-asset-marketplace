@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { apiRequest } from "@/lib/queryClient";
-import ReactMarkdown from "react-markdown";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { 
   Plus, 
   Edit, 
@@ -258,11 +258,10 @@ export default function FlashcardModal({
                   <Label htmlFor="front-content">Front Content (Markdown)</Label>
                   {previewMode ? (
                     <div className="min-h-[200px] p-4 bg-slate-800/50 border border-slate-600 rounded-lg">
-                      <div className="prose prose-invert max-w-none">
-                        <ReactMarkdown>
-                          {front || "*No content*"}
-                        </ReactMarkdown>
-                      </div>
+                      <MarkdownRenderer 
+                        content={front || "*No content*"}
+                        theme="dark"
+                      />
                     </div>
                   ) : (
                     <Textarea
@@ -300,10 +299,11 @@ export default function FlashcardModal({
                 <div className="space-y-2">
                   <Label htmlFor="back-content">Back Content (Markdown)</Label>
                   {previewMode ? (
-                    <div className="min-h-[200px] p-4 bg-slate-800/50 border border-slate-600 rounded-lg prose prose-invert max-w-none">
-                      <ReactMarkdown>
-                        {back || "*No content*"}
-                      </ReactMarkdown>
+                    <div className="min-h-[200px] p-4 bg-slate-800/50 border border-slate-600 rounded-lg">
+                      <MarkdownRenderer 
+                        content={back || "*No content*"}
+                        theme="dark"
+                      />
                     </div>
                   ) : (
                     <Textarea

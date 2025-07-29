@@ -207,6 +207,9 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const nodeCount = graphData?.nodes.length || 0;
   const connectionCount = graphData?.edges.length || 0;
 
+  // Check if there's an original node to hide TopicInput
+  const hasOriginalNode = graphData?.nodes.some(node => node.type === "original") || false;
+
   return (
     // h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-50 font-inter overflow-hidden
     <div className="h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-slate-50 font-inter overflow-hidden">
@@ -281,12 +284,14 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
             </div>
 
             {/* Topic Input - Responsive */}
-            <div className="hidden sm:block">
-              <TopicInput
-                onSubmit={handleCreateNode}
-                isLoading={createNodeMutation.isPending}
-              />
-            </div>
+            {!hasOriginalNode && (
+              <div className="hidden sm:block">
+                <TopicInput
+                  onSubmit={handleCreateNode}
+                  isLoading={createNodeMutation.isPending}
+                />
+              </div>
+            )}
 
             {/* Settings */}
             <Button
@@ -324,12 +329,14 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         </div>
 
         {/* Mobile Topic Input - Below main nav */}
-        <div className="sm:hidden mt-3 pt-3 border-t border-slate-700">
-          <TopicInput
-            onSubmit={handleCreateNode}
-            isLoading={createNodeMutation.isPending}
-          />
-        </div>
+        {!hasOriginalNode && (
+          <div className="sm:hidden mt-3 pt-3 border-t border-slate-700">
+            <TopicInput
+              onSubmit={handleCreateNode}
+              isLoading={createNodeMutation.isPending}
+            />
+          </div>
+        )}
       </nav>
 
       {/* Graph Canvas */}

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import FlashcardModal from "@/components/pages/collection/flashcard-modal";
 import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import {
   ArrowLeft,
   Plus,
@@ -657,13 +657,13 @@ export default function ManageFlashcards({
 
                       {/* Card Content Preview */}
                       <div className="space-y-3">
-                        <div className="prose prose-sm prose-invert max-w-none">
-                          <ReactMarkdown>
-                            {card.front.length > 100
-                              ? card.front.substring(0, 100) + "..."
-                              : card.front}
-                          </ReactMarkdown>
-                        </div>
+                        <MarkdownRenderer 
+                          content={card.front.length > 100
+                            ? card.front.substring(0, 100) + "..."
+                            : card.front}
+                          theme="dark"
+                          className="prose-sm"
+                        />
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -757,9 +757,10 @@ export default function ManageFlashcards({
                   Front Side
                 </h3>
                 <div className="p-4 bg-slate-700/50 border border-slate-600 rounded-lg">
-                  <div className="prose prose-invert max-w-none">
-                    <ReactMarkdown>{previewCard.front}</ReactMarkdown>
-                  </div>
+                  <MarkdownRenderer 
+                    content={previewCard.front}
+                    theme="dark"
+                  />
                 </div>
               </div>
 
@@ -769,9 +770,10 @@ export default function ManageFlashcards({
                   Back Side
                 </h3>
                 <div className="p-4 bg-slate-700/50 border border-slate-600 rounded-lg">
-                  <div className="prose prose-invert max-w-none">
-                    <ReactMarkdown>{previewCard.back}</ReactMarkdown>
-                  </div>
+                  <MarkdownRenderer 
+                    content={previewCard.back}
+                    theme="dark"
+                  />
                 </div>
               </div>
 
@@ -1044,13 +1046,13 @@ export default function ManageFlashcards({
                                   placeholder="Front content..."
                                 />
                               ) : (
-                                <div className="prose prose-sm prose-invert max-w-none">
-                                  <ReactMarkdown>
-                                    {card.front.length > 150
-                                      ? card.front.substring(0, 150) + "..."
-                                      : card.front}
-                                  </ReactMarkdown>
-                                </div>
+                                <MarkdownRenderer 
+                                  content={card.front.length > 150
+                                    ? card.front.substring(0, 150) + "..."
+                                    : card.front}
+                                  theme="dark"
+                                  className="prose-sm"
+                                />
                               )}
                             </div>
 
@@ -1075,13 +1077,13 @@ export default function ManageFlashcards({
                                   placeholder="Back content..."
                                 />
                               ) : (
-                                <div className="prose prose-sm prose-invert max-w-none">
-                                  <ReactMarkdown>
-                                    {card.back.length > 200
-                                      ? card.back.substring(0, 200) + "..."
-                                      : card.back}
-                                  </ReactMarkdown>
-                                </div>
+                                <MarkdownRenderer 
+                                  content={card.back.length > 200
+                                    ? card.back.substring(0, 200) + "..."
+                                    : card.back}
+                                  theme="dark"
+                                  className="prose-sm"
+                                />
                               )}
                             </div>
                           </div>
