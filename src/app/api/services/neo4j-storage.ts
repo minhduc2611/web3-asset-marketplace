@@ -21,9 +21,10 @@ export interface INeo4jStorage {
   
   // Topic operations
   createTopic(topic: InsertTopic): Promise<Topic>;
+  getTopicById(id: string): Promise<Topic | undefined>;
   getTopicByName(name: string, canvasId: string): Promise<Topic | undefined>;
   getTopicsByCanvas(canvasId: string): Promise<Topic[]>;
-  updateTopic(id: string, updates: { name?: string; description?: string }): Promise<Topic | undefined>;
+  updateTopic(id: string, updates: { name?: string; description?: string; knowledge?: string }): Promise<Topic | undefined>;
   deleteTopic(id: string): Promise<void>;
   getTopicPath(topicId: string, canvasId: string): Promise<string[]>;
   getExistingSiblings(topicId: string, canvasId: string): Promise<string[]>;
@@ -220,6 +221,34 @@ export class Neo4jStorage implements INeo4jStorage {
       });
 
       const topic = result.records[0]?.get('t').properties;
+      return {
+        id: topic.id,
+        canvasId: topic.canvasId,
+        name: topic.name,
+        type: topic.type,
+        description: topic.description || "",
+        knowledge: topic.knowledge || "",
+        positionX: topic.positionX || null,
+        positionY: topic.positionY || null,
+        createdAt: new Date(topic.createdAt.toString())
+      };
+    } finally {
+      await session.close();
+    }
+  }
+
+  async getTopicById(id: string): Promise<Topic | undefined> {
+    const session = getSession();
+    
+    try {
+      const result = await session.run(`
+        MATCH (t:Topic {id: $id})
+        RETURN t
+      `, { id });
+
+      if (result.records.length === 0) return undefined;
+
+      const topic = result.records[0].get('t').properties;
       return {
         id: topic.id,
         canvasId: topic.canvasId,

@@ -129,12 +129,14 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       searchResults: any[];
       geminiAnswer: string;
       isLoading: boolean;
+      nodeId?: string;
     }>({
       open: false,
       searchTerm: "",
       searchResults: [],
       geminiAnswer: "",
       isLoading: false,
+      nodeId: undefined,
     });
 
     const [googleSearchConfirmDialog, setGoogleSearchConfirmDialog] = useState<{
@@ -240,31 +242,16 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           ...prev,
           searchResults: data.searchResults || [],
           geminiAnswer: data.geminiAnswer || "",
-          isLoading: false,
+          isLoading: data.status === "processing" ? true : false,
+          nodeId: data.nodeId,
         }));
 
-        // Save the knowledge as metadata
-        const knowledgeData = {
-          searchResults: data.searchResults || [],
-          geminiAnswer: data.geminiAnswer || "",
-          searchDate: new Date().toISOString(),
-        };
-
-        try {
-          await apiRequest("PUT", `/api/node/${data.nodeId}`, {
-            knowledge: JSON.stringify(knowledgeData),
+        // Show initial response message for background processing
+        if (data.status === "processing") {
+          toast.info("Search Started", {
+            description: "Your search is being processed in the background. Results will appear shortly.",
+            duration: 5000,
           });
-
-          // Refresh graph data to reflect the updated knowledge
-          queryClient.invalidateQueries({
-            queryKey: [`/api/canvas/graph-data/${canvasId}`],
-          });
-
-          toast.success("Knowledge Saved", {
-            description: "Search results saved as node knowledge",
-          });
-        } catch (error) {
-          console.error("Failed to save knowledge:", error);
         }
       },
       onError: (error: any) => {
@@ -304,10 +291,32 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         searchResults: [],
         geminiAnswer: "",
         isLoading: true,
+        nodeId,
       }));
 
       // Call API with system instruction
       googleSearchMutation.mutate({ searchTerm, nodeId, systemInstruction });
+    };
+
+    // Handle search completion from modal polling
+    const handleSearchComplete = (data: { searchResults: any[]; geminiAnswer: string }) => {
+      setGoogleSearchDialog((prev) => ({
+        ...prev,
+        searchResults: data.searchResults,
+        geminiAnswer: data.geminiAnswer,
+        isLoading: false,
+      }));
+
+      // Show success notification
+      toast.success("Search Completed", {
+        description: "Google search results have been generated and saved to your knowledge base.",
+        duration: 6000,
+      });
+
+      // Refresh graph data to reflect any updates
+      queryClient.invalidateQueries({
+        queryKey: [`/api/canvas/graph-data/${canvasId}`],
+      });
     };
 
     // Handle node detail view
@@ -1241,12 +1250,14 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           searchResults={googleSearchDialog.searchResults}
           geminiAnswer={googleSearchDialog.geminiAnswer}
           isLoading={googleSearchDialog.isLoading}
+          nodeId={googleSearchDialog.nodeId}
           onOpenChange={(open) =>
             setGoogleSearchDialog((prev) => ({ ...prev, open }))
           }
           onClose={() =>
             setGoogleSearchDialog((prev) => ({ ...prev, open: false }))
           }
+          onSearchComplete={handleSearchComplete}
         />
 
         {/* Google Search Confirm Modal */}

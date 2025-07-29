@@ -9,13 +9,20 @@ if (!process.env.TAVILY_API_KEY) {
 export const generate = async (
   question: string,
   systemInstruction?: string,
-  topicPath?: string
+  topicPath?: string,
+  documentContext?: Array<{
+    filename: string;
+    chunkId: string;
+    name: string;
+    description: string;
+    text: string;
+    score: number;
+  }>
 ) => {
   try {
     // Setup LLM with timeout
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      timeout: 20000, // 20 second timeout
     });
 
     const systemInstructionSection = systemInstruction
@@ -31,6 +38,19 @@ When given a search query, provide detailed, informative explanations.
       ? `<topic-path>
 ${topicPath}
 </topic-path>`
+      : "";
+
+    // Document context section
+    const documentContextSection = documentContext && documentContext.length > 0
+      ? `<user-documents>
+${documentContext.map((doc, index) => 
+  `Document ${index + 1}: ${doc.filename} - ${doc.name}
+Description: ${doc.description}
+Relevance Score: ${Math.round((1 - doc.score) * 100)}%
+Content: ${doc.text}
+---`
+).join('\n')}
+</user-documents>`
       : "";
 
     // get year
@@ -66,22 +86,25 @@ ${topicPath}
 <instructions>
     ${systemInstructionSection}
     ${topicPathSection}
-    <search-results>
+    ${documentContextSection}
+    <web-search-results>
         ${JSON.stringify(TAVILY_search_result_json)}
-    </search-results>
+    </web-search-results>
     <format>
         Using Markdown format when appropriate.
-        ALWAYS reference the search results in your response when available.
+        ALWAYS reference and prioritize information from user documents when available and relevant.
+        Also incorporate relevant information from web search results.
+        If user documents contain relevant information, mention them specifically in your response.
         Current time: ${new Date().toLocaleString()}
     </format>
 </instructions>`;
 
     // Single optimized API call instead of two separate calls
     const response = await openai.responses.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       input: `Provide a comprehensive analysis of: ${question}`,
       instructions,
-      max_output_tokens: 1500, // Reduced token limit for faster response
+      max_output_tokens: 2000, // Increased token limit to accommodate document context
     });
 
     return response.output_text;
