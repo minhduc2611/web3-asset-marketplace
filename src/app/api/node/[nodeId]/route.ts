@@ -7,6 +7,41 @@ type PageProps = {
   }>;
 };
 
+export async function GET(req: NextRequest, { params }: PageProps) {
+  try {
+    const paramsObject = await params;
+    const nodeId = paramsObject.nodeId;
+
+    if (!nodeId) {
+      return NextResponse.json(
+        { message: "Node ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Get the topic by ID
+    const topic = await neo4jStorage.getTopicById(nodeId);
+
+    if (!topic) {
+      return NextResponse.json({ message: "Node not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      id: topic.id,
+      name: topic.name,
+      description: topic.description,
+      knowledge: topic.knowledge,
+      type: topic.type,
+    });
+  } catch (error) {
+    console.error("Error fetching node:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch node" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(req: NextRequest, { params }: PageProps) {
   try {
     const paramsObject = await params;

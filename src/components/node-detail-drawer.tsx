@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeDetailContent } from "@/components/node-detail-content";
-import { X, Eye, FileText, Search, Brain } from "lucide-react";
-import MemoryViewer from '@/components/memory-viewer';
+import { X, Eye, FileText, Search, Brain, RefreshCw } from "lucide-react";
+import { useState, useCallback } from 'react';
 
 interface NodeDetailDrawerProps {
   open: boolean;
@@ -27,19 +27,46 @@ interface NodeDetailDrawerProps {
 }
 
 export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerProps) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshedNode, setRefreshedNode] = useState<NodeDetailDrawerProps['node']>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+
   // Parse knowledge data to get search status
   let searchStatus = 'idle';
   let hasSearchResults = false;
   
+  const currentNode = refreshedNode || node;
+  
   try {
-    if (node?.knowledge) {
-      const knowledgeData = JSON.parse(node.knowledge);
+    if (currentNode?.knowledge) {
+      const knowledgeData = JSON.parse(currentNode.knowledge);
       searchStatus = knowledgeData.googleSearchStatus || 'idle';
       hasSearchResults = knowledgeData.latestGoogleSearch?.searchResults?.length > 0;
     }
   } catch (error) {
     console.error('Error parsing knowledge data:', error);
   }
+
+  // Refresh node data
+  const refreshNode = useCallback(async () => {
+    if (!node?.id || isRefreshing) return;
+
+    setIsRefreshing(true);
+    try {
+      const response = await fetch(`/api/node/${node.id}`);
+      if (response.ok) {
+        const updatedNode = await response.json();
+        setRefreshedNode(updatedNode);
+        setLastRefreshed(new Date());
+      } else {
+        console.error('Failed to refresh node data');
+      }
+    } catch (error) {
+      console.error('Error refreshing node:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [node?.id, isRefreshing]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -74,7 +101,7 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
               </div>
               <div>
                 <DrawerTitle className="text-lg font-semibold text-slate-50 flex items-center">
-                  &quot;{node?.name || 'Unknown'}&quot;
+                  &quot;{currentNode?.name || 'Unknown'}&quot;
                   {searchStatus === 'processing' && (
                     <div className="ml-2 flex items-center space-x-1">
                       {getStatusIcon(searchStatus)}
@@ -83,13 +110,23 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
                   )}
                 </DrawerTitle>
                 <p className="text-slate-400 text-sm">
-                  {node?.type === 'original' ? 'Original Topic' : 'Generated Topic'}
+                  {currentNode?.type === 'original' ? 'Original Topic' : 'Generated Topic'}
                   {hasSearchResults && ' • Enhanced with Knowledge'}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <MemoryViewer />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={refreshNode}
+                disabled={isRefreshing}
+                className="text-slate-400 hover:text-slate-200 hover:bg-slate-700"
+                title="Refresh node data"
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              </Button>
+              {/* <MemoryViewer /> */}
               <DrawerClose asChild>
                 <Button variant="ghost" size="sm" className="text-slate-400 hover:text-slate-200 hover:bg-slate-700">
                   <X className="w-4 h-4" />
@@ -99,17 +136,17 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
           </div>
 
           {/* Status and Content Badges */}
-          {node && (
+          {currentNode && (
             <div className="flex flex-wrap gap-2 mt-4">
               <Badge 
-                variant={node.type === 'original' ? 'default' : 'secondary'}
+                variant={currentNode.type === 'original' ? 'default' : 'secondary'}
                 className="flex items-center space-x-1"
               >
                 <FileText className="w-3 h-3" />
-                <span>{node.type === 'original' ? 'Original' : 'Generated'}</span>
+                <span>{currentNode.type === 'original' ? 'Original' : 'Generated'}</span>
               </Badge>
               
-              {node.description && (
+              {currentNode.description && (
                 <Badge variant="outline" className="border-slate-500 flex items-center space-x-1">
                   <FileText className="w-3 h-3" />
                   <span>Has Description</span>
@@ -140,6 +177,13 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
                   <span>AI Enhanced</span>
                 </Badge>
               )}
+
+              {isRefreshing && (
+                <Badge variant="outline" className="text-blue-400 border-blue-400 flex items-center space-x-1">
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                  <span>Refreshing...</span>
+                </Badge>
+              )}
             </div>
           )}
         </DrawerHeader>
@@ -147,7 +191,7 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
         <ScrollArea className="flex-1 overflow-y-auto">
           <div className="p-6">
             <NodeDetailContent 
-              node={node} 
+              node={currentNode} 
               theme="dark"
               className="space-y-6"
             />
@@ -159,6 +203,11 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
           <div className="flex items-center justify-between text-sm text-slate-400">
             <div className="flex items-center space-x-4">
               <span>💡 Tip: Right-click the node for more actions</span>
+              {lastRefreshed && (
+                <span className="text-xs text-slate-500">
+                  • Refreshed {lastRefreshed.toLocaleTimeString()}
+                </span>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <kbd className="px-2 py-1 bg-slate-700 rounded text-xs">ESC</kbd>

@@ -37,6 +37,8 @@ function GoogleSearchModal({
   const [localGeminiAnswer, setLocalGeminiAnswer] = useState(geminiAnswer);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [nodeData, setNodeData] = useState<any>(null);
+  const [isRefreshingNode, setIsRefreshingNode] = useState(false);
+  const [nodeLastRefreshed, setNodeLastRefreshed] = useState<Date | null>(null);
 
   // Format countdown time
   const formatTime = (seconds: number) => {
@@ -44,6 +46,27 @@ function GoogleSearchModal({
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Refresh node data
+  const refreshNodeData = useCallback(async () => {
+    if (!nodeId || isRefreshingNode) return;
+
+    setIsRefreshingNode(true);
+    try {
+      const nodeResponse = await fetch(`/api/node/${nodeId}`);
+      if (nodeResponse.ok) {
+        const nodeResult = await nodeResponse.json();
+        setNodeData(nodeResult);
+        setNodeLastRefreshed(new Date());
+      } else {
+        console.error('Failed to refresh node data');
+      }
+    } catch (error) {
+      console.error('Error refreshing node data:', error);
+    } finally {
+      setIsRefreshingNode(false);
+    }
+  }, [nodeId, isRefreshingNode]);
 
   // Poll for search completion and node updates
   const pollSearchStatus = useCallback(async () => {
@@ -416,11 +439,40 @@ function GoogleSearchModal({
 
           <TabsContent value="node" className="flex-1 overflow-y-scroll py-4 mt-0">
             {nodeData ? (
-              <NodeDetailContent 
-                node={nodeData}
-                theme="dark"
-                className="space-y-6"
-              />
+              <>
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-50 mb-1">Node Details</h3>
+                    {nodeLastRefreshed && (
+                      <p className="text-xs text-slate-400">
+                        Last refreshed: {nodeLastRefreshed.toLocaleTimeString()}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={refreshNodeData}
+                    className="border-slate-600 hover:bg-slate-700 touch-manipulation"
+                    disabled={isRefreshingNode}
+                  >
+                    {isRefreshingNode ? (
+                      <svg className="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                      </svg>
+                    )}
+                    {isRefreshingNode ? "Refreshing..." : "Refresh Node Data"}
+                  </Button>
+                </div>
+                <NodeDetailContent 
+                  node={nodeData}
+                  theme="dark"
+                  className="space-y-6"
+                />
+              </>
             ) : (
               <div className="text-center py-8">
                 <div className="w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
