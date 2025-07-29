@@ -106,7 +106,7 @@ export default function GraphNavigationBar({
             variant="outline"
             size="sm"
             onClick={onOpenSettings}
-            className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
+            className="bg-slate-700 hover:bg-slate-600 text-slate-300! hover:text-slate-50 border-slate-600 touch-manipulation"
             title="Canvas Settings"
           >
             <Settings className="w-4 h-4" />
@@ -118,7 +118,7 @@ export default function GraphNavigationBar({
               variant="outline"
               size="sm"
               onClick={onResetView}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
+              className="bg-slate-700 text-slate-300! hover:bg-slate-600 hover:text-slate-50 border-slate-600 touch-manipulation"
               title="Reset View"
             >
               <RotateCcw className="w-4 h-4" />
@@ -127,7 +127,7 @@ export default function GraphNavigationBar({
               variant="outline"
               size="sm"
               onClick={onCenterGraph}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-slate-50 border-slate-600 touch-manipulation"
+              className="bg-slate-700 hover:bg-slate-600 hover:text-slate-50 border-slate-600 touch-manipulation"
               title="Center Graph"
             >
               <Target className="w-4 h-4" />

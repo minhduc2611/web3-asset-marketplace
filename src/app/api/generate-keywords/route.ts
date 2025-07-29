@@ -4,6 +4,7 @@ import {
   type GenerateKeywordsResponse,
 } from "@/shared/schema";
 import { neo4jStorage } from "@/app/api/services/neo4j-storage";
+import { searchChunksByCanvas, type SearchResult } from "@/lib/weaviate";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -49,23 +50,47 @@ export async function POST(req: Request) {
       canvasId
     );
 
-    // 3. Call OpenAI with the new, more detailed prompt
+    // 3. Search for relevant document chunks using Weaviate
+    let relevantChunks: SearchResult[] = [];
+    try {
+      relevantChunks = await searchChunksByCanvas(topicName, canvasId, 3);
+    } catch (error) {
+      console.warn("Could not retrieve document chunks from Weaviate:", error);
+      // Continue without chunks - this is not critical for keyword generation
+    }
+
+    // 4. Call OpenAI with the new, more detailed prompt including document context
     const systemInstructionSection = canvas.systemInstruction
       ? `<system-instruction>
 ${canvas.systemInstruction}
 </system-instruction>`
       : "";
 
+    // Build document context section
+    const documentContextSection = relevantChunks.length > 0 
+      ? `<document-context>
+The following are relevant document excerpts from the user's knowledge base related to "${topicName}":
+
+${relevantChunks.map((chunk, index) => 
+  `Document ${index + 1} (${chunk.filename}):
+"${chunk.text.substring(0, 500)}${chunk.text.length > 500 ? '...' : ''}"
+`).join('\n')}
+
+Use this context to generate more informed and specific keywords that complement the existing knowledge.
+</document-context>`
+      : "";
+
     const instructions = `
 <persona>
 You are an expert in curriculum design and knowledge architecture. Your task is to generate keywords for a knowledge map to help a user learn a topic systematically.
-You will be given a 'topic', its hierarchical 'topicPath', existing 'children' (if any), a list of 'existingSiblings' to avoid, and ${
+You will be given a 'topic', its hierarchical 'topicPath', existing 'children' (if any), a list of 'existingSiblings' to avoid, ${
       isAutomatic
         ? "you should determine the optimal number of keywords (maximum 15)"
         : "the desired 'nodeCount'"
-    }.
+    }, and relevant document context from the user's knowledge base.
 </persona>
 ${systemInstructionSection}
+${documentContextSection}
 <task-description>
   Your generated keywords MUST follow these rules:
   <hierarchical-specificity>
@@ -75,6 +100,7 @@ ${systemInstructionSection}
   </hierarchical-specificity>
   <content-rich-mix>
     Provide a mix of core concepts, practical applications, and emerging trends.
+    ${relevantChunks.length > 0 ? "Leverage the provided document context to generate keywords that build upon or complement the existing knowledge." : ""}
   </content-rich-mix>
   <avoid-redundancy>
     Do not repeat the 'topic' itself, any keywords from the 'existingSiblings' list, or any existing 'children'.
@@ -89,6 +115,7 @@ ${systemInstructionSection}
     * Topic complexity and breadth
     * Depth in the learning hierarchy
     * Existing siblings count
+    * Available document context richness
     * Generate between 3-15 keywords as appropriate, prioritizing quality over quantity
   </automatic-count>`
       : ""
@@ -105,12 +132,16 @@ ${systemInstructionSection}
 </format>
 `;
     const automaticInstructions = isAutomatic
-      ? "- Mode: Automatic (generate an optimal number of keywords, maximum 15, based on the topic complexity and depth)"
+      ? "- Mode: Automatic (generate an optimal number of keywords, maximum 15, based on the topic complexity, depth, and available context)"
       : `- Node Count: ${nodeCount}`;
 
     const childrenSection = topicChildren.length > 0 
       ? `- Children: [${topicChildren.map((c) => `"${c}"`).join(", ")}]`
       : "";
+
+    const contextInfo = relevantChunks.length > 0 
+      ? `- Available Context: ${relevantChunks.length} relevant document chunks found`
+      : "- Available Context: No document chunks found for this topic";
 
     const input = `
 - Topic: "${topicName}"
@@ -121,6 +152,7 @@ ${childrenSection ? childrenSection + '\n' : ''}- Existing Siblings: [${
         : ""
     }]
 ${automaticInstructions}
+${contextInfo}
 `;
     const response = await openai.responses.create({
       model: "gpt-4.1",

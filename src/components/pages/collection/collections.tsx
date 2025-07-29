@@ -473,7 +473,7 @@ export default function Collections() {
                 <Link href="/marketplace">
                   <Button
                     variant="outline"
-                    className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                    className="border-slate-600 hover:bg-slate-700 text-black hover:text-white"
                   >
                     <Store className="w-4 h-4 mr-2" />
                     <span className="hidden sm:inline">Marketplace</span>
@@ -757,7 +757,7 @@ export default function Collections() {
             <Button
               variant="outline"
               onClick={() => setShowCreateModal(false)}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
+              className="border-slate-600 hover:bg-slate-700/50"
             >
               Cancel
             </Button>
@@ -1042,7 +1042,7 @@ export default function Collections() {
                   });
                 }}
                 variant="outline"
-                className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+                className="flex-1 border-slate-600 hover:bg-slate-700"
               >
                 Cancel
               </Button>

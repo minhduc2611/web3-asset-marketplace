@@ -53,7 +53,7 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
                 {node.type === 'original' ? 'Original' : 'Generated'}
               </Badge>
               {node.description && (
-                <Badge variant="outline" className="border-slate-500 text-slate-300">
+                <Badge variant="outline" className="border-slate-500">
                   Has Description
                 </Badge>
               )}

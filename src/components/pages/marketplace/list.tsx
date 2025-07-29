@@ -207,7 +207,7 @@ export default function Marketplace() {
             {/* Difficulty Filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                <Button variant="outline" className="border-slate-600 hover:bg-slate-700">
                   <Filter className="w-4 h-4 mr-2" />
                   {selectedDifficulty === "all" ? "All Levels" : selectedDifficulty}
                   <ChevronDown className="w-4 h-4 ml-2" />
@@ -332,7 +332,7 @@ export default function Marketplace() {
                           onClick={() => handlePreview(collection)}
                           variant="outline"
                           size="sm"
-                          className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-600"
+                          className="flex-1 border-slate-600 hover:bg-slate-600"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           Preview

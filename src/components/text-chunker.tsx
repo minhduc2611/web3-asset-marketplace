@@ -227,6 +227,7 @@ export default function TextChunker({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chunksHistory]);
 
   const exportChunks = () => {
@@ -279,7 +280,7 @@ export default function TextChunker({
           onClick={resetChunks}
           variant="outline"
           size="sm"
-          className="flex items-center gap-2 border-slate-600 text-slate-300 hover:bg-slate-700"
+          className="flex items-center gap-2 border-slate-600 hover:bg-slate-700"
         >
           <Split className="h-4 w-4" />
           Reset Chunks
@@ -299,7 +300,7 @@ export default function TextChunker({
             onClick={undoLastSplit}
             variant="outline"
             size="sm"
-            className="flex items-center gap-2 border-slate-600 text-slate-300 hover:bg-slate-700"
+            className="flex items-center gap-2 border-slate-600 hover:bg-slate-700"
           >
             <Undo2 className="h-4 w-4" />
             Undo Split

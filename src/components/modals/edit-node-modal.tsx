@@ -79,7 +79,7 @@ export default function EditNodeModal({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+            className="border-slate-600 hover:bg-slate-700"
           >
             Cancel
           </Button>

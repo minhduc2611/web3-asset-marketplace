@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import mammoth from "mammoth";
-// import pdfParse from "pdf-parse";
 import pdfParse from 'pdf-parse/lib/pdf-parse';
 
 import type { ParseDocumentResponse } from "@/shared/schema";

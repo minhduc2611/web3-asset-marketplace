@@ -462,7 +462,7 @@ export default function Landing() {
                     <Button
                       variant="outline"
                       size="lg"
-                      className="border-white/20 text-blue-600 hover:bg-white/10 px-12 py-6 text-lg"
+                      className="border-white/20 hover:bg-white/10 px-12 py-6 text-lg"
                     >
                       Sign In
                     </Button>

@@ -325,6 +325,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
       {/* Canvas Settings Modal */}
       <CanvasSettingsModal
         open={settingsOpen}
+        canvasId={canvasId}
         initialCanvasName={(canvasData as Canvas)?.name || ""}
         initialSystemInstruction={(canvasData as Canvas)?.systemInstruction || ""}
         onOpenChange={setSettingsOpen}

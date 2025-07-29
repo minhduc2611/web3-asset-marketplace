@@ -411,7 +411,7 @@ export default function FeedbackWidget() {
               <Button
                 onClick={() => setIsOpen(false)}
                 variant="outline"
-                className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+                className="flex-1 border-slate-600 hover:bg-slate-700"
               >
                 Cancel
               </Button>

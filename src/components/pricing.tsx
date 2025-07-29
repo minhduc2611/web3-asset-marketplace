@@ -367,11 +367,11 @@ export default function Pricing() {
               We&apos;re here to help you choose the perfect plan for your learning journey.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="outline" size="lg" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+              <Button variant="outline" size="lg" className="border-slate-600 hover:bg-slate-700">
                 <Mail className="w-4 h-4 mr-2" />
                 Contact Support
               </Button>
-              <Button variant="outline" size="lg" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+              <Button variant="outline" size="lg" className="border-slate-600 hover:bg-slate-700">
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Live Chat
               </Button>

@@ -23,6 +23,35 @@ export const CHUNK_COLLECTION_NAME = "DocumentChunk";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let client: WeaviateClient; // Using any for now - replace with proper types based on your setup
 
+export const initWeaviateClient = async () => {
+  client = await weaviate.connectToWeaviateCloud(
+    process.env.WEAVIATE_URL as string,
+    {
+      authCredentials: new weaviate.ApiKey(
+        process.env.WEAVIATE_API_KEY as string
+      ),
+      headers: { "X-OpenAI-Api-Key": process.env.OPENAI_API_KEY as string },
+    }
+  );
+
+  // Create collection
+  const collection = client.collections.get(CHUNK_COLLECTION_NAME);
+
+  // Check if collection exists
+  const collectionExists = await collection.exists();
+  if (!collectionExists) {
+    // Create collection
+    await client.collections.create({
+      name: CHUNK_COLLECTION_NAME,
+      vectorizers: vectors.text2VecOpenAI({
+        model: "text-embedding-3-small",
+      }),
+    });
+  }
+};
+
+initWeaviateClient();
+
 export const getWeaviateClient = async () => {
   if (!client) {
     // For local Weaviate instance (adjust based on your setup):
@@ -44,21 +73,6 @@ export const getWeaviateClient = async () => {
 
     // client.close(); // Close the client connection when done
 
-    // Create collection
-    const collection = client.collections.get(CHUNK_COLLECTION_NAME);
-
-    // Check if collection exists
-    const collectionExists = await collection.exists();
-    if (!collectionExists) {
-      // Create collection
-      await client.collections.create({
-        name: CHUNK_COLLECTION_NAME,
-        vectorizers: vectors.text2VecOpenAI({
-          model: "text-embedding-3-small",
-        }),
-      });
-    }
-
     // For Weaviate Cloud (uncomment and adjust):
     // client = await weaviate.connectToWeaviateCloud(process.env.WEAVIATE_URL!, {
     //   apiKey: process.env.WEAVIATE_API_KEY!,
@@ -77,6 +91,7 @@ export interface ChunkData {
 }
 
 export interface DocumentChunksData {
+  canvasId: string;
   filename: string;
   originalText: string;
   chunks: ChunkData[];
@@ -110,6 +125,7 @@ export const saveChunksToWeaviate = async (
         totalChunks: data.metadata.totalChunks,
         totalCharacters: data.metadata.totalCharacters,
         createdAt: data.metadata.createdAt,
+        canvasId: data.canvasId,
       },
     }));
 
@@ -130,5 +146,56 @@ export const saveChunksToWeaviate = async (
   } catch (error) {
     console.error("Error saving chunks to Weaviate:", error);
     throw error;
+  }
+};
+
+// Search chunks by canvas ID and query
+export interface SearchResult {
+  id: string;
+  filename: string;
+  chunkId: string;
+  name: string;
+  description: string;
+  text: string;
+  startIndex: number;
+  endIndex: number;
+  score: number;
+}
+
+export const searchChunksByCanvas = async (
+  query: string,
+  canvasId: string,
+  limit: number = 5
+): Promise<SearchResult[]> => {
+  const client = await getWeaviateClient();
+
+  try {
+    const collection = client.collections.get(CHUNK_COLLECTION_NAME);
+
+    // Perform semantic search with canvas ID filter
+    const result = await collection.query.nearText(query, {
+      limit,
+      returnMetadata: ['score'],
+      filters: collection.filter.byProperty('canvasId').equal(canvasId),
+    });
+
+    // Transform results to our interface
+    const searchResults: SearchResult[] = result.objects.map((obj) => ({
+      id: obj.uuid,
+      filename: obj.properties.filename as string,
+      chunkId: obj.properties.chunkId as string,
+      name: obj.properties.name as string,
+      description: obj.properties.description as string,
+      text: obj.properties.text as string,
+      startIndex: obj.properties.startIndex as number,
+      endIndex: obj.properties.endIndex as number,
+      score: obj.metadata?.score || 0,
+    }));
+
+    return searchResults;
+  } catch (error) {
+    console.error("Error searching chunks in Weaviate:", error);
+    // Return empty array instead of throwing to not break the keyword generation
+    return [];
   }
 };

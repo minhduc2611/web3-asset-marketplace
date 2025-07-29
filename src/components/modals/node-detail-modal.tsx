@@ -45,7 +45,7 @@ function NodeDetailModal({
             type="button"
             variant="outline"
             onClick={onClose}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 touch-manipulation"
+            className="border-slate-600 hover:bg-slate-700 touch-manipulation"
           >
             Close
           </Button>

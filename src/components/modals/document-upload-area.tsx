@@ -149,7 +149,7 @@ export default function DocumentUploadArea({ onDocumentParsed }: DocumentUploadA
               <Button
                 variant="outline"
                 size="sm"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto"
+                className="text-black border-slate-600 hover:bg-slate-700 w-full sm:w-auto"
               >
                 Choose File
               </Button>

@@ -67,9 +67,9 @@ export function MarkdownRenderer({
           em: ({children}) => <em className={styles.em}>{children}</em>,
           code: ({children}) => <code className={styles.code}>{children}</code>,
           pre: ({children}) => <pre className={styles.pre}>{children}</pre>,
-          ul: ({children}) => <ul className={styles.ul}>{children}</ul>,
-          ol: ({children}) => <ol className={styles.ol}>{children}</ol>,
-          li: ({children}) => <li className={styles.li}>{children}</li>,
+          // ul: ({children}) => <ul className={styles.ul}>{children}</ul>,
+          // ol: ({children}) => <ol className={styles.ol}>{children}</ol>,
+          // li: ({children}) => <li className={styles.li}>{children}</li>,
           blockquote: ({children}) => <blockquote className={styles.blockquote}>{children}</blockquote>,
           a: ({href, children}) => (
             <a 

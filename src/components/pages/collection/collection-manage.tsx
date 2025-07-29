@@ -466,7 +466,7 @@ export default function ManageFlashcards({
               <Button
                 onClick={() => setShowCreateModal(true)}
                 variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                className="border-slate-600  hover:bg-slate-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add New Card
@@ -690,7 +690,7 @@ export default function ManageFlashcards({
                           onClick={() => handlePreview(card)}
                           variant="outline"
                           size="sm"
-                          className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+                          className="flex-1 border-slate-600 hover:bg-slate-700"
                         >
                           <Eye className="w-4 h-4 mr-1" />
                           Preview
@@ -699,7 +699,7 @@ export default function ManageFlashcards({
                           onClick={() => handleEdit(card)}
                           variant="outline"
                           size="sm"
-                          className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700"
+                          className="flex-1 border-slate-600 hover:bg-slate-700"
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
@@ -912,7 +912,7 @@ export default function ManageFlashcards({
             <Button
               variant="outline"
               onClick={() => setShowBulkModal(false)}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="border-slate-600 hover:bg-slate-700"
             >
               Cancel
             </Button>
@@ -1095,7 +1095,7 @@ export default function ManageFlashcards({
                                 onClick={handleCancelEdit}
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-600"
+                                className="flex-1 border-slate-600 hover:bg-slate-600"
                               >
                                 Cancel
                               </Button>
@@ -1125,7 +1125,7 @@ export default function ManageFlashcards({
                 setBulkCards([]);
                 setSelectedBulkCards(new Set());
               }}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="border-slate-600 hover:bg-slate-700"
             >
               Cancel
             </Button>

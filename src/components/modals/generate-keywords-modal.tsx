@@ -108,7 +108,7 @@ export default function GenerateKeywordsModal({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 w-full sm:w-auto touch-manipulation"
+            className="border-slate-600 hover:bg-slate-700 w-full sm:w-auto touch-manipulation"
           >
             Cancel
           </Button>

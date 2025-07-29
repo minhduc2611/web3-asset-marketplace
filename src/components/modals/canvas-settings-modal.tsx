@@ -16,6 +16,7 @@ import type { ParseDocumentResponse } from "@/shared/schema";
 
 interface CanvasSettingsModalProps {
   open: boolean;
+  canvasId: string;
   initialCanvasName?: string;
   initialSystemInstruction?: string;
   onOpenChange: (open: boolean) => void;
@@ -26,6 +27,7 @@ interface CanvasSettingsModalProps {
 }
 
 export default function CanvasSettingsModal({
+  canvasId,
   open,
   initialCanvasName = "",
   initialSystemInstruction = "",
@@ -164,7 +166,7 @@ export default function CanvasSettingsModal({
             type="button"
             variant="outline"
             onClick={handleCancel}
-            className="border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:border-slate-500 transition-colors min-h-[44px] sm:min-h-[auto] w-full sm:w-auto order-2 sm:order-1"
+            className="text-black border-slate-600/50 hover:bg-slate-700/50 hover:border-slate-500 transition-colors min-h-[44px] sm:min-h-[auto] w-full sm:w-auto order-2 sm:order-1"
           >
             Cancel
           </Button>
@@ -188,6 +190,7 @@ export default function CanvasSettingsModal({
     </Dialog>
 
     <DocumentUploadModal
+      canvasId={canvasId} 
       open={showDocumentModal}
       onOpenChange={setShowDocumentModal}
       parsedData={parsedDocument}

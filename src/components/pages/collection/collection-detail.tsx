@@ -367,7 +367,7 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
               Study Again
             </Button>
             <Link href="/collections">
-              <Button variant="outline" className="w-full border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:text-white">
+              <Button variant="outline" className="w-full border-slate-600/50 hover:bg-slate-700/50 hover:text-white">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Collections
               </Button>
@@ -425,7 +425,7 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
                 onClick={() => setShowCreateModal(true)}
                 variant="outline"
                 size="sm"
-                className="border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:text-white"
+                className="border-slate-600/50 hover:bg-slate-700/50 text-black hover:text-white"
               >
                 <Plus className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Add Card</span>
@@ -434,7 +434,7 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
                 onClick={handleRestart}
                 variant="outline" 
                 size="sm"
-                className="border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:text-white"
+                className="border-slate-600/50 hover:bg-slate-700/50 text-black  hover:text-white"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -445,7 +445,7 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-slate-600/50 text-slate-300 hover:bg-slate-700/50 hover:text-white"
+                    className="border-slate-600/50 hover:bg-slate-700/50 text-black  hover:text-white"
                   >
                     <MoreVertical className="w-4 h-4" />
                   </Button>
@@ -829,7 +829,7 @@ export default function CollectionDetailEnhanced({ collectionId }: { collectionI
             <Button
               variant="outline"
               onClick={() => setShowSettingsModal(false)}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              className="border-slate-600 hover:bg-slate-700 text-black hover:text-white"
             >
               Cancel
             </Button>

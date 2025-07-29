@@ -4,18 +4,36 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, Send, Bot, User } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { X, Send, Bot, User, FileText, Globe } from "lucide-react";
+import { MarkdownRenderer } from "../ui/markdown-renderer";
+
+interface DocumentSource {
+  type: "document";
+  filename: string;
+  text: string;
+  relevanceScore?: number;
+}
+
+interface WebSource {
+  type: "web";
+  title: string;
+  url: string;
+  content: string;
+}
+
+type Source = DocumentSource | WebSource;
 
 interface Message {
   id: string;
   text: string;
   sender: "user" | "ai";
   timestamp: Date;
-  sources?: Array<{
-    filename: string;
-    text: string;
-    relevanceScore?: number;
-  }>;
+  sources?: Source[];
   isStreaming?: boolean;
 }
 
@@ -34,7 +52,7 @@ export default function AIPartnerModal({
       text: "Hi! I'm your AI Partner. I can help you explore your knowledge graph, generate insights, and answer questions about your content. How can I assist you today?",
       sender: "ai",
       timestamp: new Date(),
-    }
+    },
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -100,13 +118,7 @@ export default function AIPartnerModal({
       }
 
       let accumulatedText = "";
-      let sources:
-        | Array<{
-            filename: string;
-            text: string;
-            relevanceScore?: number;
-          }>
-        | undefined;
+      let sources: Source[] | undefined;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -122,7 +134,37 @@ export default function AIPartnerModal({
               const data = JSON.parse(line.slice(6));
 
               if (data.type === "sources") {
-                sources = data.sources;
+                // Transform the sources data to match our Source interface
+                sources = data.sources
+                  .map(
+                    (source: {
+                      type: string;
+                      filename?: string;
+                      text?: string;
+                      relevanceScore?: number;
+                      title?: string;
+                      url?: string;
+                      content?: string;
+                    }) => {
+                      if (source.type === "document") {
+                        return {
+                          type: "document" as const,
+                          filename: source.filename,
+                          text: source.text || "", // Add fallback for text
+                          relevanceScore: source.relevanceScore,
+                        };
+                      } else if (source.type === "web") {
+                        return {
+                          type: "web" as const,
+                          title: source.title,
+                          url: source.url,
+                          content: source.content || "", // Add fallback for content
+                        };
+                      }
+                      return source;
+                    }
+                  )
+                  .filter(Boolean);
               } else if (data.type === "content") {
                 accumulatedText += data.content;
 
@@ -250,34 +292,108 @@ export default function AIPartnerModal({
                         : "bg-slate-700 text-slate-100"
                     }`}
                   >
-                    <p className="text-md whitespace-pre-wrap">
-                      {message.text}
-                    </p>
-                    {message.isStreaming && (
+                    <MarkdownRenderer
+                      content={message.text || ""}
+                      theme="dark"
+                    />
+                    {isLoading && (
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="inline-block p-3 rounded-lg bg-slate-700 text-slate-100">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></div>
+                              <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* {message.isStreaming && (
                       <div className="flex items-center mt-2">
                         <div className="w-1 h-1 bg-slate-400 rounded-full animate-pulse mr-1"></div>
                         <span className="text-xs text-slate-400">
                           AI is typing...
                         </span>
                       </div>
-                    )}
+                    )} */}
                     {message.sources && message.sources.length > 0 && (
                       <div className="mt-3 pt-2 border-t border-slate-600">
                         <p className="text-xs text-slate-400 mb-1">Sources:</p>
                         <div className="space-y-1">
                           {message.sources.map((source, index) => (
-                            <div
-                              key={index}
-                              className="text-xs text-slate-300 bg-slate-800 rounded px-2 py-1"
-                            >
-                              📄 {source.filename}
-                              {source.relevanceScore && (
-                                <span className="text-slate-500 ml-1">
-                                  ({Math.round(source.relevanceScore * 100)}%
-                                  match)
-                                </span>
-                              )}
-                            </div>
+                            <Popover key={index}>
+                              <PopoverTrigger asChild>
+                                <div className="text-xs text-slate-300 bg-slate-800 rounded px-2 py-1 cursor-pointer hover:bg-slate-700 transition-colors">
+                                  <div className="flex items-center space-x-1">
+                                    {source.type === "document" ? (
+                                      <FileText className="w-3 h-3" />
+                                    ) : (
+                                      <Globe className="w-3 h-3" />
+                                    )}
+                                    <span>
+                                      {source.type === "document"
+                                        ? source.filename
+                                        : source.title}
+                                    </span>
+                                    {source.type === "document" &&
+                                      source.relevanceScore && (
+                                        <span className="text-slate-500 ml-1">
+                                          (
+                                          {Math.round(
+                                            source.relevanceScore * 100
+                                          )}
+                                          % match)
+                                        </span>
+                                      )}
+                                  </div>
+                                </div>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-80 bg-slate-800 border-slate-600 text-slate-100 max-h-60"
+                                side="top"
+                              >
+                                <div className="space-y-2">
+                                  <div className="flex justify-start items-center space-x-2 min-w-0">
+                                    {source.type === "document" ? (
+                                      <FileText className="w-4 h-4 text-blue-400" />
+                                    ) : (
+                                      <Globe className="w-4 h-4 text-green-400" />
+                                    )}
+                                    <span className="font-medium text-sm flex-1 min-w-0">
+                                      {source.type === "document"
+                                        ? source.filename
+                                        : (
+                                            <a
+                                        href={source.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-slate-400 block truncate"
+                                      >
+                                        {source.title}
+                                      </a>
+                                        )}
+                                    </span>
+                                    
+                                  </div>
+                                  {/* {source.type === "web" && (
+                                    <p className="text-xs text-slate-400 break-all">
+                                      {source.url}
+                                    </p>
+                                  )} */}
+                                  <ScrollArea className="max-h-40 overflow-y-auto">
+                                    <p className="text-md text-slate-300 leading-relaxed">
+                                      {source.type === "document"
+                                        ? source.text
+                                        : source.content}
+                                    </p>
+                                  </ScrollArea>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
                           ))}
                         </div>
                       </div>
@@ -289,22 +405,7 @@ export default function AIPartnerModal({
                 </div>
               </div>
             ))}
-            {isLoading && (
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-white" />
-                </div>
-                <div className="flex-1">
-                  <div className="inline-block p-3 rounded-lg bg-slate-700 text-slate-100">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+
             {/* Invisible element to scroll to */}
             <div ref={messagesEndRef} />
           </div>

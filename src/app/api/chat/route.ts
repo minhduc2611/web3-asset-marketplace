@@ -140,12 +140,14 @@ Instructions:
             ...contextChunks.map(chunk => ({
               type: 'document' as const,
               filename: chunk.filename,
+              text: chunk.text,
               relevanceScore: chunk.relevanceScore
             })),
             ...webSearchResults.map(result => ({
               type: 'web' as const,
               title: result.title,
-              url: result.url
+              url: result.url,
+              content: result.content
             }))
           ];
 

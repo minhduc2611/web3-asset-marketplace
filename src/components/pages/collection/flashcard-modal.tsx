@@ -184,7 +184,7 @@ export default function FlashcardModal({
                 variant="outline"
                 size="sm"
                 onClick={() => setPreviewMode(!previewMode)}
-                className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                className="border-slate-600 hover:bg-slate-700/50"
               >
                 <Eye className="w-4 h-4 mr-2" />
                 {previewMode ? 'Edit' : 'Preview'}
@@ -374,7 +374,7 @@ export default function FlashcardModal({
             <Button
               variant="outline"
               onClick={handleClose}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
+              className="border-slate-600 hover:bg-slate-700/50"
             >
               Cancel
             </Button>

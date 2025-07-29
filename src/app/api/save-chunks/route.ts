@@ -6,10 +6,10 @@ export async function POST(req: NextRequest) {
     const body: DocumentChunksData = await req.json();
 
     // Validate required fields
-    if (!body.filename || !body.chunks || !Array.isArray(body.chunks)) {
+    if (!body.filename || !body.chunks || !Array.isArray(body.chunks) || !body.canvasId) {
       return NextResponse.json(
         { 
-          message: "Invalid request body. Required fields: filename, chunks (array)",
+          message: "Invalid request body. Required fields: filename, chunks (array), canvasId",
           error: "validation_error"
         },
         { status: 400 }
