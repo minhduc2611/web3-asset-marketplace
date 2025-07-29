@@ -169,3 +169,21 @@ export interface ParseDocumentResponse {
   wordCount: number;
   success: boolean;
 }
+
+// Chat schemas
+export const chatRequestSchema = z.object({
+  message: z.string().min(1).max(2000),
+  canvasId: z.string().min(1).optional(),
+});
+
+export type ChatRequest = z.infer<typeof chatRequestSchema>;
+
+export interface ChatResponse {
+  message: string;
+  sources?: Array<{
+    filename: string;
+    text: string;
+    relevanceScore?: number;
+  }>;
+  success: boolean;
+}
