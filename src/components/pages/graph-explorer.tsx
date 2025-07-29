@@ -32,10 +32,6 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   
   // Settings modal state
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsData, setSettingsData] = useState({
-    name: "",
-    systemInstruction: ""
-  });
   
   // Instructions panel state
   const [instructionsExpanded, setInstructionsExpanded] = useState(true);
@@ -189,18 +185,18 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   };
 
   const handleOpenSettings = () => {
-    const canvas = canvasData as Canvas;
-    setSettingsData({
-      name: canvas?.name || "",
-      systemInstruction: canvas?.systemInstruction || ""
-    });
     setSettingsOpen(true);
   };
 
-  const handleSaveSettings = () => {
-    updateCanvasMutation.mutate({
-      name: settingsData.name,
-      systemInstruction: settingsData.systemInstruction
+  const handleSaveSettings = async (data: { canvasName: string; systemInstruction: string }) => {
+    return new Promise<void>((resolve, reject) => {
+      updateCanvasMutation.mutate({
+        name: data.canvasName,
+        systemInstruction: data.systemInstruction
+      }, {
+        onSuccess: () => resolve(),
+        onError: (error) => reject(error)
+      });
     });
   };
 
@@ -412,14 +408,10 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
       {/* Canvas Settings Modal */}
       <CanvasSettingsModal
         open={settingsOpen}
-        canvasName={settingsData.name}
-        systemInstruction={settingsData.systemInstruction}
-        isLoading={updateCanvasMutation.isPending}
+        initialCanvasName={(canvasData as Canvas)?.name || ""}
+        initialSystemInstruction={(canvasData as Canvas)?.systemInstruction || ""}
         onOpenChange={setSettingsOpen}
-        onCanvasNameChange={(name) => setSettingsData(prev => ({ ...prev, name }))}
-        onSystemInstructionChange={(systemInstruction) => setSettingsData(prev => ({ ...prev, systemInstruction }))}
         onSave={handleSaveSettings}
-        onCancel={() => setSettingsOpen(false)}
       />
     </div>
   );

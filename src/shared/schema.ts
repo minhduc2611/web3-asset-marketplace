@@ -154,3 +154,18 @@ export interface FlashcardStats {
     cardsReviewed: number;
   }[];
 }
+
+// Document parsing schemas
+export const parseDocumentSchema = z.object({
+  file: z.instanceof(File),
+});
+
+export type ParseDocumentRequest = z.infer<typeof parseDocumentSchema>;
+
+export interface ParseDocumentResponse {
+  text: string;
+  filename: string;
+  fileType: 'pdf' | 'docx';
+  wordCount: number;
+  success: boolean;
+}

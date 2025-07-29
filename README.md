@@ -156,5 +156,103 @@ so all apps are in 1 platform, With the main goal and motto is: Build lasting kn
 2. with the ideas, give critique
 3. after all the thoughts, give me a table with records of suggestions.
 
+# new-minhkim
+
+This is a Next.js project bootstrapped with `create-next-app`.
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## API Endpoints
+
+### Document Parsing Endpoint
+
+**POST** `/api/parse-document`
+
+Accepts DOCX and PDF files and returns parsed text content.
+
+#### Request
+- Method: `POST`
+- Content-Type: `multipart/form-data`
+- Body: FormData with a `file` field containing the document
+
+#### Supported File Types
+- PDF files (`application/pdf`)
+- DOCX files (`application/vnd.openxmlformats-officedocument.wordprocessingml.document`)
+- Legacy DOC files (`application/msword`)
+
+#### File Constraints
+- Maximum file size: 10MB
+- File must contain extractable text content
+
+#### Response
+```typescript
+{
+  text: string;           // Extracted text content
+  filename: string;       // Original filename
+  fileType: 'pdf' | 'docx'; // Detected file type
+  wordCount: number;      // Number of words in extracted text
+  success: boolean;       // Operation success status
+}
+```
+
+#### Error Responses
+- `400`: No file provided or unsupported file type
+- `422`: Failed to parse document or no text content found
+- `500`: Internal server error
+
+#### Example Usage (JavaScript/TypeScript)
+```javascript
+const formData = new FormData();
+formData.append('file', fileInput.files[0]);
+
+const response = await fetch('/api/parse-document', {
+  method: 'POST',
+  body: formData
+});
+
+const result = await response.json();
+console.log('Extracted text:', result.text);
+```
+
+#### Example Usage (cURL)
+```bash
+curl -X POST \
+  -F "file=@document.pdf" \
+  http://localhost:3000/api/parse-document
+```
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details. 
+
 
 
