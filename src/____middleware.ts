@@ -1,90 +1,25 @@
 
-// export async function middleware(request: NextRequest) {
-//   let supabaseResponse = NextResponse.next({
-//     request,
-//   });
-//   const response = NextResponse.next({
-//     request: {
-//       headers: request.headers,
-//     },
-//   });
+import { NextRequest, NextResponse } from 'next/server';
+import { initializeNeo4j } from './app/api/services/neo4j';
 
-//   const supabase = createServerClient(
-//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-//     {
-//       cookies: {
-//         getAll() {
-//           return request.cookies.getAll();
-//         },
-//         setAll(cookiesToSet) {
-//           cookiesToSet.forEach(({ name, value, options }) =>
-//             request.cookies.set(name, value)
-//           );
-//           supabaseResponse = NextResponse.next({
-//             request,
-//           });
-//           cookiesToSet.forEach(({ name, value, options }) =>
-//             supabaseResponse.cookies.set(name, value, options)
-//           );
-//         },
-//       },
-//     }
-//   );
+let initializationStarted = false;
 
-//   const {
-//     data: { user },
-//   } = await supabase.auth.getUser();
+export async function middleware(request: NextRequest) {
+  // Initialize Neo4j only once when the app starts
+  if (!initializationStarted && request.nextUrl.pathname.startsWith('/api/')) {
+    initializationStarted = true;
+    try {
+      await initializeNeo4j();
+      console.log('Neo4j initialization completed via middleware');
+    } catch (error) {
+      console.error('Neo4j initialization failed:', error);
+      // Don't block requests, but log the error
+    }
+  }
+  
+  return NextResponse.next();
+}
 
-//   // Define public routes that don't require authentication
-//   const publicRoutes = ["/login", "/signup", "/auth/callback", "/"];
-//   const isNotPublicRoute = !publicRoutes.includes(request.nextUrl.pathname);
-//   const isNotAuthenticated = !user;
-
-// //   Debug logging
-//   console.log("🔒 Middleware:", {
-//     pathname: request.nextUrl.pathname,
-//     isNotPublicRoute,
-//     isNotAuthenticated,
-//     user,
-//   });
-
-//   // Redirect to login if accessing protected route without authentication
-//   if (isNotAuthenticated && isNotPublicRoute) {
-//     const redirectUrl = new URL("/login", request.url);
-//     redirectUrl.searchParams.set("next", request.nextUrl.pathname);
-//     return NextResponse.redirect(redirectUrl);
-//   }
-
-// //   const {
-// //     data: { user },
-// //   } = await supabase.auth.getUser();
-
-// //   if (
-// //     !user &&
-// //     !request.nextUrl.pathname.startsWith("/login") &&
-// //     !request.nextUrl.pathname.startsWith("/auth")
-// //   ) {
-// //     // no user, potentially respond by redirecting the user to the login page
-// //     const url = request.nextUrl.clone();
-// //     url.pathname = "/login";
-// //     return NextResponse.redirect(url);
-// //   }
-
-//   return response;
-// }
-
-// Configure which routes to run middleware on
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     * - public files
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: '/api/:path*'
 };
