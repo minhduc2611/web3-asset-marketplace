@@ -64,6 +64,8 @@ export const getWeaviateClient = async () => {
         ), // Your API key
         // Optionally, add headers for inference APIs:
         headers: { "X-OpenAI-Api-Key": process.env.OPENAI_API_KEY as string },
+        timeout: { init: 30, query: 60, insert: 120 },
+        skipInitChecks: true,
       }
     );
 
