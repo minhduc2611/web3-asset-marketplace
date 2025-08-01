@@ -1,28 +1,33 @@
-import { createClient, type Session, type User } from "@supabase/supabase-js";
+import { AuthUser } from "@/types/auth";
+import authService from "@/lib/auth-service";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+export const getCurrentUser = async (): Promise<AuthUser | null> => {
+  // First check if we have a user in local storage
+  const localUser = authService.getCurrentUser();
+  if (localUser && authService.isAuthenticated()) {
+    console.log("FE >>>>>>>>> user from local storage: ", localUser);
+    return localUser;
+  }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  // If no local user or not authenticated, try to verify with the backend
+  const verifyResult = await authService.verifyToken();
+  if (verifyResult.success && verifyResult.data) {
+    // console.log("FE >>>>>>>>> user from backend verification: ", verifyResult.data);
+    return verifyResult.data;
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let currentSession: Session | null = null;
-
-export const setSession = (newSession: Session) => {
-  currentSession = newSession;
-};
-
-export const getCurrentUser = async (): Promise<User | null> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  console.log("FE >>>>>>>>> user: ", user);
-  return user;
+  // console.log("FE >>>>>>>>> no authenticated user found");
+  return null;
 };
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error("Error signing out:", error);
-    throw error;
+  const result = await authService.logout();
+  if (!result.success) {
+    console.error("Error signing out:", result.error);
+    throw new Error(result.message || 'Logout failed');
   }
-  currentSession = null;
 };
+
+// Export authService as the main auth interface
+export { authService };
+export default authService;

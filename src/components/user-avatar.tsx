@@ -1,6 +1,6 @@
 "use client";
 
-import { User as SupabaseUser } from "@supabase/supabase-js";
+import { AuthUser } from "@/types/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
@@ -16,7 +16,7 @@ import { useState } from "react";
 import useAppState from "@/store/useAppState";
 
 interface UserAvatarProps {
-  user: SupabaseUser | null;
+  user: AuthUser | null;
 }
 
 const UserAvatar = ({ user }: UserAvatarProps) => {
@@ -24,7 +24,7 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
-  const avatarUrl = user?.user_metadata?.avatar_url;
+  const avatarUrl = null; // TODO: Add avatar URL support to AuthUser type
 
   const handleSignOut = async () => {
     router.push("/login");
@@ -56,7 +56,7 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
               </Avatar>
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.user_metadata?.name || user?.identities?.[0]?.identity_data?.name || "User"}
+                  {user?.name || "User"}
                 </p>
                 <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>

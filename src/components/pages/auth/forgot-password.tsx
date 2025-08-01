@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner"
-import { supabase } from "@/lib/supabase";
+import authService from "@/lib/auth-service";
 import Logo from "@/components/logo";
 import Link from "next/link";
 
@@ -36,13 +36,13 @@ export default function ForgotPassword() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const result = await authService.forgotPassword({
+        email: data.email,
       });
 
-      if (error) {
-        toast.error("Error", {
-          description: error.message,
+      if (!result.success) {
+        toast.error("Failed to send reset email", {
+          description: authService.handleAuthError(result),
         });
       } else {
         setSentEmail(data.email);
@@ -65,16 +65,16 @@ export default function ForgotPassword() {
     
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(sentEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+      const result = await authService.forgotPassword({
+        email: sentEmail,
       });
 
-      if (error) {
-        toast.error("Error", {
-          description: error.message,
+      if (!result.success) {
+        toast.error("Failed to resend email", {
+          description: authService.handleAuthError(result),
         });
       } else {
-        toast.success("Reset email sent", {
+        toast.success("Reset email resent", {
           description: "A new reset email has been sent to your inbox.",
         });
       }

@@ -1,13 +1,13 @@
-import { User } from "@supabase/supabase-js";
+import { AuthUser } from "@/types/auth";
 import { create } from "zustand";
-import { signOut as supabaseSignOut } from "@/lib/supabase";
+import authService from "@/lib/auth-service";
 
 interface AppState {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
   appLoading: boolean;
   setAppLoading: (appLoading: boolean) => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 }
 
 const useAppState = create<AppState>((set) => {
@@ -16,9 +16,9 @@ const useAppState = create<AppState>((set) => {
     appLoading: false,
     setUser: (user) => set({ user }),
     setAppLoading: (appLoading) => set({ appLoading }),
-    signOut: () => {
+    signOut: async () => {
       set({ user: null });
-      supabaseSignOut();
+      await authService.logout();
     },
   };
 });

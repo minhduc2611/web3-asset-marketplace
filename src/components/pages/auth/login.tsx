@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner"
-import { supabase } from "@/lib/supabase";
+import authService from "@/lib/auth-service";
 import Logo from "@/components/logo";
 import Link from "next/link";
 
@@ -36,20 +36,21 @@ export default function Login() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const result = await authService.login({
         email: data.email,
         password: data.password,
       });
 
-      if (error) {
+      if (!result.success) {
         toast.error("Login failed", {
-          description: error.message,
+          description: authService.handleAuthError(result),
         });
-        } else {
+      } else {
         toast.success("Welcome back!", {
           description: "You have been logged in successfully.",
         });
         // Redirect handled by auth state change
+        window.location.href = "/";
       }
     } catch {
       toast.error("Login failed", {
@@ -62,15 +63,7 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
-      // 
-      if (error) {
-        toast.error("Google login failed", {
-          description: error.message,
-        });
-      }
+      await authService.signInWithOAuth("google");
     } catch {
       toast.error("Google login failed", {
         description: "An unexpected error occurred. Please try again.",

@@ -1,22 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Mail, Lock, User, UserPlus, Check, X } from "lucide-react";
+import { Eye, EyeOff, Lock, CheckCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import authService from "@/lib/auth-service";
 import Logo from "@/components/logo";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+const resetPasswordSchema = z.object({
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -28,7 +27,7 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
-type SignupFormData = z.infer<typeof signupSchema>;
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 const PasswordStrengthIndicator = ({ password }: { password: string }) => {
   const requirements = [
@@ -63,9 +62,9 @@ const PasswordStrengthIndicator = ({ password }: { password: string }) => {
             }`}
           >
             {req.met ? (
-              <Check className="w-2.5 h-2.5" />
+              <CheckCircle className="w-2.5 h-2.5" />
             ) : (
-              <X className="w-2.5 h-2.5 text-gray-400" />
+              <div className="w-2.5 h-2.5 bg-gray-400" />
             )}
           </div>
           <span
@@ -83,50 +82,78 @@ const PasswordStrengthIndicator = ({ password }: { password: string }) => {
   );
 };
 
-export default function Signup() {
+export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const password = watch("password", "");
 
-  const onSubmit = async (data: SignupFormData) => {
+  useEffect(() => {
+    // Extract token and email from URL parameters
+    const tokenParam = searchParams.get("token");
+    const emailParam = searchParams.get("email");
+
+    if (!tokenParam) {
+      toast.error("Invalid reset link", {
+        description: "The password reset link is invalid or has expired.",
+      });
+      router.push("/forgot-password");
+      return;
+    }
+
+    setToken(tokenParam);
+    setEmail(emailParam);
+  }, [searchParams, router]);
+
+  const onSubmit = async (data: ResetPasswordFormData) => {
+    if (!token || !email) {
+      toast.error("Invalid reset link", {
+        description: "The password reset link is invalid or has expired.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const result = await authService.signup({
-        email: data.email,
+      const result = await authService.resetPassword({
+        email,
         password: data.password,
-        name: data.name,
+        token,
       });
 
       if (!result.success) {
-        toast.error("Signup failed", {
+        toast.error("Password reset failed", {
           description: authService.handleAuthError(result),
         });
-      } else if (result.data?.email_confirmation_pending) {
-        toast.success("Account created! 📧", {
-          description: "Please check your email and click the confirmation link to complete registration.",
-        });
-        // Don't redirect - user needs to confirm email first
       } else {
-        toast.success("Account created! 🎉", {
-          description: "You have been signed up and logged in successfully.",
+        setIsSuccess(true);
+        toast.success("Password reset successful!", {
+          description: "Your password has been updated and you are now logged in.",
         });
-        // Redirect to dashboard
-        window.location.href = "/";
+        // Redirect to dashboard after successful reset
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       }
     } catch {
-      toast.error("Signup failed", {
+      toast.error("Password reset failed", {
         description: "An unexpected error occurred. Please try again.",
       });
     } finally {
@@ -134,21 +161,62 @@ export default function Signup() {
     }
   };
 
-  const handleGoogleSignup = async () => {
-    try {
-      // TODO: Implement OAuth with Rust backend when OAuth endpoints are available
-      toast.info("Google signup", {
-        description: "OAuth integration pending - use email/password for now.",
-      });
-    } catch {
-      toast.error("Google signup failed", {
-        description: "An unexpected error occurred. Please try again.",
-      });
-    }
-  };
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <Logo size="lg" />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="w-full max-w-md"
+        >
+          <Card className="shadow-xl border-0 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
+            <CardHeader className="space-y-1 text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              >
+                <div className="mx-auto w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle className="w-6 h-6 text-white" />
+                </div>
+              </motion.div>
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Password Reset Successful!
+              </CardTitle>
+              <CardDescription>
+                Your password has been updated and you are now logged in.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-center"
+              >
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Redirecting to dashboard...
+                </p>
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -171,134 +239,36 @@ export default function Signup() {
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             >
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mb-4">
-                <UserPlus className="w-6 h-6 text-white" />
+              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center mb-4">
+                <Lock className="w-6 h-6 text-white" />
               </div>
             </motion.div>
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Create Account
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Reset Password
             </CardTitle>
             <CardDescription>
-              Sign up to get started with your account
+              Enter your new password below
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Button
-                onClick={handleGoogleSignup}
-                variant="outline"
-                className="w-full h-11 border-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
-              >
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                Continue with Google
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-200 dark:border-gray-700" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white dark:bg-gray-950 px-2 text-gray-500">
-                  Or continue with email
-                </span>
-              </div>
-            </motion.div>
-
             <motion.form
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.3 }}
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    className="pl-10 h-11 border-2 focus:border-purple-500 transition-colors"
-                    {...register("name")}
-                  />
-                </div>
-                {errors.name && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-red-500"
-                  >
-                    {errors.name.message}
-                  </motion.p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    className="pl-10 h-11 border-2 focus:border-purple-500 transition-colors"
-                    {...register("email")}
-                  />
-                </div>
-                {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-red-500"
-                  >
-                    {errors.email.message}
-                  </motion.p>
-                )}
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
-                  Password
+                  New Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
-                    className="pl-10 pr-10 h-11 border-2 focus:border-purple-500 transition-colors"
+                    placeholder="Enter your new password"
+                    className="pl-10 pr-10 h-11 border-2 focus:border-green-500 transition-colors"
                     {...register("password")}
                     onFocus={() => setShowPasswordRequirements(true)}
                     onBlur={() => setShowPasswordRequirements(false)}
@@ -333,15 +303,15 @@ export default function Signup() {
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                  Confirm Password
+                  Confirm New Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    className="pl-10 pr-10 h-11 border-2 focus:border-purple-500 transition-colors"
+                    placeholder="Confirm your new password"
+                    className="pl-10 pr-10 h-11 border-2 focus:border-green-500 transition-colors"
                     {...register("confirmPassword")}
                   />
                   <Button
@@ -375,7 +345,7 @@ export default function Signup() {
               >
                 <Button
                   type="submit"
-                  className="w-full h-11 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium transition-all duration-200"
+                  className="w-full h-11 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-medium transition-all duration-200"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -385,7 +355,7 @@ export default function Signup() {
                       className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                     />
                   ) : (
-                    "Create Account"
+                    "Reset Password"
                   )}
                 </Button>
               </motion.div>
@@ -394,15 +364,13 @@ export default function Signup() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-center text-sm"
+              transition={{ delay: 0.4 }}
+              className="flex items-center justify-center space-x-2"
             >
-              <span className="text-gray-600 dark:text-gray-400">
-                Already have an account?{" "}
-              </span>
               <Link href="/login">
-                <Button variant="link" className="px-0 text-purple-600 hover:text-purple-700 font-medium">
-                  Sign in
+                <Button variant="link" className="px-0 text-green-600 hover:text-green-700 font-medium">
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                  Back to Sign In
                 </Button>
               </Link>
             </motion.div>
@@ -411,4 +379,4 @@ export default function Signup() {
       </motion.div>
     </div>
   );
-}
+} 
