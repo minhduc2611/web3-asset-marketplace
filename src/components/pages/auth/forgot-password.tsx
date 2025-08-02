@@ -38,6 +38,7 @@ export default function ForgotPassword() {
     try {
       const result = await authService.forgotPassword({
         email: data.email,
+        redirect_to: `${window.location.origin}/reset-password`,
       });
 
       if (!result.success) {
@@ -67,6 +68,7 @@ export default function ForgotPassword() {
     try {
       const result = await authService.forgotPassword({
         email: sentEmail,
+        redirect_to: `${window.location.origin}/reset-password`,
       });
 
       if (!result.success) {

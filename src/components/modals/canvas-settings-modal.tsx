@@ -166,7 +166,7 @@ export default function CanvasSettingsModal({
             type="button"
             variant="outline"
             onClick={handleCancel}
-            className="text-black border-slate-600/50 hover:bg-slate-700/50 hover:border-slate-500 transition-colors min-h-[44px] sm:min-h-[auto] w-full sm:w-auto order-2 sm:order-1"
+            className="text-black border-slate-600/50 hover:border-slate-500 transition-colors min-h-[44px] sm:min-h-[auto] w-full sm:w-auto order-2 sm:order-1"
           >
             Cancel
           </Button>

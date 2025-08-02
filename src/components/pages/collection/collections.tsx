@@ -757,7 +757,7 @@ export default function Collections() {
             <Button
               variant="outline"
               onClick={() => setShowCreateModal(false)}
-              className="border-slate-600 hover:bg-slate-700/50"
+              className="border-slate-600"
             >
               Cancel
             </Button>
@@ -785,7 +785,7 @@ export default function Collections() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-slate-600 text-slate-300 hover:bg-slate-700">
+            <AlertDialogCancel className="border-slate-600 text-slate-300">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
@@ -1042,7 +1042,7 @@ export default function Collections() {
                   });
                 }}
                 variant="outline"
-                className="flex-1 border-slate-600 hover:bg-slate-700"
+                className="flex-1 border-slate-600"
               >
                 Cancel
               </Button>

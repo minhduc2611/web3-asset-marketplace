@@ -48,9 +48,9 @@
   
   /* Light theme colors - using HSL for consistency */
   --background: hsl(0, 0%, 100%);
-  --foreground: hsl(0, 9%, 94%);
+  --foreground: hsl(0, 1%, 31%);
   --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(216, 22%, 87%);
+  --muted-foreground: hsl(240, 1%, 46%);
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(0, 0%, 9%);
   --card: hsl(0, 0%, 100%);
@@ -101,9 +101,9 @@
 .dark {
   /* Dark theme colors - using HSL for consistency */
   --background: hsl(240, 10%, 4%);
-  --foreground: hsl(0, 0%, 98%);
+  --foreground: hsl(0, 0%, 11%);
   --muted: hsl(240, 4%, 16%);
-  --muted-foreground: hsl(240, 16%, 96%);
+  --muted-foreground: hsl(0, 1%, 56%);
   --popover: hsl(240, 10%, 4%);
   --popover-foreground: hsl(0, 0%, 98%);
   --card: hsl(240, 10%, 4%);
@@ -114,7 +114,7 @@
   --primary-foreground: hsl(0, 0%, 98%);
   --secondary: hsl(240, 4%, 16%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 4%, 16%);
+  --accent: hsl(240, 3%, 39%);
   --accent-foreground: hsl(0, 0%, 98%);
   --destructive: hsl(0, 63%, 31%);
   --destructive-foreground: hsl(0, 0%, 98%);

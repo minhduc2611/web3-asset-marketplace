@@ -88,11 +88,8 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
   
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const {
     register,
@@ -105,37 +102,28 @@ export default function ResetPassword() {
 
   const password = watch("password", "");
 
-  useEffect(() => {
-    // Extract token and email from URL parameters
-    const tokenParam = searchParams.get("token");
-    const emailParam = searchParams.get("email");
+  // useEffect(() => {
+  //   // Extract token and email from URL parameters
+  //   const tokenParam = searchParams.get("token");
+  //   const emailParam = searchParams.get("email");
 
-    if (!tokenParam) {
-      toast.error("Invalid reset link", {
-        description: "The password reset link is invalid or has expired.",
-      });
-      router.push("/forgot-password");
-      return;
-    }
+  //   if (!tokenParam) {
+  //     toast.error("Invalid reset link", {
+  //       description: "The password reset link is invalid or has expired.",
+  //     });
+  //     router.push("/forgot-password");
+  //     return;
+  //   }
 
-    setToken(tokenParam);
-    setEmail(emailParam);
-  }, [searchParams, router]);
+  //   setToken(tokenParam);
+  //   setEmail(emailParam);
+  // }, [searchParams, router]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    if (!token || !email) {
-      toast.error("Invalid reset link", {
-        description: "The password reset link is invalid or has expired.",
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
       const result = await authService.resetPassword({
-        email,
         password: data.password,
-        token,
       });
 
       if (!result.success) {

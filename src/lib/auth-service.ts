@@ -33,6 +33,11 @@ class AuthService {
     }
   }
 
+  // Public method for setting tokens from external sources (like OAuth callbacks)
+  public setTokensFromExternal(tokens: StoredTokens): void {
+    this.setTokens(tokens);
+  }
+
   private getTokens(): StoredTokens | null {
     const stored = localStorage.getItem(this.TOKEN_KEY);
     return stored ? JSON.parse(stored) : null;
@@ -162,7 +167,7 @@ class AuthService {
   }
 
   async verifyOAuthToken(
-    data: OAuthTokenRequest
+    data: OAuthTokenRequest,
   ): Promise<AuthResponse<AuthUser>> {
     const result = await makeUnauthenticatedRequest<AuthUser>("/auth/oauth/verify", {
       method: "POST",
@@ -181,7 +186,6 @@ class AuthService {
         refresh_token: data.refresh_token,
         expires_at: data.expires_at,
       });
-      window.location.href = "/";
     }
 
     return result;

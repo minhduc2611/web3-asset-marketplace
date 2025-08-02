@@ -23,12 +23,11 @@ export interface OAuthTokenRequest {
 
 export interface ForgotPasswordRequest {
   email: string;
+  redirect_to: string;
 }
 
 export interface ResetPasswordRequest {
-  email: string;
   password: string;
-  token: string;
 }
 
 // Response Types
@@ -36,6 +35,19 @@ export interface AuthUser {
   id: string;
   email: string;
   name?: string;
+  full_name?: string;
+  avatar_url?: string;
+  email_verified?: boolean;
+  phone?: string;
+  phone_verified?: boolean;
+  role?: string;
+  providers: string[];
+  last_sign_in_at?: string;
+  created_at?: string;
+  updated_at?: string;
+  confirmed_at?: string;
+  email_confirmed_at?: string;
+  is_anonymous?: boolean;
   roles: string[];
 }
 

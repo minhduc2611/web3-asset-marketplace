@@ -24,7 +24,8 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const initials = user?.email?.slice(0, 2).toUpperCase() || "??";
-  const avatarUrl = null; // TODO: Add avatar URL support to AuthUser type
+  const avatarUrl = user?.avatar_url || null;
+  
 
   const handleSignOut = async () => {
     router.push("/login");
@@ -41,7 +42,7 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
             className="relative h-10 w-10 rounded-full"
           >
             <Avatar className="h-10 w-10">
-              <AvatarImage src={avatarUrl} alt={user?.email || "User"} />
+              <AvatarImage src={avatarUrl || ""} alt={user?.email || "User"} />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </Button>
@@ -51,7 +52,7 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
             <SheetTitle className="text-left">Account</SheetTitle>
             <div className="flex items-center space-x-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={avatarUrl} alt={user?.email || "User"} />
+                <AvatarImage src={avatarUrl || ""} alt={user?.email || "User"} />
                 <AvatarFallback className="text-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="space-y-1">

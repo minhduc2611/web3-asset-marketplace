@@ -359,7 +359,7 @@ export default function CanvasList() {
               <Button
                 variant="outline"
                 onClick={() => setIsCreateDialogOpen(false)}
-                className="border-slate-600/50 hover:bg-slate-700/50"
+                className="border-slate-600/50"
               >
                 Cancel
               </Button>
