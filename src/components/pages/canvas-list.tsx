@@ -19,8 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useMutation, useQuery } from "@tanstack/react-query"; // TODO: remove this
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -33,54 +31,25 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
-// import useLocalStorageState from "use-local-storage-state";
 import useAppState from "@/store/useAppState";
-interface Canvas {
-  id: string;
-  name: string;
-  authorId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useCanvases, useCreateCanvas } from "@/hooks/use-canvas";
 
 export default function CanvasList() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [canvasName, setCanvasName] = useState("");
   const { user } = useAppState();
   const authorId = user?.id || "";
-  // const [authorId] = useLocalStorageState("userId", {
-  //   defaultValue: "9dde1fd0-371f-4028-a0f5-f32bb0cbc755",
-  // });
   const router = useRouter();
-  // Fetch user's canvases
-  const { data: canvases, isLoading } = useQuery<Canvas[]>({
-    queryKey: [`/api/canvas/author/${authorId}`],
-    refetchOnWindowFocus: false,
+  
+  // Fetch user's canvases using the new hook
+  const { data: response, isLoading } = useCanvases({
+    author_id: authorId,
+    limit: 50,
+    offset: 0,
   });
 
-  // Create canvas mutation
-  const createCanvasMutation = useMutation({
-    mutationFn: async (data: { name: string; authorId: string }) => {
-      const response = await apiRequest("POST", "/api/canvas", data);
-      return response.json();
-    },
-    onSuccess: (newCanvas) => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/author/${authorId}`],
-      });
-      setIsCreateDialogOpen(false);
-      setCanvasName("");
-      toast.success("Canvas Created", {
-        description: `Created new canvas: ${newCanvas.name}`,
-      });
-    },
-    onError: (error: Error) => {
-      toast.error("Error", {
-        description: error.message || "Failed to create canvas",
-      });
-    },
-  });
+  // Create canvas mutation using the new hook
+  const createCanvasMutation = useCreateCanvas();
 
   const handleCreateCanvas = () => {
     if (!canvasName.trim()) return;
@@ -89,9 +58,14 @@ export default function CanvasList() {
       name: canvasName.trim(),
       authorId,
     });
+    setIsCreateDialogOpen(false);
+    setCanvasName("");
   };
+  
   const { isPending: isCreating } = createCanvasMutation;
-
+  
+  // Extract canvases from the response
+  const canvases = response?.data || [];
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
       {/* Floating Elements Background */}
@@ -236,9 +210,9 @@ export default function CanvasList() {
                             <div className="flex items-center gap-2 text-slate-400">
                               <Clock className="w-3 h-3" />
                               <span>
-                                {new Date(
-                                  canvas.createdAt
-                                ).toLocaleDateString()}
+                                {canvas.created_at ? new Date(
+                                  canvas.created_at
+                                ).toLocaleDateString() : 'N/A'}
                               </span>
                             </div>
                             <Badge

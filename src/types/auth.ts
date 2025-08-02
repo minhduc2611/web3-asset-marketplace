@@ -67,12 +67,22 @@ export interface SignupResponse {
   message?: string;
 }
 
+export interface Pagination {
+  total: number;
+  limit: number;
+  offset: number;
+  current_page: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
+}
 
 export interface AuthResponse<T = object> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
+  pagination?: Pagination;
 }
 
 export type AuthError = 

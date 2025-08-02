@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import authService from "@/lib/auth-service";
 import Logo from "@/components/logo";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const resetPasswordSchema = z.object({
   password: z
@@ -101,23 +101,6 @@ export default function ResetPassword() {
   });
 
   const password = watch("password", "");
-
-  // useEffect(() => {
-  //   // Extract token and email from URL parameters
-  //   const tokenParam = searchParams.get("token");
-  //   const emailParam = searchParams.get("email");
-
-  //   if (!tokenParam) {
-  //     toast.error("Invalid reset link", {
-  //       description: "The password reset link is invalid or has expired.",
-  //     });
-  //     router.push("/forgot-password");
-  //     return;
-  //   }
-
-  //   setToken(tokenParam);
-  //   setEmail(emailParam);
-  // }, [searchParams, router]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);

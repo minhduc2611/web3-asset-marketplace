@@ -8,8 +8,8 @@ export const canvases = pgTable("canvases", {
   authorId: varchar("author_id").notNull(),
   name: text("name").notNull(),
   systemInstruction: text("system_instruction").default(""),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export const topics = pgTable("topics", {
@@ -34,8 +34,8 @@ export const relationships = pgTable("relationships", {
 
 export const insertCanvasSchema = createInsertSchema(canvases).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export const insertTopicSchema = createInsertSchema(topics).omit({

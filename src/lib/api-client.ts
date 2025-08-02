@@ -1,7 +1,7 @@
-import axios, { AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import { AuthResponse } from '@/types/auth';
 
-const API_BASE_URL = 'http://localhost:8080';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // Create axios instance with default config
 export const apiClient = axios.create({
@@ -52,7 +52,7 @@ apiClient.interceptors.response.use(
 
     // Handle HTTP error responses
     const status = error.response.status;
-    const responseData = error.response.data as any;
+    const responseData = error.response.data as AuthResponse;
 
     // If the response is already in our AuthResponse format, return it
     if (responseData && typeof responseData === 'object' && 'success' in responseData) {
@@ -98,16 +98,13 @@ apiClient.interceptors.response.use(
 // Utility function for making authenticated requests
 export const makeAuthenticatedRequest = async <T>(
   endpoint: string,
-  config: any = {}
+  config: AxiosRequestConfig = {}
 ): Promise<AuthResponse<T>> => {
   try {
     const response = await apiClient(endpoint, config);
-    return {
-      success: true,
-      data: response.data.data || response.data,
-      message: response.data.message,
-    };
-  } catch (error: any) {
+    console.log('response', response)
+    return response.data as AuthResponse<T>;
+  } catch (error) {
     return error as AuthResponse<T>;
   }
 };
@@ -115,7 +112,7 @@ export const makeAuthenticatedRequest = async <T>(
 // Utility function for making unauthenticated requests
 export const makeUnauthenticatedRequest = async <T>(
   endpoint: string,
-  config: any = {}
+  config: AxiosRequestConfig = {}
 ): Promise<AuthResponse<T>> => {
   try {
     // Remove auth header for unauthenticated requests
@@ -133,7 +130,7 @@ export const makeUnauthenticatedRequest = async <T>(
       data: response.data.data || response.data,
       message: response.data.message,
     };
-  } catch (error: any) {
+  } catch (error) {
     return error as AuthResponse<T>;
   }
 };
