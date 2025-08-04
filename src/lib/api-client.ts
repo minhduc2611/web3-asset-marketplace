@@ -1,14 +1,16 @@
-import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
-import { AuthResponse } from '@/types/auth';
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios";
+import { AuthResponse } from "@/types/auth";
+import { publicRoutes } from "@/constants/public-routes";
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // Create axios instance with default config
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000, // 10 seconds timeout
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -16,7 +18,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Add auth token if available (for authenticated requests)
-    const tokens = localStorage.getItem('auth_tokens');
+    const tokens = localStorage.getItem("auth_tokens");
     if (tokens) {
       try {
         const parsedTokens = JSON.parse(tokens);
@@ -24,7 +26,7 @@ apiClient.interceptors.request.use(
           config.headers.Authorization = `Bearer ${parsedTokens.access_token}`;
         }
       } catch (error) {
-        console.error('Error parsing stored tokens:', error);
+        console.error("Error parsing stored tokens:", error);
       }
     }
     return config;
@@ -42,60 +44,63 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => {
     // Handle network errors
     if (!error.response) {
-      console.error('Network error:', error.message);
+      console.error("Network error:", error.message);
       return Promise.reject({
         success: false,
-        error: 'ExternalServiceError',
-        message: 'Network error occurred',
+        error: "ExternalServiceError",
+        message: "Network error occurred",
       });
     }
-
     // Handle HTTP error responses
-    // const status = error.response.status;
+    const status = error.response.status;
     const responseData = error.response.data as AuthResponse;
 
-    // If the response is already in our AuthResponse format, return it
-    if (responseData && typeof responseData === 'object' && 'success' in responseData) {
-      return Promise.reject(responseData);
+    // Handle common HTTP status codes
+    switch (status) {
+      case 400:
+        return Promise.reject({
+          success: false,
+          error: "BadRequest",
+          message: responseData?.message || "Bad request",
+        });
+      case 401:
+        // Clear stored tokens and redirect to login
+        localStorage.removeItem("auth_tokens");
+        if (typeof window !== "undefined" && !publicRoutes.includes(window.location.pathname)) {
+          window.location.href = "/login";
+        }
+        return Promise.reject({
+          success: false,
+          error: "AuthenticationFailed",
+          message: responseData?.message || "Unauthorized",
+        });
+      case 403:
+        return Promise.reject({
+          success: false,
+          error: "InvalidToken",
+          message: responseData?.message || "Forbidden",
+        });
+      case 500:
+        return Promise.reject({
+          success: false,
+          error: "ExternalServiceError",
+          message: "Internal server error",
+        });
+      default:
+        return Promise.reject({
+          success: false,
+          error: "ExternalServiceError",
+          message: responseData?.message || `HTTP ${status} error`,
+        });
     }
 
-    // Handle common HTTP status codes
-    // switch (status) {
-    //   case 400:
-    //     return Promise.reject({
-    //       success: false,
-    //       error: 'ValidationError',
-    //       message: responseData?.error || 'Bad request',
-    //     });
-    //   case 401:
-    //     // Clear stored tokens and redirect to login
-    //     localStorage.removeItem('auth_tokens');
-    //     if (typeof window !== 'undefined') {
-    //       window.location.href = '/login';
-    //     }
-    //     return Promise.reject({
-    //       success: false,
-    //       error: 'AuthenticationFailed',
-    //       message: responseData?.message || 'Unauthorized',
-    //     });
-    //   case 403:
-    //     return Promise.reject({
-    //       success: false,
-    //       error: 'InvalidToken',
-    //       message: responseData?.message || 'Forbidden',
-    //     });
-    //   case 500:
-    //     return Promise.reject({
-    //       success: false,
-    //       error: 'ExternalServiceError',
-    //       message: 'Internal server error',
-    //     });
-    //   default:
-    //     return Promise.reject({
-    //       success: false,
-    //       error: 'ExternalServiceError',
-    //       message: responseData?.message || `HTTP ${status} error`,
-    //     });
+    // If the response is already in our AuthResponse format, return it
+    // if (
+    //   responseData &&
+    //   typeof responseData === "object" &&
+    //   "success" in responseData
+    // ) {
+    //   return Promise.reject(responseData);
     // }
   }
 );
@@ -107,7 +112,7 @@ export const makeAuthenticatedRequest = async <T>(
 ): Promise<AuthResponse<T>> => {
   try {
     const response = await apiClient(endpoint, config);
-    console.log('response', response)
+    console.log("response", response);
     return response.data as AuthResponse<T>;
   } catch (error) {
     return error as AuthResponse<T>;
@@ -128,7 +133,7 @@ export const makeUnauthenticatedRequest = async <T>(
         Authorization: undefined,
       },
     };
-    
+
     const response = await apiClient(endpoint, configWithoutAuth);
     return {
       success: true,

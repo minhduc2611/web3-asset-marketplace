@@ -2,6 +2,21 @@ import { makeAuthenticatedRequest } from './api-client';
 import { Canvas, CreateCanvasRequest, UpdateCanvasRequest } from '@/shared/schema';
 import { AuthResponse } from '@/types/auth';
 
+export interface GraphData {
+  nodes: Array<{
+    id: string;
+    name: string;
+    node_type: "original" | "generated";
+    description?: string | null;
+    knowledge?: string | null;
+  }>;
+  edges: Array<{
+    id: string;
+    source: string;
+    target: string;
+  }>;
+}
+
 /**
  * Canvas Service - Updated to match new API specification
  * 
@@ -139,6 +154,24 @@ export class CanvasService {
       throw new Error(response.message || 'Failed to delete canvas');
     }
   }
+
+  /**
+   * Get graph data for a specific canvas
+   */
+  static async getGraphData(canvasId: string): Promise<GraphData> {
+    const response = await makeAuthenticatedRequest<GraphData>(
+      `${CanvasService.BASE_URL}/${canvasId}/graph-data`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to fetch graph data');
+    }
+
+    return response.data as GraphData;
+  }
 }
 
 // Export individual functions for easier use with React Query
@@ -148,4 +181,5 @@ export const canvasService = {
   create: CanvasService.createCanvas,
   update: CanvasService.updateCanvas,
   delete: CanvasService.deleteCanvas,
+  getGraphData: CanvasService.getGraphData,
 }; 

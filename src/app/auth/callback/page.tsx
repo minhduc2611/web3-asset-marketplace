@@ -23,7 +23,7 @@ function OAuthCallbackContent() {
         const error_description = params.get("error_description");
         const type = params.get("type");
 
-        // console.log("🎯 >>>>>>>>> OAuth tokens:", { access_token, refresh_token, error });
+        console.log("🎯 >>>>>>>>> OAuth tokens:", { access_token, refresh_token, error });
 
         if (error) {
           console.error("OAuth error:", error, error_description);

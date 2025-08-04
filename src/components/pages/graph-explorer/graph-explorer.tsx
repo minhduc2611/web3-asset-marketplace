@@ -11,19 +11,7 @@ import { CanvasSettingsModal } from "@/components/modals";
 import AIPartnerModal from "@/components/modals/ai-partner-modal";
 import GraphNavigationBar from "./graph-navigation-bar";
 import { useCanvas, useUpdateCanvas } from "@/hooks/use-canvas";
-
-interface GraphData {
-  nodes: Array<{
-    id: string;
-    name: string;
-    type: "original" | "generated";
-  }>;
-  edges: Array<{
-    id: string;
-    source: string;
-    target: string;
-  }>;
-}
+import { canvasService, GraphData } from "@/lib/canvas-service";
 
 export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -51,7 +39,8 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   // Fetch graph data
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { data: graphData, isLoading } = useQuery<GraphData>({
-    queryKey: [`/api/canvas/graph-data/${canvasId}`],
+    queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+    queryFn: () => canvasService.getGraphData(canvasId),
     enabled: !!canvasId,
     refetchOnWindowFocus: false,
   });
@@ -68,7 +57,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/graph-data/${canvasId}`],
+        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
       });
       toast.success("Topic Added", {
         description: `Added topic: ${data.name}`,
@@ -104,7 +93,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     onSuccess: (data) => {
       console.log("generateKeywordsMutation onSuccess", canvasId);
       queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/graph-data/${canvasId}`],
+        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
       });
       console.log("generateKeywordsMutation data", data);
       toast.success("Keywords Generated", {
@@ -127,7 +116,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/graph-data/${canvasId}`],
+        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
       });
       setSelectedNodeId(null);
       toast.success("Node Deleted", {
@@ -188,7 +177,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const connectionCount = graphData?.edges.length || 0;
 
   // Check if there's an original node to hide TopicInput
-  const hasOriginalNode = graphData?.nodes.some(node => node.type === "original") || false;
+  const hasOriginalNode = graphData?.nodes.some(node => node.node_type === "original") || false;
 
   return (
     // h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-slate-50 font-inter overflow-hidden

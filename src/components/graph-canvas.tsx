@@ -31,7 +31,7 @@ interface GraphData {
   nodes: Array<{
     id: string;
     name: string;
-    type: "original" | "generated";
+    node_type: "original" | "generated";
     description?: string | null;
     knowledge?: string | null;
   }>;
@@ -169,7 +169,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       },
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: [`/api/canvas/graph-data/${canvasId}`],
+          queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
         });
         toast.success("Node Updated", {
           description: "Node has been successfully updated",
@@ -202,7 +202,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       onSuccess: () => {
         console.log("onSuccess", canvasId);
         queryClient.invalidateQueries({
-          queryKey: [`/api/canvas/graph-data/${canvasId}`],
+          queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
         });
         toast.success("Sub Node Created", {
           description: "Sub node has been successfully created",
@@ -314,7 +314,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
       // Refresh graph data to reflect any updates
       queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/graph-data/${canvasId}`],
+        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
       });
     };
 
@@ -605,7 +605,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
     // Mind map layout with collision detection and proper spacing
     const applyImprovedLayout = (cy: Core, nodes: any[], edges: any[]) => {
-      const originalNodes = nodes.filter((n) => n.type === "original");
+      const originalNodes = nodes.filter((n) => n.node_type === "original");
 
       // Build parent-child relationships
       const children: { [key: string]: string[] } = {};
@@ -863,7 +863,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       const elements = [
         ...graphData.nodes.map((node) => {
           const classes = [];
-          if (node.type === "generated") classes.push("generated");
+          if (node.node_type === "generated") classes.push("generated");
           if (node.description && node.description.trim())
             classes.push("has-description");
           if (node.knowledge && node.knowledge.trim())
@@ -875,7 +875,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
               id: node.id,
               label: node.name,
               name: node.name,
-              type: node.type,
+              node_type: node.node_type,
               description: node.description,
             },
             classes: classes.join(" "),
