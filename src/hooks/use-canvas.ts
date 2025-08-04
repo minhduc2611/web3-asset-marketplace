@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { canvasService } from '@/lib/canvas-service';
 import { Canvas, CreateCanvasRequest, UpdateCanvasRequest } from '@/shared/schema';
+import { AuthResponse } from '@/types/auth';
 import { toast } from 'sonner';
 
 // Query keys
@@ -13,7 +14,7 @@ export const canvasKeys = {
   detail: (id: string) => [...canvasKeys.details(), id] as const,
 };
 
-// Hook for listing canvases
+// Hook for listing canvases with pagination
 export const useCanvases = (params?: {
   author_id?: string;
   limit?: number;
@@ -93,16 +94,14 @@ export const useDeleteCanvas = () => {
 
   return useMutation({
     mutationFn: (id: string) => canvasService.delete(id),
-    onSuccess: (response, id) => {
+    onSuccess: (_, id) => {
       // Remove the canvas from cache
       queryClient.removeQueries({ queryKey: canvasKeys.detail(id) });
       
       // Invalidate and refetch canvas lists
       queryClient.invalidateQueries({ queryKey: canvasKeys.lists() });
       
-      toast.success('Canvas deleted successfully', {
-        description: `Deleted: ${response.name}`,
-      });
+      toast.success('Canvas deleted successfully');
     },
     onError: (error: Error) => {
       toast.error('Failed to delete canvas', {
@@ -130,11 +129,11 @@ export const useOptimisticCanvasUpdate = () => {
     updateCanvasListOptimistically: (updates: Partial<Canvas>) => {
       queryClient.setQueriesData(
         { queryKey: canvasKeys.lists() },
-        (old: Canvas[]) => {
-          if (!old) return old;
+        (old: AuthResponse<Canvas[]>) => {
+          if (!old || !old.data) return old;
           return {
             ...old,
-            data: old.map((canvas: Canvas) =>
+            data: old.data.map((canvas: Canvas) =>
               canvas.id === updates.id ? { ...canvas, ...updates } : canvas
             ),
           };

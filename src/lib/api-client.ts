@@ -51,7 +51,7 @@ apiClient.interceptors.response.use(
     }
 
     // Handle HTTP error responses
-    const status = error.response.status;
+    // const status = error.response.status;
     const responseData = error.response.data as AuthResponse;
 
     // If the response is already in our AuthResponse format, return it
@@ -60,38 +60,43 @@ apiClient.interceptors.response.use(
     }
 
     // Handle common HTTP status codes
-    switch (status) {
-      case 400:
-        return Promise.reject({
-          success: false,
-          error: 'ValidationError',
-          message: responseData?.message || 'Bad request',
-        });
-      case 401:
-        return Promise.reject({
-          success: false,
-          error: 'AuthenticationFailed',
-          message: responseData?.message || 'Unauthorized',
-        });
-      case 403:
-        return Promise.reject({
-          success: false,
-          error: 'InvalidToken',
-          message: responseData?.message || 'Forbidden',
-        });
-      case 500:
-        return Promise.reject({
-          success: false,
-          error: 'ExternalServiceError',
-          message: 'Internal server error',
-        });
-      default:
-        return Promise.reject({
-          success: false,
-          error: 'ExternalServiceError',
-          message: responseData?.message || `HTTP ${status} error`,
-        });
-    }
+    // switch (status) {
+    //   case 400:
+    //     return Promise.reject({
+    //       success: false,
+    //       error: 'ValidationError',
+    //       message: responseData?.error || 'Bad request',
+    //     });
+    //   case 401:
+    //     // Clear stored tokens and redirect to login
+    //     localStorage.removeItem('auth_tokens');
+    //     if (typeof window !== 'undefined') {
+    //       window.location.href = '/login';
+    //     }
+    //     return Promise.reject({
+    //       success: false,
+    //       error: 'AuthenticationFailed',
+    //       message: responseData?.message || 'Unauthorized',
+    //     });
+    //   case 403:
+    //     return Promise.reject({
+    //       success: false,
+    //       error: 'InvalidToken',
+    //       message: responseData?.message || 'Forbidden',
+    //     });
+    //   case 500:
+    //     return Promise.reject({
+    //       success: false,
+    //       error: 'ExternalServiceError',
+    //       message: 'Internal server error',
+    //     });
+    //   default:
+    //     return Promise.reject({
+    //       success: false,
+    //       error: 'ExternalServiceError',
+    //       message: responseData?.message || `HTTP ${status} error`,
+    //     });
+    // }
   }
 );
 

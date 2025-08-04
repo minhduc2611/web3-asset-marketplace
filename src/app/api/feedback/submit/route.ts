@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createFeedbackPage, ensureFeedbackDatabase, FeedbackData } from '@/lib/notion';
 import ServerAuthService from '@/lib/auth-server';
-import { storageService } from '@/lib/storage';
 
 export async function POST(req: NextRequest) {
   try {

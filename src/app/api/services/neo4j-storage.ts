@@ -59,19 +59,19 @@ export class Neo4jStorage implements INeo4jStorage {
         RETURN c
       `, {
         id,
-        authorId: insertCanvas.authorId,
+        author_id: insertCanvas.author_id,
         name: insertCanvas.name,
-        systemInstruction: insertCanvas.systemInstruction || ""
+        system_instruction: insertCanvas.system_instruction || ""
       });
 
       const canvas = result.records[0]?.get('c').properties;
       return {
         id: canvas.id,
-        authorId: canvas.authorId,
+        author_id: canvas.authorId,
         name: canvas.name,
-        systemInstruction: canvas.systemInstruction || "",
-        createdAt: new Date(canvas.createdAt.toString()),
-        updatedAt: new Date(canvas.updatedAt.toString())
+        system_instruction: canvas.systemInstruction || "",
+        created_at: new Date(canvas.createdAt.toString()),
+        updated_at: new Date(canvas.updatedAt.toString())
       };
     } finally {
       await session.close();
@@ -92,11 +92,11 @@ export class Neo4jStorage implements INeo4jStorage {
       const canvas = result.records[0].get('c').properties;
       return {
         id: canvas.id,
-        authorId: canvas.authorId,
+        author_id: canvas.authorId,
         name: canvas.name,
-        systemInstruction: canvas.systemInstruction || "",
-        createdAt: new Date(canvas.createdAt.toString()),
-        updatedAt: new Date(canvas.updatedAt.toString())
+        system_instruction: canvas.systemInstruction || "",
+        created_at: new Date(canvas.createdAt.toString()),
+        updated_at: new Date(canvas.updatedAt.toString())
       };
     } finally {
       await session.close();
@@ -117,11 +117,11 @@ export class Neo4jStorage implements INeo4jStorage {
         const canvas = record.get('c').properties;
         return {
           id: canvas.id,
-          authorId: canvas.authorId,
+          author_id: canvas.authorId,
           name: canvas.name,
-          systemInstruction: canvas.systemInstruction || "",
-          createdAt: new Date(canvas.createdAt.toString()),
-          updatedAt: new Date(canvas.updatedAt.toString())
+          system_instruction: canvas.systemInstruction || "",
+          created_at: new Date(canvas.createdAt.toString()),
+          updated_at: new Date(canvas.updatedAt.toString())
         };
       });
     } finally {
@@ -164,11 +164,11 @@ export class Neo4jStorage implements INeo4jStorage {
       const canvas = result.records[0].get('c').properties;
       return {
         id: canvas.id,
-        authorId: canvas.authorId,
+        author_id: canvas.authorId,
         name: canvas.name,
-        systemInstruction: canvas.systemInstruction || "",
-        createdAt: new Date(canvas.createdAt.toString()),
-        updatedAt: new Date(canvas.updatedAt.toString())
+        system_instruction: canvas.systemInstruction || "",
+        created_at: new Date(canvas.createdAt.toString()),
+        updated_at: new Date(canvas.updatedAt.toString())
       };
     } finally {
       await session.close();

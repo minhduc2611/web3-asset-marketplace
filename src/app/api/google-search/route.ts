@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     let systemInstruction = "";
     if (canvasId) {
       const canvas = await neo4jStorage.getCanvas(canvasId);
-      systemInstruction = canvas?.systemInstruction || "";
+      systemInstruction = canvas?.system_instruction || "";
     }
 
     // Mark node as processing (add processing status to knowledge field temporarily)

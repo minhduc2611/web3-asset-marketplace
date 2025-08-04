@@ -60,9 +60,9 @@ export async function POST(req: Request) {
     }
 
     // 4. Call OpenAI with the new, more detailed prompt including document context
-    const systemInstructionSection = canvas.systemInstruction
+    const systemInstructionSection = canvas.system_instruction
       ? `<system-instruction>
-${canvas.systemInstruction}
+${canvas.system_instruction}
 </system-instruction>`
       : "";
 

@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { CanvasSettingsModal } from "@/components/modals";
 import AIPartnerModal from "@/components/modals/ai-partner-modal";
 import GraphNavigationBar from "./graph-navigation-bar";
+import { useCanvas, useUpdateCanvas } from "@/hooks/use-canvas";
 
 interface GraphData {
   nodes: Array<{
@@ -37,17 +38,15 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   // Instructions panel state
   const [instructionsExpanded, setInstructionsExpanded] = useState(true);
 
+  // Fetch canvas info using the new hook
+  const { data: canvasData } = useCanvas(canvasId);
+
+  // Update canvas mutation using the new hook
+  const updateCanvasMutation = useUpdateCanvas();
+
   if (!canvasId) {
     return <div>Canvas ID not found</div>;
   }
-
-  // Fetch canvas info
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { data: canvasData } = useQuery({
-    queryKey: [`/api/canvas/${canvasId}`],
-    enabled: !!canvasId,
-    refetchOnWindowFocus: false,
-  });
 
   // Fetch graph data
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -142,29 +141,6 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     },
   });
 
-  // Update canvas mutation
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const updateCanvasMutation = useMutation({
-    mutationFn: async (updates: { name?: string; systemInstruction?: string }) => {
-      const response = await apiRequest("PUT", `/api/canvas/${canvasId}`, updates);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/canvas/${canvasId}`],
-      });
-      setSettingsOpen(false);
-      toast.success("Settings Updated", {
-        description: "Canvas settings have been saved successfully",
-      });
-    },
-    onError: (error: Error) => {
-      toast.error("Update Failed", {
-        description: error.message || "Failed to update canvas settings",
-      });
-    },
-  });
-
   const handleCreateNode = (topic: string) => {
     createNodeMutation.mutate(topic);
   };
@@ -196,8 +172,11 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const handleSaveSettings = async (data: { canvasName: string; systemInstruction: string }) => {
     return new Promise<void>((resolve, reject) => {
       updateCanvasMutation.mutate({
-        name: data.canvasName,
-        systemInstruction: data.systemInstruction
+        id: canvasId,
+        data: {
+          name: data.canvasName,
+          system_instruction: data.systemInstruction
+        }
       }, {
         onSuccess: () => resolve(),
         onError: (error) => reject(error)
@@ -327,7 +306,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
         open={settingsOpen}
         canvasId={canvasId}
         initialCanvasName={(canvasData as Canvas)?.name || ""}
-        initialSystemInstruction={(canvasData as Canvas)?.systemInstruction || ""}
+        initialSystemInstruction={(canvasData as Canvas)?.system_instruction || ""}
         onOpenChange={setSettingsOpen}
         onSave={handleSaveSettings}
       />

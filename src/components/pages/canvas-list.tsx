@@ -57,6 +57,7 @@ export default function CanvasList() {
     createCanvasMutation.mutate({
       name: canvasName.trim(),
       authorId,
+      systemInstruction: '',
     });
     setIsCreateDialogOpen(false);
     setCanvasName("");

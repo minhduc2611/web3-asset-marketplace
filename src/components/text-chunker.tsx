@@ -75,11 +75,13 @@ export default function TextChunker({
       onChunksChange?.([]);
     }
     setChunksHistory([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [originalText]);
 
   // Call onChunksChange whenever chunks change
   useEffect(() => {
     onChunksChange?.(chunks);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chunks]);
 
   const handleChunkClick = (

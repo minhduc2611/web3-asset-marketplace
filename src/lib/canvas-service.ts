@@ -2,6 +2,31 @@ import { makeAuthenticatedRequest } from './api-client';
 import { Canvas, CreateCanvasRequest, UpdateCanvasRequest } from '@/shared/schema';
 import { AuthResponse } from '@/types/auth';
 
+/**
+ * Canvas Service - Updated to match new API specification
+ * 
+ * API Base URL: /api/v1/canvas
+ * 
+ * All endpoints follow the standard response format:
+ * {
+ *   "success": boolean,
+ *   "data": object | array | null,
+ *   "pagination": object | null,
+ *   "message": string | null,
+ *   "error": string | null
+ * }
+ * 
+ * Pagination format:
+ * {
+ *   "total": number,
+ *   "limit": number,
+ *   "offset": number,
+ *   "current_page": number,
+ *   "total_pages": number,
+ *   "has_next": boolean,
+ *   "has_previous": boolean
+ * }
+ */
 
 // Canvas service class
 export class CanvasService {
@@ -86,8 +111,8 @@ export class CanvasService {
     if (data.name !== undefined) {
       updateData.name = data.name;
     }
-    if (data.systemInstruction !== undefined) {
-      updateData.system_instruction = data.systemInstruction;
+    if (data.system_instruction !== undefined) {
+      updateData.system_instruction = data.system_instruction;
     }
 
     const response = await makeAuthenticatedRequest<Canvas>(`${CanvasService.BASE_URL}/${id}`, {
@@ -105,16 +130,14 @@ export class CanvasService {
   /**
    * Delete a canvas
    */
-  static async deleteCanvas(id: string): Promise<Canvas> {
-    const response = await makeAuthenticatedRequest<Canvas>(`${CanvasService.BASE_URL}/${id}`, {
+  static async deleteCanvas(id: string): Promise<void> {
+    const response = await makeAuthenticatedRequest<void>(`${CanvasService.BASE_URL}/${id}`, {
       method: 'DELETE',
     });
 
     if (!response.success) {
       throw new Error(response.message || 'Failed to delete canvas');
     }
-
-    return response.data as Canvas;
   }
 }
 

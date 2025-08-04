@@ -5,9 +5,9 @@ import { z } from "zod";
 // Canvas table for multi-user support
 export const canvases = pgTable("canvases", {
   id: varchar("id").primaryKey(),
-  authorId: varchar("author_id").notNull(),
+  author_id: varchar("author_id").notNull(),
   name: text("name").notNull(),
-  systemInstruction: text("system_instruction").default(""),
+  system_instruction: text("system_instruction").default(""),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
 });
@@ -34,6 +34,7 @@ export const relationships = pgTable("relationships", {
 
 export const insertCanvasSchema = createInsertSchema(canvases).omit({
   id: true,
+  author_id: true,
   created_at: true,
   updated_at: true,
 });
@@ -64,7 +65,7 @@ export const createCanvasSchema = z.object({
 
 export const updateCanvasSchema = z.object({
   name: z.string().min(1).max(100).optional(),
-  systemInstruction: z.string().optional(),
+  system_instruction: z.string().optional(),
 });
 
 export const createNodeSchema = z.object({
