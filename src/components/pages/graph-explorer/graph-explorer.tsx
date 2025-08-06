@@ -12,6 +12,7 @@ import AIPartnerModal from "@/components/modals/ai-partner-modal";
 import GraphNavigationBar from "./graph-navigation-bar";
 import { useCanvas, useUpdateCanvas } from "@/hooks/use-canvas";
 import { canvasService, GraphData } from "@/lib/canvas-service";
+import { AIService } from "@/lib/ai-service";
 
 export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -82,13 +83,12 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
       nodeCount?: number;
       isAutomatic?: boolean;
     }) => {
-      const response = await apiRequest("POST", "/api/generate-keywords", {
-        name: topic,
-        canvasId,
-        nodeCount,
-        isAutomatic,
+      return AIService.generateKeywords({
+        canvas_id: canvasId,
+        topic_name: topic,
+        node_count: nodeCount || 10,
+        is_automatic: isAutomatic || false,
       });
-      return response.json();
     },
     onSuccess: (data) => {
       console.log("generateKeywordsMutation onSuccess", canvasId);
