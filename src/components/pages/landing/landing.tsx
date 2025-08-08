@@ -71,18 +71,18 @@ export default function Landing() {
                     Pricing
                   </Button>
                 </Link>
-                <Link href="/login">
+                {/* <Link href="/login">
                   <Button
                     variant="ghost"
                     className="text-blue-600 hover:bg-white/10"
                   >
                     Sign In
                   </Button>
-                </Link>
+                </Link> */}
 
-                <Link href="/signup">
+                <Link href="/login">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Get Started
+                  Sign In
                   </Button>
                 </Link>
               </>
