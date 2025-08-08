@@ -10,8 +10,10 @@ import {
 } from "react";
 import cytoscape, { Core } from "cytoscape";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { NodeService } from "@/lib/node-service";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getCanvasKey, getCanvasGraphDataKey } from "@/keys";
 
 import { toast } from "sonner";
 import {
@@ -26,6 +28,7 @@ import {
 import { NodeDetailDrawer } from "@/components/node-detail-drawer";
 
 import { WandSparkles } from "lucide-react";
+import { canvasService } from "@/lib/canvas-service";
 
 interface GraphData {
   nodes: Array<{
@@ -82,7 +85,8 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
     // Fetch canvas data to get system instruction
     const { data: canvasData } = useQuery({
-      queryKey: [`/api/canvas/${canvasId}`],
+      queryKey: [getCanvasKey(canvasId)],
+      queryFn: () => canvasService.getCanvas(canvasId),
       enabled: !!canvasId,
       refetchOnWindowFocus: false,
     });
@@ -161,15 +165,15 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         name: string;
         description: string;
       }) => {
-        const response = await apiRequest("PUT", `/api/node/${data.nodeId}`, {
+        const response = await NodeService.updateNode(data.nodeId, {
           name: data.name,
           description: data.description,
         });
-        return response.json();
+        return response.data;
       },
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+          queryKey: [getCanvasGraphDataKey(canvasId)],
         });
         toast.success("Node Updated", {
           description: "Node has been successfully updated",
@@ -191,18 +195,18 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         description: string;
         canvasId: string;
       }) => {
-        const response = await apiRequest("POST", `/api/node`, {
+        const response = await NodeService.createNode({
           name: data.name,
           description: data.description,
-          canvasId: data.canvasId,
-          parentNodeId: data.parentNodeId,
+          canvas_id: data.canvasId,
+          parent_node_id: data.parentNodeId,
         });
-        return response.json();
+        return response.data;
       },
       onSuccess: () => {
         console.log("onSuccess", canvasId);
         queryClient.invalidateQueries({
-          queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+          queryKey: [getCanvasGraphDataKey(canvasId)],
         });
         toast.success("Sub Node Created", {
           description: "Sub node has been successfully created",
@@ -314,7 +318,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
       // Refresh graph data to reflect any updates
       queryClient.invalidateQueries({
-        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+        queryKey: [getCanvasGraphDataKey(canvasId)],
       });
     };
 

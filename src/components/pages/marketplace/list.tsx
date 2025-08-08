@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/lib/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
+import { getCollectionsKey } from "@/keys";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowLeft,
@@ -148,7 +149,7 @@ export default function Marketplace() {
       toast.success("Collection Downloaded", {
         description: "The collection has been added to your library.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: [getCollectionsKey()] });
     } catch {
       toast.error("Download Failed", {
         description: "Failed to download collection. Please try again.",

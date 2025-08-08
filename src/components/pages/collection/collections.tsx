@@ -66,6 +66,7 @@ import {
   Eye,
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { getCollectionsKey } from "@/keys";
 
 // Available tags for marketplace publishing
 const availableTags = [
@@ -256,7 +257,7 @@ export default function Collections() {
       toast.success("Collection Deleted", {
         description: "Collection has been permanently deleted.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: [getCollectionsKey()] });
     } catch {
       toast.error("Delete Failed", {
         description: "Failed to delete collection. Please try again.",
@@ -296,7 +297,7 @@ export default function Collections() {
       toast.success("Published Successfully", {
         description: "Collection is now available in the marketplace.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: [getCollectionsKey()] });
     } catch {
       toast.error("Publish Failed", {
         description: "Failed to publish collection. Please try again.",
@@ -352,7 +353,7 @@ export default function Collections() {
       toast.success("Collection Duplicated", {
         description: "A copy of the collection has been created.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: [getCollectionsKey()] });
     } catch {
       toast.error("Duplicate Failed", {
         description: "Failed to duplicate collection. Please try again.",

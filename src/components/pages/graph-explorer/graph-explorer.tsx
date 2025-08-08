@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { toast } from "sonner";
 import GraphCanvas, { GraphCanvasRef } from "@/components/graph-canvas";
 import { X, Info } from "lucide-react";
@@ -13,6 +13,8 @@ import GraphNavigationBar from "./graph-navigation-bar";
 import { useCanvas, useUpdateCanvas } from "@/hooks/use-canvas";
 import { canvasService, GraphData } from "@/lib/canvas-service";
 import { AIService } from "@/lib/ai-service";
+import { NodeService } from "@/lib/node-service";
+import { getCanvasGraphDataKey } from "@/keys";
 
 export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   // Fetch graph data
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { data: graphData, isLoading } = useQuery<GraphData>({
-    queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+    queryKey: [getCanvasGraphDataKey(canvasId)],
     queryFn: () => canvasService.getGraphData(canvasId),
     enabled: !!canvasId,
     refetchOnWindowFocus: false,
@@ -50,18 +52,18 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const createNodeMutation = useMutation({
     mutationFn: async (topic: string) => {
-      const response = await apiRequest("POST", "/api/node", {
+      const response = await NodeService.createNode({
         name: topic,
-        canvasId,
+        canvas_id: canvasId,
       });
-      return response.json();
+      return response.data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+        queryKey: [getCanvasGraphDataKey(canvasId)],
       });
       toast.success("Topic Added", {
-        description: `Added topic: ${data.name}`,
+        description: `Added topic: ${data?.name || 'Unknown'}`,
       });
     },
     onError: (error: Error) => {
@@ -93,7 +95,7 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
     onSuccess: (data) => {
       console.log("generateKeywordsMutation onSuccess", canvasId);
       queryClient.invalidateQueries({
-        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+        queryKey: [getCanvasGraphDataKey(canvasId)],
       });
       console.log("generateKeywordsMutation data", data);
       toast.success("Keywords Generated", {
@@ -111,16 +113,16 @@ export default function GraphExplorer({ canvasId }: { canvasId: string }) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const deleteNodeMutation = useMutation({
     mutationFn: async (nodeId: string) => {
-      const response = await apiRequest("DELETE", `/api/node/${nodeId}`);
-      return response.json();
+      const response = await NodeService.deleteNode(nodeId);
+      return response;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: [`/api/v1/canvas/${canvasId}/graph-data`],
+        queryKey: [getCanvasGraphDataKey(canvasId)],
       });
       setSelectedNodeId(null);
       toast.success("Node Deleted", {
-        description: data.message,
+        description: data.message || "Node deleted successfully",
       });
     },
     onError: (error: Error) => {

@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeDetailContent } from "@/components/node-detail-content";
 import { X, Eye, FileText, Search, Brain, RefreshCw } from "lucide-react";
 import { useState, useCallback } from 'react';
+import { NodeService } from "@/lib/node-service";
 
 interface NodeDetailDrawerProps {
   open: boolean;
@@ -53,10 +54,9 @@ export function NodeDetailDrawer({ open, onOpenChange, node }: NodeDetailDrawerP
 
     setIsRefreshing(true);
     try {
-      const response = await fetch(`/api/node/${node.id}`);
-      if (response.ok) {
-        const updatedNode = await response.json();
-        setRefreshedNode(updatedNode);
+      const response = await NodeService.getNode(node.id);
+      if (response.success && response.data) {
+        setRefreshedNode(response.data);
         setLastRefreshed(new Date());
       } else {
         console.error('Failed to refresh node data');

@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { NodeDetailContent } from "@/components/node-detail-content";
 import MemoryViewer from '@/components/memory-viewer';
+import { NodeService } from "@/lib/node-service";
 
 interface GoogleSearchModalProps {
   open: boolean;
@@ -53,10 +54,9 @@ function GoogleSearchModal({
 
     setIsRefreshingNode(true);
     try {
-      const nodeResponse = await fetch(`/api/node/${nodeId}`);
-      if (nodeResponse.ok) {
-        const nodeResult = await nodeResponse.json();
-        setNodeData(nodeResult);
+      const response = await NodeService.getNode(nodeId);
+      if (response.success && response.data) {
+        setNodeData(response.data);
         setNodeLastRefreshed(new Date());
       } else {
         console.error('Failed to refresh node data');
@@ -96,10 +96,13 @@ function GoogleSearchModal({
 
       // Also fetch updated node data
       if (nodeId) {
-        const nodeResponse = await fetch(`/api/node/${nodeId}`);
-        if (nodeResponse.ok) {
-          const nodeResult = await nodeResponse.json();
-          setNodeData(nodeResult);
+        try {
+          const nodeResponse = await NodeService.getNode(nodeId);
+          if (nodeResponse.success && nodeResponse.data) {
+            setNodeData(nodeResponse.data);
+          }
+        } catch (error) {
+          console.error('Error fetching updated node data:', error);
         }
       }
     } catch (error) {
@@ -146,9 +149,12 @@ function GoogleSearchModal({
 
       // Fetch node data if we have nodeId
       if (nodeId) {
-        fetch(`/api/node/${nodeId}`)
-          .then(res => res.ok ? res.json() : null)
-          .then(data => setNodeData(data))
+        NodeService.getNode(nodeId)
+          .then(response => {
+            if (response.success && response.data) {
+              setNodeData(response.data);
+            }
+          })
           .catch(error => console.error('Error fetching node data:', error));
       }
     }
