@@ -41,17 +41,21 @@ ${topicPath}
       : "";
     console.log(">> Topic path section generated");
     // Document context section
-    const documentContextSection = documentContext && documentContext.length > 0
-      ? `<user-documents>
-${documentContext.map((doc, index) => 
-  `Document ${index + 1}: ${doc.filename} - ${doc.name}
+    const documentContextSection =
+      documentContext && documentContext.length > 0
+        ? `<user-documents>
+${documentContext
+  .map(
+    (doc, index) =>
+      `Document ${index + 1}: ${doc.filename} - ${doc.name}
 Description: ${doc.description}
 Relevance Score: ${Math.round((1 - doc.score) * 100)}%
 Content: ${doc.text}
 ---`
-).join('\n')}
+  )
+  .join("\n")}
 </user-documents>`
-      : "";
+        : "";
     console.log(">> Document context section generated");
     // get year
     const searchQuery = question + " " + new Date().getFullYear();

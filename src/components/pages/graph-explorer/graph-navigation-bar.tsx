@@ -94,11 +94,11 @@ export default function GraphNavigationBar({
             variant="outline"
             size="sm"
             onClick={onOpenAIPartner}
-            className="bg-purple-700 hover:bg-purple-600 text-purple-300 hover:text-purple-50 border-purple-600 touch-manipulation"
+            className="ml-2 bg-purple-700 hover:bg-purple-600 text-purple-300 hover:text-purple-50 border-purple-600 touch-manipulation"
             title="AI Partner"
           >
             <Bot className="w-4 h-4" />
-            <span className="hidden sm:inline ml-2">AI Partner</span>
+            <span className="hidden lg:inline ml-2">AI Partner</span>
           </Button>
 
           {/* Settings */}
