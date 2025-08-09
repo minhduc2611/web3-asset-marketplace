@@ -22,7 +22,7 @@ interface KnowledgeData {
   latestGoogleSearch?: {
     searchCompletedAt?: string;
     searchQuery?: string;
-    geminiAnswer?: string;
+    insights?: string;
     searchResults?: SearchResult[];
     documentSearchResults?: SearchResult[];
   };
@@ -98,11 +98,24 @@ export function NodeDetailContent({ node, theme = 'dark', className = '' }: Node
   
   try {
     if (node.knowledge) {
+      console.log('node.knowledge', node.knowledge);
       knowledgeData = JSON.parse(node.knowledge) as KnowledgeData;
+      console.log('knowledgeData', knowledgeData);
       searchStatus = knowledgeData.googleSearchStatus || 'idle';
+      console.log('searchStatus', searchStatus);
     }
   } catch (error) {
     console.error('Error parsing knowledge data:', error);
+    knowledgeData = {
+      googleSearchStatus: 'completed',
+      error: 'Error parsing knowledge data',
+      searchHistory: [],
+      latestGoogleSearch: {
+        insights: node.knowledge || '',
+        searchCompletedAt: '',
+        searchQuery: '',
+      }
+    };
   }
 
   const getStatusBadge = (status: string) => {
@@ -229,7 +242,7 @@ export function NodeDetailContent({ node, theme = 'dark', className = '' }: Node
           </div>
 
           {/* AI Insights */}
-          {knowledgeData.latestGoogleSearch?.geminiAnswer && (
+          {knowledgeData.latestGoogleSearch?.insights && (
             <div className={`rounded-lg p-4 ${styles.sectionBg}`}>
               <h3 className={`text-lg font-semibold mb-3 flex items-center ${styles.heading}`}>
                 <svg className="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +267,7 @@ export function NodeDetailContent({ node, theme = 'dark', className = '' }: Node
 
               <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-600/50">
                 <MarkdownRenderer 
-                  content={knowledgeData.latestGoogleSearch.geminiAnswer}
+                  content={knowledgeData.latestGoogleSearch.insights}
                   theme={theme}
                 />
               </div>

@@ -12,6 +12,25 @@ export interface GenerateKeywordsResponse {
   keywords: string[];
 }
 
+export interface GenerateInsightsRequest {
+  topic_node_id: string;
+  canvas_id: string;
+  system_instruction: string;
+  include_web_search?: boolean;
+  include_news_search?: boolean;
+}
+
+export interface GenerateInsightsResponse {
+  canvas_id: string;
+  document_context: [];
+  generated_at: string;
+  insights: string;
+  news_search_results: [];
+  question: string;
+  topic_node_id: string;
+  web_search_results: [];
+}
+
 /**
  * AI Service - Handles AI-related API operations
  * 
@@ -48,5 +67,24 @@ export class AIService {
     }
 
     return response.data as GenerateKeywordsResponse;
+  }
+
+  /**
+   * Generate insights for a topic node
+   */
+  static async generateInsightsForTopicNode(data: GenerateInsightsRequest): Promise<GenerateInsightsResponse> {
+    const response = await makeAuthenticatedRequest<GenerateInsightsResponse>(
+      `${AIService.BASE_URL}/generate-insights-for-topic-node`,
+      {
+        method: 'POST',
+        data,
+      }
+    );
+
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to generate insights');
+    }
+
+    return response.data as GenerateInsightsResponse;
   }
 } 

@@ -12,30 +12,27 @@ interface GoogleSearchModalProps {
   open: boolean;
   searchTerm: string;
   searchResults: any[];
-  geminiAnswer: string;
+  insights: string;
   isLoading: boolean;
   nodeId?: string;
   onOpenChange: (open: boolean) => void;
   onClose: () => void;
-  onSearchComplete?: (data: { searchResults: any[]; geminiAnswer: string }) => void;
 }
 
 function GoogleSearchModal({
   open,
   searchTerm,
   searchResults,
-  geminiAnswer,
+  insights,
   isLoading,
   nodeId,
   onOpenChange,
-  onClose,
-  onSearchComplete
+  onClose
 }: GoogleSearchModalProps) {
   const [countdown, setCountdown] = useState(60);
-  const [isPolling, setIsPolling] = useState(false);
   const [searchComplete, setSearchComplete] = useState(false);
   const [localSearchResults, setLocalSearchResults] = useState(searchResults);
-  const [localGeminiAnswer, setLocalGeminiAnswer] = useState(geminiAnswer);
+  const [localinsights, setLocalinsights] = useState(insights);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [nodeData, setNodeData] = useState<any>(null);
   const [isRefreshingNode, setIsRefreshingNode] = useState(false);
@@ -68,64 +65,6 @@ function GoogleSearchModal({
     }
   }, [nodeId, isRefreshingNode]);
 
-  // Poll for search completion and node updates
-  const pollSearchStatus = useCallback(async () => {
-    if (!nodeId || !isPolling) return;
-
-    try {
-      const response = await fetch(`/api/google-search?nodeId=${nodeId}`);
-      const data = await response.json();
-
-      if (data.status === 'completed' && data.searchData) {
-        setLocalSearchResults(data.searchData.searchResults || []);
-        setLocalGeminiAnswer(data.searchData.geminiAnswer || '');
-        setSearchComplete(true);
-        setIsPolling(false);
-        
-        // Notify parent component
-        if (onSearchComplete) {
-          onSearchComplete({
-            searchResults: data.searchData.searchResults || [],
-            geminiAnswer: data.searchData.geminiAnswer || ''
-          });
-        }
-      } else if (data.status === 'failed') {
-        setSearchError(data.error || 'Search failed');
-        setIsPolling(false);
-      }
-
-      // Also fetch updated node data
-      if (nodeId) {
-        try {
-          const nodeResponse = await NodeService.getNode(nodeId);
-          if (nodeResponse.success && nodeResponse.data) {
-            setNodeData(nodeResponse.data);
-          }
-        } catch (error) {
-          console.error('Error fetching updated node data:', error);
-        }
-      }
-    } catch (error) {
-      console.error('Error polling search status:', error);
-    }
-  }, [nodeId, isPolling, onSearchComplete]);
-
-  // Start polling when modal opens and we're loading
-  useEffect(() => {
-    if (open && isLoading && nodeId && !searchComplete) {
-      setIsPolling(true);
-      setCountdown(60);
-      
-      // Start polling immediately
-      pollSearchStatus();
-      
-      // Set up polling interval
-      const pollInterval = setInterval(pollSearchStatus, 25000);
-      
-      return () => clearInterval(pollInterval);
-    }
-  }, [open, isLoading, nodeId, searchComplete, pollSearchStatus]);
-
   // Countdown timer
   useEffect(() => {
     if (isLoading && countdown > 0 && !searchComplete) {
@@ -138,12 +77,12 @@ function GoogleSearchModal({
   useEffect(() => {
     if (open) {
       setLocalSearchResults(searchResults);
-      setLocalGeminiAnswer(geminiAnswer);
+      setLocalinsights(insights);
       setSearchComplete(false);
       setSearchError(null);
       
       // If we have results already, mark as complete
-      if (searchResults.length > 0 || geminiAnswer) {
+      if (searchResults.length > 0 || insights) {
         setSearchComplete(true);
       }
 
@@ -158,10 +97,10 @@ function GoogleSearchModal({
           .catch(error => console.error('Error fetching node data:', error));
       }
     }
-  }, [open, searchResults, geminiAnswer, nodeId]);
+  }, [open, searchResults, insights, nodeId]);
 
   const currentSearchResults = localSearchResults.length > 0 ? localSearchResults : searchResults;
-  const currentGeminiAnswer = localGeminiAnswer || geminiAnswer;
+  const currentinsights = localinsights || insights;
   const showLoading = isLoading && !searchComplete && !searchError;
 
   return (
@@ -170,7 +109,7 @@ function GoogleSearchModal({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-slate-50">Google Search: &quot;{searchTerm}&quot;</DialogTitle>
+              <DialogTitle className="text-slate-50">Insights for: &quot;{searchTerm}&quot;</DialogTitle>
               <DialogDescription className="text-slate-400">
                 {showLoading ? "Processing search in background..." : "Search results and node analysis"}
               </DialogDescription>
@@ -198,7 +137,7 @@ function GoogleSearchModal({
           <TabsContent value="results" className="flex-1 overflow-y-scroll space-y-6 py-4 mt-0">
             {showLoading ? (
               <div className="text-center py-8">
-                <div className="w-12 h-12 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
+                {/* <div className="w-12 h-12 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div> */}
                 
                 {/* Progress indicators */}
                 <div className="space-y-4 mb-6">
@@ -213,30 +152,7 @@ function GoogleSearchModal({
                       <p className="text-slate-400 text-sm">Estimated time remaining</p>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                    <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                        <span className="text-slate-300">Web search</span>
-                      </div>
-                      <p className="text-slate-500 text-xs mt-1">Latest news & articles</p>
-                    </div>
-                    <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                        <span className="text-slate-300">Document search</span>
-                      </div>
-                      <p className="text-slate-500 text-xs mt-1">Your knowledge base</p>
-                    </div>
-                    <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                        <span className="text-slate-300">AI analysis</span>
-                      </div>
-                      <p className="text-slate-500 text-xs mt-1">Combining all sources</p>
-                    </div>
-                  </div>
+               
                 </div>
 
                 <div className="bg-slate-700/30 rounded-lg p-4 border border-slate-600">
@@ -272,7 +188,7 @@ function GoogleSearchModal({
                 )}
 
                 {/* AI Insights */}
-                {currentGeminiAnswer && (
+                {currentinsights && (
                   <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
                     <h3 className="text-lg font-semibold text-slate-50 mb-3 flex items-center">
                       <svg className="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,7 +215,7 @@ function GoogleSearchModal({
                     })()}
 
                     <MarkdownRenderer 
-                      content={currentGeminiAnswer}
+                      content={currentinsights}
                       theme="dark"
                     />
                   </div>
@@ -434,7 +350,7 @@ function GoogleSearchModal({
                   </div>
                 )}
 
-                {!currentGeminiAnswer && currentSearchResults.length === 0 && !showLoading && !searchError && (
+                {!currentinsights && currentSearchResults.length === 0 && !showLoading && !searchError && (
                   <div className="text-center py-8">
                     <p className="text-slate-400">No results found. Try a different search term.</p>
                   </div>
@@ -513,7 +429,7 @@ export default React.memo(GoogleSearchModal, (prevProps, nextProps) => {
   return (
     prevProps.open === nextProps.open &&
     prevProps.searchTerm === nextProps.searchTerm &&
-    prevProps.geminiAnswer === nextProps.geminiAnswer &&
+    prevProps.insights === nextProps.insights &&
     prevProps.isLoading === nextProps.isLoading &&
     prevProps.nodeId === nextProps.nodeId &&
     JSON.stringify(prevProps.searchResults) === JSON.stringify(nextProps.searchResults)

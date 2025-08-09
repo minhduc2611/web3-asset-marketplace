@@ -90,7 +90,7 @@ export type GenerateKeywordsRequest = z.infer<typeof generateKeywordsSchema>;
 export interface GraphNode {
   id: string;
   name: string;
-  type: 'original' | 'generated';
+  node_type: 'original' | 'generated';
   description?: string | null;
   knowledge?: string | null;
   positionX?: number | null;

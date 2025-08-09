@@ -1,34 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: fix this file
 "use client";
+import { getCanvasGraphDataKey, getCanvasKey } from "@/keys";
+import { AIService } from "@/lib/ai-service";
+import { NodeService } from "@/lib/node-service";
+import { queryClient } from "@/lib/queryClient";
+import { Canvas, GraphEdge, GraphNode } from "@/shared/schema";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import cytoscape, { Core } from "cytoscape";
 import {
+  forwardRef,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
-  useImperativeHandle,
-  forwardRef,
 } from "react";
-import cytoscape, { Core } from "cytoscape";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import { NodeService } from "@/lib/node-service";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { getCanvasKey, getCanvasGraphDataKey } from "@/keys";
 
-import { toast } from "sonner";
 import {
-  EditNodeModal,
   AddSubNodeModal,
+  EditNodeModal,
   GenerateKeywordsModal,
-  GoogleSearchModal,
   GoogleSearchConfirmModal,
+  GoogleSearchModal,
   NodeDetailModal,
 } from "@/components/modals";
+import { toast } from "sonner";
 
-import { NodeDetailDrawer } from "@/components/node-detail-drawer";
-
-import { WandSparkles } from "lucide-react";
 import { canvasService } from "@/lib/canvas-service";
+import { WandSparkles } from "lucide-react";
 
 interface GraphData {
   nodes: Array<{
@@ -81,12 +80,11 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
   ) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const cyRef = useRef<Core | null>(null);
-    const isMobile = useIsMobile();
 
     // Fetch canvas data to get system instruction
     const { data: canvasData } = useQuery({
       queryKey: [getCanvasKey(canvasId)],
-      queryFn: () => canvasService.getCanvas(canvasId),
+      queryFn: () => canvasService.get(canvasId),
       enabled: !!canvasId,
       refetchOnWindowFocus: false,
     });
@@ -131,17 +129,18 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       open: boolean;
       searchTerm: string;
       searchResults: any[];
-      geminiAnswer: string;
+      insights: string;
       isLoading: boolean;
       nodeId?: string;
     }>({
       open: false,
       searchTerm: "",
       searchResults: [],
-      geminiAnswer: "",
+      insights: "",
       isLoading: false,
       nodeId: undefined,
     });
+    console.log("googleSearchDialog", googleSearchDialog);
 
     const [googleSearchConfirmDialog, setGoogleSearchConfirmDialog] = useState<{
       open: boolean;
@@ -154,9 +153,6 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       open: boolean;
       node: any | null;
     }>({ open: false, node: null });
-
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerNode, setDrawerNode] = useState<any | null>(null);
 
     // Edit node mutation
     const editNodeMutation = useMutation({
@@ -233,29 +229,40 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         nodeId: string;
         systemInstruction?: string;
       }) => {
-        const response = await apiRequest("POST", "/api/google-search", {
-          query: data.searchTerm,
-          canvasId,
-          systemInstruction: data.systemInstruction,
+        const result = await AIService.generateInsightsForTopicNode({
+          topic_node_id: data.nodeId,
+          canvas_id: canvasId,
+          system_instruction: data.systemInstruction || "",
+          include_web_search: true,
+          include_news_search: true,
         });
-        const result = await response.json();
-        return { ...result, nodeId: data.nodeId };
+        return {
+          searchResults: result.web_search_results || [],
+          insights: result.insights || "",
+          nodeId: data.nodeId,
+          status: "completed",
+        };
       },
       onSuccess: async (data) => {
         setGoogleSearchDialog((prev) => ({
           ...prev,
           searchResults: data.searchResults || [],
-          geminiAnswer: data.geminiAnswer || "",
-          isLoading: data.status === "processing" ? true : false,
+          insights: data.insights || "",
+          isLoading: false,
           nodeId: data.nodeId,
         }));
-        // Show initial response message for background processing
-        if (data.status === "processing") {
-          toast.info("Search Started", {
-            description: "Your search is being processed in the background. Results will appear shortly.",
-            duration: 5000,
-          });
-        }
+
+        // Show success notification
+        toast.success("Search Completed", {
+          description:
+            "Google search results have been generated and saved to your knowledge base.",
+          duration: 6000,
+        });
+
+        // Refresh graph data to reflect any updates
+        queryClient.invalidateQueries({
+          queryKey: [getCanvasGraphDataKey(canvasId)],
+        });
       },
       onError: (error: any) => {
         toast.error("Search Failed", {
@@ -271,7 +278,9 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
     // Handle Google search - now opens confirmation modal
     const handleGoogleSearch = (searchTerm: string, nodeId: string) => {
       // Get system instruction from canvas data
-      const systemInstruction = (canvasData as any)?.systemInstruction || "";
+      console.log("canvasData", canvasData);
+      const systemInstruction =
+        (canvasData as Canvas)?.system_instruction || "";
 
       setGoogleSearchConfirmDialog({
         open: true,
@@ -292,34 +301,13 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         open: true,
         searchTerm,
         searchResults: [],
-        geminiAnswer: "",
+        insights: "",
         isLoading: true,
         nodeId,
       }));
 
       // Call API with system instruction
       googleSearchMutation.mutate({ searchTerm, nodeId, systemInstruction });
-    };
-
-    // Handle search completion from modal polling
-    const handleSearchComplete = (data: { searchResults: any[]; geminiAnswer: string }) => {
-      setGoogleSearchDialog((prev) => ({
-        ...prev,
-        searchResults: data.searchResults,
-        geminiAnswer: data.geminiAnswer,
-        isLoading: false,
-      }));
-
-      // Show success notification
-      toast.success("Search Completed", {
-        description: "Google search results have been generated and saved to your knowledge base.",
-        duration: 6000,
-      });
-
-      // Refresh graph data to reflect any updates
-      queryClient.invalidateQueries({
-        queryKey: [getCanvasGraphDataKey(canvasId)],
-      });
     };
 
     // Handle node detail view
@@ -555,17 +543,11 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           const nodeData = graphData?.nodes.find((n) => n.id === node.id());
 
           if (nodeData) {
-            if (isMobile) {
-              // Mobile: Open detail modal
-              setNodeDetailDialog({
-                open: true,
-                node: nodeData,
-              });
-            } else {
-              // Desktop: Open drawer
-              setDrawerNode(nodeData);
-              setDrawerOpen(true);
-            }
+            // Mobile: Open detail modal
+            setNodeDetailDialog({
+              open: true,
+              node: nodeData,
+            });
           }
 
           onNodeSelect(node.id());
@@ -608,7 +590,11 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
     }, [graphData?.nodes.length, graphData?.edges.length]);
 
     // Mind map layout with collision detection and proper spacing
-    const applyImprovedLayout = (cy: Core, nodes: any[], edges: any[]) => {
+    const applyImprovedLayout = (
+      cy: Core,
+      nodes: GraphNode[],
+      edges: GraphEdge[]
+    ) => {
       const originalNodes = nodes.filter((n) => n.node_type === "original");
 
       // Build parent-child relationships
@@ -1251,7 +1237,7 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           open={googleSearchDialog.open}
           searchTerm={googleSearchDialog.searchTerm}
           searchResults={googleSearchDialog.searchResults}
-          geminiAnswer={googleSearchDialog.geminiAnswer}
+          insights={googleSearchDialog.insights}
           isLoading={googleSearchDialog.isLoading}
           nodeId={googleSearchDialog.nodeId}
           onOpenChange={(open) =>
@@ -1260,7 +1246,6 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           onClose={() =>
             setGoogleSearchDialog((prev) => ({ ...prev, open: false }))
           }
-          onSearchComplete={handleSearchComplete}
         />
 
         {/* Google Search Confirm Modal */}
@@ -1288,13 +1273,6 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
           onClose={() =>
             setNodeDetailDialog((prev) => ({ ...prev, open: false }))
           }
-        />
-
-        {/* Node Detail Drawer for Desktop */}
-        <NodeDetailDrawer
-          open={drawerOpen}
-          onOpenChange={setDrawerOpen}
-          node={drawerNode}
         />
       </div>
     );
